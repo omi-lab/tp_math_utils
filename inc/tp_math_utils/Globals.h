@@ -47,12 +47,12 @@ struct RNG
   }
 
   //################################################################################################
-  std::vector<size_t> randomIndexes(size_t lessThan, size_t count)
+  void randomIndexes(size_t lessThan, size_t count, std::vector<size_t>& results)
   {
-    std::vector<size_t> results;
-
     count = tpMin(lessThan, count);
 
+    results.clear();
+    results.reserve(count);
     for(size_t c=0; c<count; c++)
     {
       size_t i = mt()%lessThan;
@@ -66,8 +66,6 @@ struct RNG
 
       results.push_back(i);
     }
-
-    return results;
   }
 
   //################################################################################################
