@@ -1,10 +1,7 @@
 #ifndef tp_math_utils_Transformation_h
 #define tp_math_utils_Transformation_h
 
-#include "tp_math_utils/Globals.h"
 #include "tp_math_utils/Plane.h"
-
-#include <glm/glm.hpp>
 
 namespace tp_math_utils
 {

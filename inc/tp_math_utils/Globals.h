@@ -12,6 +12,7 @@
 #include <glm/glm.hpp>
 
 #include <random>
+#include <ostream>
 
 //##################################################################################################
 //! Math utils for 3D graphics
@@ -75,6 +76,41 @@ struct RNG
   }
 };
 
+}
+
+//##################################################################################################
+template<typename T, glm::precision P>
+std::ostream& operator<<(std::ostream& os, const glm::tvec2<T, P>& v)
+{
+  os << '(' << v.x << ',' << v.y << ')';
+  return os;
+}
+
+//##################################################################################################
+template<typename T, glm::precision P>
+std::ostream& operator<<(std::ostream& os, const glm::tvec3<T, P>& v)
+{
+  os << '(' << v.x << ',' << v.y << ',' << v.z << ')';
+  return os;
+}
+
+//##################################################################################################
+template<typename T, glm::precision P>
+std::ostream& operator<<(std::ostream& os, const glm::tvec4<T, P>& v)
+{
+  os << '(' << v.x << ',' << v.y << ',' << v.z << ',' << v.w << ')';
+  return os;
+}
+
+//##################################################################################################
+template<typename T, glm::precision P>
+std::ostream& operator<<(std::ostream& os, const glm::tmat4x4<T, P>& v)
+{
+  os << "([" << v[0][0] << ',' << v[1][0] << ',' << v[2][0] << ',' << v[3][0] << "]\n";
+  os << " [" << v[0][1] << ',' << v[1][1] << ',' << v[2][1] << ',' << v[3][1] << "]\n";
+  os << " [" << v[0][2] << ',' << v[1][2] << ',' << v[2][2] << ',' << v[3][2] << "]\n";
+  os << " [" << v[0][3] << ',' << v[1][3] << ',' << v[2][3] << ',' << v[3][3] << "])";
+  return os;
 }
 
 namespace std

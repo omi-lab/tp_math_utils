@@ -1,9 +1,9 @@
 #ifndef tp_math_utils_Polygon_h
 #define tp_math_utils_Polygon_h
 
-#include "json.hpp"
+#include "tp_math_utils/Globals.h"
 
-#include <glm/glm.hpp>
+#include "json.hpp"
 
 #include <unordered_map>
 

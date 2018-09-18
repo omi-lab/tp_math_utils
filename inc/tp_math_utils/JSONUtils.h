@@ -7,7 +7,6 @@
 
 #include "json.hpp"
 
-#include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 namespace tp_math_utils

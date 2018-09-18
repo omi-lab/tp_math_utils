@@ -3,8 +3,6 @@
 
 #include "tp_math_utils/Globals.h"
 
-#include <glm/glm.hpp>
-
 namespace tp_math_utils
 {
 class Plane;

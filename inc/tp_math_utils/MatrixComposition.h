@@ -1,7 +1,7 @@
 #ifndef tp_math_utils_MatrixComposition_h
 #define tp_math_utils_MatrixComposition_h
 
-#include <glm/glm.hpp>
+#include "tp_math_utils/Globals.h"
 
 namespace tp_math_utils
 {
