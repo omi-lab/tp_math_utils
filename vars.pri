@@ -5,7 +5,7 @@ DEFINES += TP_MATH_UTILS_LIBRARY
 
 HEADERS += inc/tp_math_utils/Globals.h
 
-SOURCES += src/JSONUtils.cpp
+#SOURCES += src/JSONUtils.cpp
 HEADERS += inc/tp_math_utils/JSONUtils.h
 
 SOURCES += src/Plane.cpp
@@ -23,7 +23,7 @@ HEADERS += inc/tp_math_utils/DistanceToRay.h
 SOURCES += src/DistanceBetweenLines.cpp
 HEADERS += inc/tp_math_utils/DistanceBetweenLines.h
 
-SOURCES += src/Ray.cpp
+#SOURCES += src/Ray.cpp
 HEADERS += inc/tp_math_utils/Ray.h
 
 SOURCES += src/Intersection.cpp
@@ -32,7 +32,7 @@ HEADERS += inc/tp_math_utils/Intersection.h
 SOURCES += src/Transformation.cpp
 HEADERS += inc/tp_math_utils/Transformation.h
 
-SOURCES += src/Ellipse.cpp
+#SOURCES += src/Ellipse.cpp
 HEADERS += inc/tp_math_utils/Ellipse.h
 
 SOURCES += src/Polygon.cpp
