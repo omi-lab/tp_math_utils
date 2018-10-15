@@ -1,6 +1,5 @@
 #include "tp_math_utils/Transformation.h"
 
-#define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/rotate_vector.hpp"
 
 namespace tp_math_utils
