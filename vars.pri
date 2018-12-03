@@ -38,6 +38,9 @@ HEADERS += inc/tp_math_utils/Ellipse.h
 SOURCES += src/Polygon.cpp
 HEADERS += inc/tp_math_utils/Polygon.h
 
+SOURCES += src/Geometry3D.cpp
+HEADERS += inc/tp_math_utils/Geometry3D.h
+
 SOURCES += src/ClosestPointsOnLines.cpp
 HEADERS += inc/tp_math_utils/ClosestPointsOnLines.h
 
