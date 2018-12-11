@@ -1,8 +1,6 @@
 #include "tp_math_utils/ClosestPointsOnLines.h"
 #include "tp_math_utils/Ray.h"
 
-#include "tp_utils/Globals.h"
-
 namespace tp_math_utils
 {
 

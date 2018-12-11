@@ -1,8 +1,10 @@
-#include "tp_math_utils/DistanceBetweenLines.h"
+#include "tp_math_utils/ClosestPointsOnRays.h"
 #include "tp_math_utils/Ray.h"
 
 namespace tp_math_utils
 {
+
+//http://geomalgorithms.com/a07-_distance.html
 
 //##################################################################################################
 // Copyright 2001 softSurfer, 2012 Dan Sunday
@@ -11,37 +13,33 @@ namespace tp_math_utils
 // SoftSurfer makes no warranty for this code, and cannot be held
 // liable for any real or imagined damage resulting from its use.
 // Users of this code must verify correctness for their application.
-float distanceBetweenLines(const tp_math_utils::Ray& l1, const tp_math_utils::Ray& l2)
+void closestPointsOnRays(const DRay& S1, const DRay& S2, glm::dvec3& P1, glm::dvec3& P2)
 {
-  glm::vec3 u = l1.p1 - l1.p0;
-  glm::vec3 v = l2.p1 - l2.p0;
-  glm::vec3 w = l1.p0 - l2.p0;
-  float     a = glm::dot(u,u); // always >= 0
-  float     b = glm::dot(u,v);
-  float     c = glm::dot(v,v); // always >= 0
-  float     d = glm::dot(u,w);
-  float     e = glm::dot(v,w);
-  float     D = a*c - b*b;     // always >= 0
+  const double SMALL_NUM = 0.00001;
+
+  glm::dvec3 u = S1.p1 - S1.p0;
+  glm::dvec3 v = S2.p1 - S2.p0;
+  glm::dvec3 w = S1.p0 - S2.p0;
+  double     a = glm::dot(u,u); // always >= 0
+  double     b = glm::dot(u,v);
+  double     c = glm::dot(v,v); // always >= 0
+  double     d = glm::dot(u,w);
+  double     e = glm::dot(v,w);
+  double     D = a*c - b*b;     // always >= 0
+  double     sc, tc;
 
   // compute the line parameters of the two closest points
-  float sc;
-  float tc;
-  if(D < 0.00001)
-  {
-    // the lines are almost parallel
+  if (D < SMALL_NUM) {          // the lines are almost parallel
     sc = 0.0;
     tc = (b>c ? d/b : e/c);    // use the largest denominator
   }
-  else
-  {
+  else {
     sc = (b*e - c*d) / D;
     tc = (a*e - b*d) / D;
   }
 
-  // get the difference of the two closest points
-  glm::vec3 dP = w + (sc * u) - (tc * v);  // =  L1(sc) - L2(tc)
-
-  return std::sqrt(glm::dot(dP,dP));   // return the closest distance
+  P1 = S1.p0 + (sc * u);
+  P2 = S2.p0 + (tc * v);
 }
 
 }

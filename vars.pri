@@ -23,8 +23,14 @@ HEADERS += inc/tp_math_utils/DistanceToRay.h
 SOURCES += src/DistanceBetweenLines.cpp
 HEADERS += inc/tp_math_utils/DistanceBetweenLines.h
 
+SOURCES += src/DistanceBetweenCones.cpp
+HEADERS += inc/tp_math_utils/DistanceBetweenCones.h
+
 #SOURCES += src/Ray.cpp
 HEADERS += inc/tp_math_utils/Ray.h
+
+#SOURCES += src/Cone.cpp
+HEADERS += inc/tp_math_utils/Cone.h
 
 SOURCES += src/Intersection.cpp
 HEADERS += inc/tp_math_utils/Intersection.h
@@ -43,6 +49,9 @@ HEADERS += inc/tp_math_utils/Geometry3D.h
 
 SOURCES += src/ClosestPointsOnLines.cpp
 HEADERS += inc/tp_math_utils/ClosestPointsOnLines.h
+
+SOURCES += src/ClosestPointsOnRays.cpp
+HEADERS += inc/tp_math_utils/ClosestPointsOnRays.h
 
 SOURCES += src/MidPointBetweenLines.cpp
 HEADERS += inc/tp_math_utils/MidPointBetweenLines.h
