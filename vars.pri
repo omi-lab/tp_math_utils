@@ -32,6 +32,9 @@ HEADERS += inc/tp_math_utils/Ray.h
 #SOURCES += src/Cone.cpp
 HEADERS += inc/tp_math_utils/Cone.h
 
+#SOURCES += src/Region.cpp
+HEADERS += inc/tp_math_utils/Region.h
+
 SOURCES += src/Intersection.cpp
 HEADERS += inc/tp_math_utils/Intersection.h
 

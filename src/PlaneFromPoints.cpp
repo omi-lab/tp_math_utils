@@ -43,7 +43,7 @@ Plane planeFromPoints(const std::vector<glm::vec3>& points)
   yz /= n;
   zz /= n;
 
-  glm::dvec3 weighted_dir;
+  glm::dvec3 weighted_dir{0.0, 0.0, 0.0};
 
   {
       double det_x = yy*zz - yz*yz;
