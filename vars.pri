@@ -67,3 +67,6 @@ HEADERS += inc/tp_math_utils/StandardDeviation.h
 
 SOURCES += src/MatrixComposition.cpp
 HEADERS += inc/tp_math_utils/MatrixComposition.h
+
+#SOURCES += src/BoxPacker.cpp
+HEADERS += inc/tp_math_utils/BoxPacker.h
