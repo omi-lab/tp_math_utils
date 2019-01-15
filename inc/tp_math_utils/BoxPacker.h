@@ -51,7 +51,7 @@ struct BoxPacker
       {
         inputBox.rotatedWidth  = inputBox.height;
         inputBox.rotatedHeight = inputBox.width;
-        inputBox.rotated = true;
+        inputBox.rotate = true;
       }
       else
       {
@@ -72,6 +72,19 @@ struct BoxPacker
         maxSize = inputBox.rotatedHeight;
     }
 
+    auto po2 = [](size_t v)
+    {
+      v--;
+      v |= v >> 1;
+      v |= v >> 2;
+      v |= v >> 4;
+      v |= v >> 8;
+      v |= v >> 16;
+      v++;
+      return v;
+    };
+    maxSize = po2(maxSize);
+
     std::vector<size_t> sortedBoxes;
     sortedBoxes.reserve(inputBoxes.size());
     for(size_t i=0; i<inputBoxes.size(); i++)
@@ -90,6 +103,7 @@ struct BoxPacker
         size_t tallest = 0;
         for(size_t currentY=0; currentY<outputSize; currentY+=tallest)
         {
+          tpDebug() << "currentY: " << currentY;
           if(sortedBoxes.empty())
             break;
 
@@ -97,11 +111,12 @@ struct BoxPacker
 
           for(size_t currentX=0; currentX<outputSize;)
           {
+            tpDebug() << "currentX: " << currentX;
             bool doneX = true;
             for(size_t i=0; i<sortedBoxes.size(); i++)
             {
               auto ii = sortedBoxes.at(i);
-              const auto& inputBox = inputBoxes.at(ii);
+              auto& inputBox = inputBoxes.at(ii);
 
               if((currentX+inputBox.rotatedWidth) > outputSize)
                 continue;
@@ -120,6 +135,9 @@ struct BoxPacker
             if(doneX)
               break;
           }
+
+          if(tallest<1)
+            break;
         }
       };
 
@@ -145,6 +163,7 @@ struct BoxPacker
       iterateBoxes(outputBox.size, sortedBoxes, inputBoxes, [&](size_t x, size_t y, size_t inputBoxIndex)
       {
         auto& inputBox = inputBoxes.at(inputBoxIndex);
+        inputBox.outputBoxIndex = outputBoxes.size();
         inputBox.origin = {int(x), int(y)};
 
         float p = padding?1.0f:0.0f;
@@ -161,6 +180,24 @@ struct BoxPacker
         inputBox.bottomLeft  /= float(outputBox.size);
         inputBox.topLeft     /= float(outputBox.size);
 
+        if(inputBox.rotate)
+        {
+          auto topRight = inputBox.topRight;
+          inputBox.topRight    = inputBox.bottomRight;
+          inputBox.bottomRight = inputBox.bottomLeft;
+          inputBox.bottomLeft  = inputBox.topLeft;
+          inputBox.topLeft     = topRight;
+
+          std::swap(inputBox.topRight,    inputBox.topLeft   );
+          std::swap(inputBox.bottomRight, inputBox.bottomLeft);
+
+//          auto topLeft = inputBox.topLeft;
+//          inputBox.topLeft     = inputBox.bottomLeft;
+//          inputBox.bottomLeft  = inputBox.bottomRight;
+//          inputBox.bottomRight = inputBox.topRight;
+//          inputBox.topRight    = topLeft;
+        }
+
         outputBox.inputBoxIndexes.push_back(inputBoxIndex);
       });
 
@@ -175,8 +212,12 @@ struct BoxPacker
                      PixelType* outputData,
                      PixelType blank)
   {
-    for(auto [p, pMax]={outputData, outputData + (outputBox.size*outputBox.size)}; p<pMax; p++)
-      (*p) = blank;
+    {
+      auto p = outputData;
+      auto pMax = p+(outputBox.size*outputBox.size);
+      for(; p<pMax; p++)
+        (*p) = blank;
+    }
 
     for(const auto& i : outputBox.inputBoxIndexes)
     {
@@ -196,7 +237,7 @@ struct BoxPacker
         outputData[((oy+y)*outputBox.size)+(ox+x)] = pixel;
       };
 
-      if(inputBox.rotated)
+      if(inputBox.rotate)
       {
         for(size_t y=0; y<yMax; y++)
           for(size_t x=0; x<xMax; x++)

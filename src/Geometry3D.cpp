@@ -17,13 +17,21 @@ struct Face_lt
 //##################################################################################################
 void calculateFaces(const Geometry3D& geometry, std::vector<Face_lt>& faces)
 {
+  if(geometry.indexes.empty())
+    return;
+
   for(const auto& indexes : geometry.indexes)
   {
+    auto calcVMax = [&](size_t sub)
+    {
+      return (sub>indexes.indexes.size())?0:indexes.indexes.size()-sub;
+    };
+
     if(indexes.type == geometry.triangleFan)
     {
       const auto& f = indexes.indexes.front();
 
-      size_t vMax = indexes.indexes.size()-1;
+      size_t vMax = calcVMax(1);
       for(size_t v=1; v<vMax; v++)
       {
         Face_lt face;
@@ -35,7 +43,7 @@ void calculateFaces(const Geometry3D& geometry, std::vector<Face_lt>& faces)
     }
     else if(indexes.type == geometry.triangleStrip)
     {
-      size_t vMax = indexes.indexes.size()-2;
+      size_t vMax = calcVMax(2);
       for(size_t v=0; v<vMax; v++)
       {
         Face_lt face;
@@ -56,7 +64,7 @@ void calculateFaces(const Geometry3D& geometry, std::vector<Face_lt>& faces)
     }
     else if(indexes.type == geometry.triangles)
     {
-      size_t vMax = indexes.indexes.size()-2;
+      size_t vMax = calcVMax(2);
       for(size_t v=0; v<vMax; v+=3)
       {
         Face_lt face;
