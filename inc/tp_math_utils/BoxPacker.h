@@ -103,7 +103,6 @@ struct BoxPacker
         size_t tallest = 0;
         for(size_t currentY=0; currentY<outputSize; currentY+=tallest)
         {
-          tpDebug() << "currentY: " << currentY;
           if(sortedBoxes.empty())
             break;
 
@@ -111,7 +110,6 @@ struct BoxPacker
 
           for(size_t currentX=0; currentX<outputSize;)
           {
-            tpDebug() << "currentX: " << currentX;
             bool doneX = true;
             for(size_t i=0; i<sortedBoxes.size(); i++)
             {
@@ -190,12 +188,6 @@ struct BoxPacker
 
           std::swap(inputBox.topRight,    inputBox.topLeft   );
           std::swap(inputBox.bottomRight, inputBox.bottomLeft);
-
-//          auto topLeft = inputBox.topLeft;
-//          inputBox.topLeft     = inputBox.bottomLeft;
-//          inputBox.bottomLeft  = inputBox.bottomRight;
-//          inputBox.bottomRight = inputBox.topRight;
-//          inputBox.topRight    = topLeft;
         }
 
         outputBox.inputBoxIndexes.push_back(inputBoxIndex);
@@ -223,31 +215,56 @@ struct BoxPacker
     {
       const auto& inputBox = inputBoxes.at(i);
       auto inputData = getInputData(i);
-      auto getPixel{[&](size_t x, size_t y){return inputData[(y*inputBox.width)+x];}};
+      auto getPixel{[&](ptrdiff_t x, ptrdiff_t y){return inputData[(y*ptrdiff_t(inputBox.width))+x];}};
 
-      size_t p = outputBox.padding?1:0;
-      size_t xMax = inputBox.rotatedWidth  - (2*p);
-      size_t yMax = inputBox.rotatedHeight - (2*p);
+      ptrdiff_t p = outputBox.padding?1:0;
+      ptrdiff_t xMax = ptrdiff_t(inputBox.rotatedWidth ) - (2*p);
+      ptrdiff_t yMax = ptrdiff_t(inputBox.rotatedHeight) - (2*p);
 
-      size_t ox = size_t(inputBox.origin.x) + p;
-      size_t oy = size_t(inputBox.origin.y) + p;
+      ptrdiff_t ox = ptrdiff_t(inputBox.origin.x) + p;
+      ptrdiff_t oy = ptrdiff_t(inputBox.origin.y) + p;
 
-      auto setPixel = [&](size_t x, size_t y, PixelType pixel)
+      auto setPixel = [&](ptrdiff_t x, ptrdiff_t y, PixelType pixel)
       {
         outputData[((oy+y)*outputBox.size)+(ox+x)] = pixel;
       };
 
+      auto clonePixel = [&](ptrdiff_t x, ptrdiff_t y, ptrdiff_t xFrom, ptrdiff_t yFrom)
+      {
+        outputData[((oy+y)*outputBox.size)+(ox+x)] = outputData[((oy+yFrom)*outputBox.size)+(ox+xFrom)];
+      };
+
       if(inputBox.rotate)
       {
-        for(size_t y=0; y<yMax; y++)
-          for(size_t x=0; x<xMax; x++)
+        for(ptrdiff_t y=0; y<yMax; y++)
+          for(ptrdiff_t x=0; x<xMax; x++)
             setPixel(x, y, getPixel(y, x));
       }
       else
       {
-        for(size_t y=0; y<yMax; y++)
-          for(size_t x=0; x<xMax; x++)
+        for(ptrdiff_t y=0; y<yMax; y++)
+          for(ptrdiff_t x=0; x<xMax; x++)
             setPixel(x, y, getPixel(x, y));
+      }
+
+      if(outputBox.padding)
+      {
+        clonePixel(  -1,   -1,      0,      0);
+        clonePixel(xMax,   -1, xMax-1,      0);
+        clonePixel(xMax, yMax, xMax-1, yMax-1);
+        clonePixel(  -1, yMax,      0, yMax-1);
+
+        for(ptrdiff_t y=0; y<yMax; y++)
+        {
+          clonePixel(  -1, y,      0, y);
+          clonePixel(xMax, y, xMax-1, y);
+        }
+
+        for(ptrdiff_t x=0; x<xMax; x++)
+        {
+          clonePixel(x,   -1, x,      0);
+          clonePixel(x, yMax, x, yMax-1);
+        }
       }
     }
   }
