@@ -30,9 +30,9 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
   std::vector<Indexes3D> indexes;
 
   //GL_TRIANGLE_FAN, GL_TRIANGLE_STRIP, GL_TRIANGLES
-  int triangleFan{0};
-  int triangleStrip{0};
-  int triangles{0};
+  int triangleFan  {1};
+  int triangleStrip{2};
+  int triangles    {3};
 
   //################################################################################################
   void calculateVertexNormals();
