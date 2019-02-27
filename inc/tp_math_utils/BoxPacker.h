@@ -204,18 +204,31 @@ struct BoxPacker
                      PixelType* outputData,
                      PixelType blank)
   {
+    render(inputBoxes,
+           outputBox,
+           [&](size_t i){return [inputData = getInputData(i)](size_t j){return inputData[j];};},
+           [&](size_t i)->PixelType&{return outputData[i];},
+           blank);
+  }
+
+  //################################################################################################
+  static void render(const std::vector<InputBox>& inputBoxes,
+                     const OutputBox& outputBox,
+                     const std::function<const std::function<PixelType(size_t)>(size_t)>& getInputData,
+                     const std::function<PixelType&(size_t)> outputPixel,
+                     PixelType blank)
+  {
     {
-      auto p = outputData;
-      auto pMax = p+(outputBox.size*outputBox.size);
-      for(; p<pMax; p++)
-        (*p) = blank;
+      size_t pMax = outputBox.size*outputBox.size;
+      for(size_t p=0; p<pMax; p++)
+        outputPixel(p) = blank;
     }
 
     for(const auto& i : outputBox.inputBoxIndexes)
     {
       const auto& inputBox = inputBoxes.at(i);
       auto inputData = getInputData(i);
-      auto getPixel{[&](ptrdiff_t x, ptrdiff_t y){return inputData[(y*ptrdiff_t(inputBox.width))+x];}};
+      auto getPixel{[&](ptrdiff_t x, ptrdiff_t y){return inputData((y*ptrdiff_t(inputBox.width))+x);}};
 
       ptrdiff_t p = outputBox.padding?1:0;
       ptrdiff_t xMax = ptrdiff_t(inputBox.rotatedWidth ) - (2*p);
@@ -226,12 +239,12 @@ struct BoxPacker
 
       auto setPixel = [&](ptrdiff_t x, ptrdiff_t y, PixelType pixel)
       {
-        outputData[((oy+y)*outputBox.size)+(ox+x)] = pixel;
+        outputPixel(((oy+y)*outputBox.size)+(ox+x)) = pixel;
       };
 
       auto clonePixel = [&](ptrdiff_t x, ptrdiff_t y, ptrdiff_t xFrom, ptrdiff_t yFrom)
       {
-        outputData[((oy+y)*outputBox.size)+(ox+x)] = outputData[((oy+yFrom)*outputBox.size)+(ox+xFrom)];
+        outputPixel(((oy+y)*outputBox.size)+(ox+x)) = outputPixel(((oy+yFrom)*outputBox.size)+(ox+xFrom));
       };
 
       if(inputBox.rotate)
