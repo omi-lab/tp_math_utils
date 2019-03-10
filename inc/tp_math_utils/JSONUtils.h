@@ -88,6 +88,20 @@ inline nlohmann::json mat4ToJSON(const glm::mat4& mat)
 }
 
 //##################################################################################################
+inline glm::mat4 mat4FromJSON(const nlohmann::json& j)
+{
+  glm::mat4 mat{1};
+  if(j.is_array() && j.size() == 16)
+  {
+    float* v = glm::value_ptr(mat);
+    for(size_t i=0; i<16; i++, v++)
+      if(const auto& jj = j.at(i); jj.is_number())
+        (*v) = jj;
+  }
+  return mat;
+}
+
+//##################################################################################################
 inline glm::mat4 getJSONMat4(const nlohmann::json& j, const std::string& key, const glm::mat4& defaultValue)
 {
   std::vector<nlohmann::json> c = tp_utils::getJSONArray(j, key);
@@ -95,7 +109,7 @@ inline glm::mat4 getJSONMat4(const nlohmann::json& j, const std::string& key, co
   {
     glm::mat4 mat;
     float* v = glm::value_ptr(mat);
-    for(int i=0; i<16; i++, v++)
+    for(size_t i=0; i<16; i++, v++)
       (*v) = c.at(i);
     return mat;
   }
