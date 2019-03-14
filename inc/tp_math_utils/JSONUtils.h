@@ -51,6 +51,12 @@ inline nlohmann::json vec3ToJSON(const glm::vec3& vec)
 }
 
 //##################################################################################################
+inline glm::vec3 vec3FromJSON(const nlohmann::json& j)
+{
+  return (j.size() == 3)?glm::vec3(j.at(0), j.at(1), j.at(2)):glm::vec3(0,0,0);
+}
+
+//##################################################################################################
 inline glm::vec3 getJSONVec3(const nlohmann::json& j, const std::string& key, const glm::vec3& defaultValue)
 {
   std::vector<nlohmann::json> c = tp_utils::getJSONArray(j, key);
@@ -116,6 +122,36 @@ inline glm::mat4 getJSONMat4(const nlohmann::json& j, const std::string& key, co
 
   return defaultValue;
 }
+
+
+//##################################################################################################
+inline nlohmann::json vec3VectorToJSON(const std::vector<glm::vec3>& coords)
+{
+  nlohmann::json j = nlohmann::json::array();
+  for(const auto& coord : coords)
+    j.push_back(vec3ToJSON(coord));
+  return j;
+}
+
+//##################################################################################################
+inline const std::vector<glm::vec3> vec3VectorFromJSON(const nlohmann::json& j)
+{
+  std::vector<glm::vec3> coords;
+  if(j.is_array())
+    for(const auto& jj : j)
+      coords.push_back(vec3FromJSON(jj));
+  return coords;
+}
+
+
+
+
+
+
+
+
+
+
 
 }
 
