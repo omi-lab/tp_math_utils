@@ -7,7 +7,7 @@ namespace tp_math_utils
 {
 
 //##################################################################################################
-void decomposeMatrix(glm::mat4 m, glm::vec3& translation, glm::vec3& scale, glm::vec3& rotation)
+void decomposeMatrix(glm::mat4 m, glm::vec3& translation, glm::vec3& scale, glm::mat4& rotation)
 {
   float* f = glm::value_ptr(m);
   translation.x = f[12];
@@ -33,6 +33,17 @@ void decomposeMatrix(glm::mat4 m, glm::vec3& translation, glm::vec3& scale, glm:
   f[8]/=scale.z;
   f[9]/=scale.z;
   f[10]/=scale.z;
+
+  rotation = m;
+}
+
+//##################################################################################################
+void decomposeMatrix(glm::mat4 m, glm::vec3& translation, glm::vec3& scale, glm::vec3& rotation)
+{
+  glm::mat4 r;
+  decomposeMatrix(m, translation, scale, r);
+
+  float* f = glm::value_ptr(r);
 
   rotation.x = std::atan2(f[6], f[10]);
   rotation.y = std::atan2(-f[2], std::sqrt((f[6]*f[6])+(f[10]*f[10])));

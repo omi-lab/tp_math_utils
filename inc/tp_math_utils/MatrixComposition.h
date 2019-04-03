@@ -5,6 +5,8 @@
 
 namespace tp_math_utils
 {
+//##################################################################################################
+void decomposeMatrix(glm::mat4 m, glm::vec3& translation, glm::vec3& scale, glm::mat4& rotation);
 
 //##################################################################################################
 void decomposeMatrix(glm::mat4 m, glm::vec3& translation, glm::vec3& scale, glm::vec3& rotation);
