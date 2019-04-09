@@ -70,3 +70,6 @@ HEADERS += inc/tp_math_utils/MatrixComposition.h
 
 #SOURCES += src/BoxPacker.cpp
 HEADERS += inc/tp_math_utils/BoxPacker.h
+
+#SOURCES += src/TFU.cpp
+HEADERS += inc/tp_math_utils/TFU.h
