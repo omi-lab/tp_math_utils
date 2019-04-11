@@ -51,6 +51,30 @@ void decomposeMatrix(glm::mat4 m, glm::vec3& translation, glm::vec3& scale, glm:
 }
 
 //##################################################################################################
+void composeMatrix(glm::mat4& m, const glm::vec3 translation, const glm::vec3 scale, const glm::mat4 rotation)
+{
+  float* f = glm::value_ptr(m);
+
+  m = rotation;
+
+  f[0]*=scale.x;
+  f[1]*=scale.x;
+  f[2]*=scale.x;
+
+  f[4]*=scale.y;
+  f[5]*=scale.y;
+  f[6]*=scale.y;
+
+  f[8]*=scale.z;
+  f[9]*=scale.z;
+  f[10]*=scale.z;
+
+  f[12] = translation.x;
+  f[13] = translation.y;
+  f[14] = translation.z;
+}
+
+//##################################################################################################
 void composeMatrix(glm::mat4& m, const glm::vec3& translation, const glm::vec3& scale, const glm::vec3& rotation)
 {
   m = glm::translate(glm::mat4{1.0f}, translation);

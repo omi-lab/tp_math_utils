@@ -12,6 +12,9 @@ void decomposeMatrix(glm::mat4 m, glm::vec3& translation, glm::vec3& scale, glm:
 void decomposeMatrix(glm::mat4 m, glm::vec3& translation, glm::vec3& scale, glm::vec3& rotation);
 
 //##################################################################################################
+void composeMatrix(glm::mat4& m, const glm::vec3 translation, const glm::vec3 scale, const glm::mat4 rotation);
+
+//##################################################################################################
 void composeMatrix(glm::mat4& m, const glm::vec3& translation, const glm::vec3& scale, const glm::vec3& rotation);
 
 }
