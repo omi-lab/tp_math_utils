@@ -15,10 +15,25 @@ struct Face_lt
 };
 
 //##################################################################################################
-void calculateFaces(const Geometry3D& geometry, std::vector<Face_lt>& faces)
+std::vector<Face_lt> calculateFaces(const Geometry3D& geometry)
 {
-  if(geometry.indexes.empty())
-    return;
+  std::vector<Face_lt> faces;
+
+  size_t count=0;
+  for(const auto& indexes : geometry.indexes)
+  {
+    if(indexes.indexes.size()<3)
+      continue;
+
+    if(indexes.type == geometry.triangleFan)
+      count+=indexes.indexes.size()-2;
+    else if(indexes.type == geometry.triangleStrip)
+      count+=indexes.indexes.size()-2;
+    else if(indexes.type == geometry.triangles)
+      count+=indexes.indexes.size()/3;
+  }
+
+  faces.reserve(count);
 
   for(const auto& indexes : geometry.indexes)
   {
@@ -38,7 +53,7 @@ void calculateFaces(const Geometry3D& geometry, std::vector<Face_lt>& faces)
         face.indexes[0] = f;
         face.indexes[1] = indexes.indexes.at(v);
         face.indexes[2] = indexes.indexes.at(v+1);
-        faces.push_back(face);
+        faces.emplace_back(face);
       }
     }
     else if(indexes.type == geometry.triangleStrip)
@@ -59,7 +74,7 @@ void calculateFaces(const Geometry3D& geometry, std::vector<Face_lt>& faces)
           face.indexes[1] = indexes.indexes.at(v+1);
           face.indexes[2] = indexes.indexes.at(v+2);
         }
-        faces.push_back(face);
+        faces.emplace_back(face);
       }
     }
     else if(indexes.type == geometry.triangles)
@@ -71,45 +86,64 @@ void calculateFaces(const Geometry3D& geometry, std::vector<Face_lt>& faces)
         face.indexes[0] = indexes.indexes.at(v);
         face.indexes[1] = indexes.indexes.at(v+1);
         face.indexes[2] = indexes.indexes.at(v+2);
-        faces.push_back(face);
+        faces.emplace_back(face);
       }
     }
   }
 
   for(auto& face : faces)
-    face.normal = glm::triangleNormal(geometry.verts.at(size_t(face.indexes[0])).vert,
-                                      geometry.verts.at(size_t(face.indexes[1])).vert,
-                                      geometry.verts.at(size_t(face.indexes[2])).vert);
+    face.normal = glm::triangleNormal(
+        geometry.verts.at(size_t(face.indexes[0])).vert,
+        geometry.verts.at(size_t(face.indexes[1])).vert,
+        geometry.verts.at(size_t(face.indexes[2])).vert);
+
+  return faces;
 }
 }
 
 //##################################################################################################
 void Geometry3D::calculateVertexNormals()
 {
+  const size_t vMax = verts.size();
+
+  std::vector<uint_fast8_t> normalCounts(vMax, 0);
+
   for(auto& vert : verts)
     vert.normal = {0.0f, 0.0f, 0.0f};
 
-  std::vector<Face_lt> faces;
-  calculateFaces(*this, faces);
-
-  for(const auto& face : faces)
-    for(size_t i=0; i<3; i++)
-      verts[size_t(face.indexes[i])].normal += face.normal;
-
-  for(auto& vert : verts)
+  std::vector<Face_lt> faces = calculateFaces(*this);
   {
-    if(glm::length2(vert.normal)>0.001f)
-      vert.normal = glm::normalize(vert.normal);
-    else
-      vert.normal = {0.0f, 0.0f, 1.0f};
+    auto const* face = faces.data();
+    auto faceMax = face + faces.size();
+    for(; face<faceMax; face++)
+    {
+      for(size_t i=0; i<3; i++)
+      {
+        auto ii = size_t(face->indexes[i]);
+        normalCounts[ii]++;
+        verts[ii].normal += face->normal;
+      }
+    }
+  }
+
+  {
+    auto vert  = verts.data();
+    auto vertMax = vert+vMax;
+    auto count = normalCounts.data();
+    for(; vert<vertMax; vert++, count++)
+    {
+      if(*count)
+        vert->normal/=float(*count);
+      else
+        vert->normal = {0.0f, 0.0f, 1.0f};
+    }
   }
 }
 
 //##################################################################################################
 void Geometry3D::calculateFaceNormals()
 {
-  std::vector<Face_lt> faces;
-  calculateFaces(*this, faces);
+  std::vector<Face_lt> faces = calculateFaces(*this);
 
   std::vector<Vertex3D> newVerts;
   indexes.clear();
