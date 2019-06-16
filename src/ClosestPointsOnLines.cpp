@@ -76,8 +76,8 @@ void closestPointsOnLines(const DRay& S1, const DRay& S2, glm::dvec3& P1, glm::d
     }
   }
   // finally do the division to get sc and tc
-  sc = (abs(sN) < SMALL_NUM ? 0.0 : sN / sD);
-  tc = (abs(tN) < SMALL_NUM ? 0.0 : tN / tD);
+  sc = (std::abs(sN) < SMALL_NUM ? 0.0 : sN / sD);
+  tc = (std::abs(tN) < SMALL_NUM ? 0.0 : tN / tD);
 
   P1 = S1.p0 + (sc * u);
   P2 = S2.p0 + (tc * v);

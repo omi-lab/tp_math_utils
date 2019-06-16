@@ -38,10 +38,10 @@ public:
   const glm::vec3* threePoints()const;
 
 private:
-  mutable glm::vec3 m_pointAndNormal[2];
+  mutable std::array<glm::vec3, 2> m_pointAndNormal{};
   mutable bool m_pointAndNormalValid;
 
-  mutable glm::vec3 m_threePoints[3];
+  mutable std::array<glm::vec3, 3> m_threePoints{};
   mutable bool m_threePointsValid;
 };
 

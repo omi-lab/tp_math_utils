@@ -26,7 +26,7 @@ bool rayPlaneIntersection(const Ray& ray, const Plane& plane, glm::vec3& interse
   glm::vec3 vRotRay2(glm::dot(V1, r2-p[0]), glm::dot(V2, r2-p[0]), glm::dot(V3, r2-p[0]));
 
   // Return now if ray will never intersect plane (they're parallel)
-  if(fabs(vRotRay1.z - vRotRay2.z)<0.0001f)
+  if(std::fabs(vRotRay1.z - vRotRay2.z)<0.0001f)
     return false;
 
   // Find 2D plane coordinates (fX, fY) that the ray interesects with

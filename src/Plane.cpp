@@ -57,7 +57,7 @@ const glm::vec3* Plane::pointAndNormal()const
     m_pointAndNormalValid = true;
   }
 
-  return m_pointAndNormal;
+  return m_pointAndNormal.data();
 }
 
 //##################################################################################################
@@ -99,7 +99,7 @@ const glm::vec3* Plane::threePoints()const
     m_threePointsValid = true;
   }
 
-  return m_threePoints;
+  return m_threePoints.data();
 }
 
 }

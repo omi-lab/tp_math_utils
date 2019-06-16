@@ -83,8 +83,8 @@ Plane planeFromPoints(const std::vector<glm::vec3>& points)
   if(std::isinf(normal.x) || std::isinf(normal.y) ||std::isinf(normal.z) ||
      std::isnan(normal.x) || std::isnan(normal.y) ||std::isnan(normal.z))
     return Plane();
-  else
-    return Plane(centroid, normal);
+
+  return Plane(centroid, normal);
 }
 
 }

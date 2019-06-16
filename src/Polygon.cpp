@@ -17,7 +17,7 @@ void deserializeGeometry(const nlohmann::json& j, Polygon& polygon)
       {
         float x = coord.at(0);
         float y = coord.at(1);
-        loop.push_back({x, y});
+        loop.emplace_back(x, y);
       }
 
       if(polygon.outer.empty())
@@ -104,7 +104,7 @@ nlohmann::json serializeProperties(const Polygon& polygon)
 {
   nlohmann::json j = nlohmann::json::object();
 
-  for(const auto i : polygon.properties)
+  for(const auto& i : polygon.properties)
     j[i.first] = i.second;
 
   return j;

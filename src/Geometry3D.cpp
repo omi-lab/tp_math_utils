@@ -10,8 +10,8 @@ namespace
 {
 struct Face_lt
 {
-  int indexes[3];
-  glm::vec3 normal;
+  std::array<int, 3> indexes{};
+  glm::vec3 normal{};
 };
 
 //##################################################################################################
@@ -49,11 +49,10 @@ std::vector<Face_lt> calculateFaces(const Geometry3D& geometry)
       size_t vMax = calcVMax(1);
       for(size_t v=1; v<vMax; v++)
       {
-        Face_lt face;
+        Face_lt& face = faces.emplace_back(face);
         face.indexes[0] = f;
         face.indexes[1] = indexes.indexes.at(v);
         face.indexes[2] = indexes.indexes.at(v+1);
-        faces.emplace_back(face);
       }
     }
     else if(indexes.type == geometry.triangleStrip)
@@ -61,7 +60,7 @@ std::vector<Face_lt> calculateFaces(const Geometry3D& geometry)
       size_t vMax = calcVMax(2);
       for(size_t v=0; v<vMax; v++)
       {
-        Face_lt face;
+        Face_lt& face = faces.emplace_back(face);
         if(v&1)
         {
           face.indexes[0] = indexes.indexes.at(v);
@@ -74,7 +73,6 @@ std::vector<Face_lt> calculateFaces(const Geometry3D& geometry)
           face.indexes[1] = indexes.indexes.at(v+1);
           face.indexes[2] = indexes.indexes.at(v+2);
         }
-        faces.emplace_back(face);
       }
     }
     else if(indexes.type == geometry.triangles)
@@ -82,11 +80,10 @@ std::vector<Face_lt> calculateFaces(const Geometry3D& geometry)
       size_t vMax = calcVMax(2);
       for(size_t v=0; v<vMax; v+=3)
       {
-        Face_lt face;
+        Face_lt& face = faces.emplace_back();
         face.indexes[0] = indexes.indexes.at(v);
         face.indexes[1] = indexes.indexes.at(v+1);
         face.indexes[2] = indexes.indexes.at(v+2);
-        faces.emplace_back(face);
       }
     }
   }
@@ -117,9 +114,9 @@ void Geometry3D::calculateVertexNormals()
     auto faceMax = face + faces.size();
     for(; face<faceMax; face++)
     {
-      for(size_t i=0; i<3; i++)
+      for(const auto& i : face->indexes)
       {
-        auto ii = size_t(face->indexes[i]);
+        auto ii = size_t(i);
         normalCounts[ii]++;
         verts[ii].normal += face->normal;
       }
@@ -155,10 +152,10 @@ void Geometry3D::calculateFaceNormals()
     newIndexes.indexes[i] = int(i);
   for(const auto& face : faces)
   {
-    for(size_t i=0; i<3; i++)
+    for(const auto& i : face.indexes)
     {
       auto& v = newVerts.emplace_back();
-      v = verts[size_t(face.indexes[i])];
+      v = verts[size_t(i)];
       v.normal = face.normal;
     }
   }
