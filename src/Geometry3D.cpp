@@ -49,7 +49,7 @@ std::vector<Face_lt> calculateFaces(const Geometry3D& geometry)
       size_t vMax = calcVMax(1);
       for(size_t v=1; v<vMax; v++)
       {
-        Face_lt& face = faces.emplace_back(face);
+        Face_lt& face = faces.emplace_back();
         face.indexes[0] = f;
         face.indexes[1] = indexes.indexes.at(v);
         face.indexes[2] = indexes.indexes.at(v+1);
@@ -60,7 +60,7 @@ std::vector<Face_lt> calculateFaces(const Geometry3D& geometry)
       size_t vMax = calcVMax(2);
       for(size_t v=0; v<vMax; v++)
       {
-        Face_lt& face = faces.emplace_back(face);
+        Face_lt& face = faces.emplace_back();
         if(v&1)
         {
           face.indexes[0] = indexes.indexes.at(v);
