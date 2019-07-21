@@ -26,7 +26,7 @@ float distanceBetweenLines(const tp_math_utils::Ray& l1, const tp_math_utils::Ra
   // compute the line parameters of the two closest points
   float sc;
   float tc;
-  if(D < 0.00001)
+  if(D < 0.00001f)
   {
     // the lines are almost parallel
     sc = 0.0;
