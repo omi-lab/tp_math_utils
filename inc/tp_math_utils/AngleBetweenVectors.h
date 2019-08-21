@@ -8,16 +8,16 @@ namespace tp_math_utils
 struct DRay;
 
 //##################################################################################################
-float angleBetweenVectors(const glm::vec3& a, const glm::vec3& b);
+float TP_MATH_UTILS_SHARED_EXPORT angleBetweenVectors(const glm::vec3& a, const glm::vec3& b);
 
 //##################################################################################################
-double angleBetweenVectors(const glm::dvec3& a, const glm::dvec3& b);
+double TP_MATH_UTILS_SHARED_EXPORT angleBetweenVectors(const glm::dvec3& a, const glm::dvec3& b);
 
 //##################################################################################################
-float angleBetweenVectorsSigned(const glm::vec3& a, const glm::vec3& b, const glm::vec3& normal);
+float TP_MATH_UTILS_SHARED_EXPORT angleBetweenVectorsSigned(const glm::vec3& a, const glm::vec3& b, const glm::vec3& normal);
 
 //##################################################################################################
-double angleToMidPointBetweenLines(const DRay& S1, const DRay& S2, glm::dvec3& midPoint);
+double TP_MATH_UTILS_SHARED_EXPORT angleToMidPointBetweenLines(const DRay& S1, const DRay& S2, glm::dvec3& midPoint);
 }
 
 #endif

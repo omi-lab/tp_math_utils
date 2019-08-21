@@ -7,7 +7,7 @@ namespace tp_math_utils
 {
 
 //##################################################################################################
-float distanceToRay(const glm::vec3& point, const Ray& ray, glm::vec3& pointOnRay);
+float TP_MATH_UTILS_SHARED_EXPORT distanceToRay(const glm::vec3& point, const Ray& ray, glm::vec3& pointOnRay);
 
 }
 

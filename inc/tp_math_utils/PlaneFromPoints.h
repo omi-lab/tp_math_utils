@@ -9,7 +9,7 @@ namespace tp_math_utils
 {
 
 //##################################################################################################
-Plane planeFromPoints(const std::vector<glm::vec3>& points);
+Plane TP_MATH_UTILS_SHARED_EXPORT planeFromPoints(const std::vector<glm::vec3>& points);
 
 }
 

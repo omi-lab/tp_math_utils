@@ -3,6 +3,8 @@
 #include "glm/gtx/norm.hpp"
 #include "glm/gtx/normal.hpp"
 
+#include <array>
+
 namespace tp_math_utils
 {
 

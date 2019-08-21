@@ -30,7 +30,7 @@ namespace tp_math_utils
 {
 
 //##################################################################################################
-struct RNG
+struct TP_MATH_UTILS_SHARED_EXPORT RNG
 {
   std::random_device rd;
   std::minstd_rand0 mt;

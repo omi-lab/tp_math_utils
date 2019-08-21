@@ -8,7 +8,7 @@ namespace tp_math_utils
 struct Ray;
 
 //##################################################################################################
-float distanceBetweenLines(const tp_math_utils::Ray& l1, const tp_math_utils::Ray& l2);
+float TP_MATH_UTILS_SHARED_EXPORT distanceBetweenLines(const tp_math_utils::Ray& l1, const tp_math_utils::Ray& l2);
 
 }
 

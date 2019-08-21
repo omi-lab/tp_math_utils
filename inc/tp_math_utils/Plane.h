@@ -3,6 +3,8 @@
 
 #include "tp_math_utils/Globals.h"
 
+#include <array>
+
 namespace tp_math_utils
 {
 

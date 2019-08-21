@@ -11,7 +11,7 @@ namespace tp_math_utils
 {
 
 //##################################################################################################
-struct Polygon
+struct TP_MATH_UTILS_SHARED_EXPORT Polygon
 {
   std::vector<glm::vec2> outer;
   std::vector<std::vector<glm::vec2>> holes;
@@ -19,7 +19,7 @@ struct Polygon
 };
 
 //##################################################################################################
-struct PolygonD
+struct TP_MATH_UTILS_SHARED_EXPORT PolygonD
 {
   std::vector<glm::dvec2> outer;
   std::vector<std::vector<glm::dvec2>> holes;
@@ -27,33 +27,33 @@ struct PolygonD
 };
 
 //##################################################################################################
-void deserializeGeometry(const nlohmann::json& j, Polygon& polygon);
+void TP_MATH_UTILS_SHARED_EXPORT deserializeGeometry(const nlohmann::json& j, Polygon& polygon);
 
 //##################################################################################################
-void deserializeProperties(const nlohmann::json& j, Polygon& polygon);
+void TP_MATH_UTILS_SHARED_EXPORT deserializeProperties(const nlohmann::json& j, Polygon& polygon);
 
 //##################################################################################################
-void deserializePolygon(const nlohmann::json& j, Polygon& polygon);
+void TP_MATH_UTILS_SHARED_EXPORT deserializePolygon(const nlohmann::json& j, Polygon& polygon);
 
 //##################################################################################################
-void deserializePolygons(const nlohmann::json& j, std::vector<Polygon>& polygons);
+void TP_MATH_UTILS_SHARED_EXPORT deserializePolygons(const nlohmann::json& j, std::vector<Polygon>& polygons);
 
 //##################################################################################################
 //! Produces the 'geometry' part of a GeoJSON feature
-nlohmann::json serializeGeometry(const Polygon& polygon);
+nlohmann::json TP_MATH_UTILS_SHARED_EXPORT serializeGeometry(const Polygon& polygon);
 
 //##################################################################################################
 //! Produces the 'properties' part of a GeoJSON feature
-nlohmann::json serializeProperties(const Polygon& polygon);
+nlohmann::json TP_MATH_UTILS_SHARED_EXPORT serializeProperties(const Polygon& polygon);
 
 //##################################################################################################
-nlohmann::json serializePolygon(const Polygon& polygon);
+nlohmann::json TP_MATH_UTILS_SHARED_EXPORT serializePolygon(const Polygon& polygon);
 
 //##################################################################################################
-nlohmann::json serializePolygons(const std::vector<Polygon>& polygons);
+nlohmann::json TP_MATH_UTILS_SHARED_EXPORT serializePolygons(const std::vector<Polygon>& polygons);
 
 //##################################################################################################
-nlohmann::json serializePolygonsVector(const std::vector<std::vector<Polygon>>& polygonsVector);
+nlohmann::json TP_MATH_UTILS_SHARED_EXPORT serializePolygonsVector(const std::vector<std::vector<Polygon>>& polygonsVector);
 
 }
 
