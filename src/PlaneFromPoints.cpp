@@ -14,7 +14,7 @@ Plane planeFromPoints(const std::vector<glm::vec3>& points)
     return Plane();
 
   glm::dvec3 sum{0.0, 0.0, 0.0};
-  double n = points.size();
+  double n = double(points.size());
 
   for(const glm::vec3& p : points)
     sum += p;
