@@ -40,6 +40,40 @@ bool rayPlaneIntersection(const Ray& ray, const Plane& plane, glm::vec3& interse
   return true;
 }
 
+//##################################################################################################
+bool rayPlaneIntersection(const Ray& ray, const Plane& plane, glm::dvec3& intersection)
+{
+  const glm::vec3* pp = plane.threePoints();
+  const glm::dvec3 p[3] = {pp[0], pp[1], pp[2]};
+
+  // Returns in (fX, fY) the location on the plane (P1,P2,P3) of the intersection with the ray (R1, R2)
+  // First compute the axes
+  glm::dvec3 V1 = p[1] - p[0];
+  glm::dvec3 V2 = p[2] - p[0];
+  glm::dvec3 V3 = glm::cross(V1, V2);
+
+  const glm::dvec3 r1 = ray.p0;
+  const glm::dvec3 r2 = ray.p1;
+
+  // Project ray points r1 and r2 onto the axes of the plane. (This is equivalent to a rotation.)
+  glm::dvec3 vRotRay1(glm::dot(V1, r1-p[0]), glm::dot(V2, r1-p[0]), glm::dot(V3, r1-p[0]));
+  glm::dvec3 vRotRay2(glm::dot(V1, r2-p[0]), glm::dot(V2, r2-p[0]), glm::dot(V3, r2-p[0]));
+
+  // Return now if ray will never intersect plane (they're parallel)
+  if(std::fabs(vRotRay1.z - vRotRay2.z)<0.0001)
+    return false;
+
+  // Find 2D plane coordinates (fX, fY) that the ray interesects with
+  double fPercent = vRotRay1.z / (vRotRay2.z-vRotRay1.z);
+//  glm::vec3 vIntersect2d = vRotRay1 + (vRotRay1-vRotRay2) * fPercent;
+//  //fX = vIntersect2d.x;
+//  //fY = vIntersect2d.y;
+
+  // Note that to find the 3D point on the world-space ray use this
+  intersection = r1 + (r1-r2) * fPercent;
+  return true;
+}
+
 
 }
 
