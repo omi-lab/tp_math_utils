@@ -22,7 +22,7 @@ inline glm::vec3 tpProj(const glm::mat4& m, const glm::vec3& c)
 }
 
 //##################################################################################################
-//! Math utils for 3D graphics
+//! Math utils for 3D graphics.
 /*!
 
 */
