@@ -17,7 +17,7 @@ struct Face_lt
 };
 
 //##################################################################################################
-std::vector<Face_lt> calculateFaces(const Geometry3D& geometry)
+std::vector<Face_lt> calculateFaces(const Geometry3D& geometry, bool calculateNormals)
 {
   std::vector<Face_lt> faces;
 
@@ -90,11 +90,12 @@ std::vector<Face_lt> calculateFaces(const Geometry3D& geometry)
     }
   }
 
-  for(auto& face : faces)
-    face.normal = glm::triangleNormal(
-        geometry.verts.at(size_t(face.indexes[0])).vert,
-        geometry.verts.at(size_t(face.indexes[1])).vert,
-        geometry.verts.at(size_t(face.indexes[2])).vert);
+  if(calculateNormals)
+    for(auto& face : faces)
+      face.normal = glm::triangleNormal(
+          geometry.verts.at(size_t(face.indexes[0])).vert,
+          geometry.verts.at(size_t(face.indexes[1])).vert,
+          geometry.verts.at(size_t(face.indexes[2])).vert);
 
   return faces;
 }
@@ -110,7 +111,7 @@ void Geometry3D::calculateVertexNormals()
   for(auto& vert : verts)
     vert.normal = {0.0f, 0.0f, 0.0f};
 
-  std::vector<Face_lt> faces = calculateFaces(*this);
+  std::vector<Face_lt> faces = calculateFaces(*this, true);
   {
     auto const* face = faces.data();
     auto faceMax = face + faces.size();
@@ -142,7 +143,7 @@ void Geometry3D::calculateVertexNormals()
 //##################################################################################################
 void Geometry3D::calculateFaceNormals()
 {
-  std::vector<Face_lt> faces = calculateFaces(*this);
+  std::vector<Face_lt> faces = calculateFaces(*this, true);
 
   std::vector<Vertex3D> newVerts;
   indexes.clear();
@@ -163,6 +164,59 @@ void Geometry3D::calculateFaceNormals()
   }
 
   verts = std::move(newVerts);
+}
+
+//##################################################################################################
+void Geometry3D::calculateTangentsAndBitangents()
+{
+  for(auto& vert : verts)
+  {
+    vert.tangent = {0.0f,0.0f,0.0f};
+    vert.bitangent = {0.0f,0.0f,0.0f};
+  }
+
+  for(const auto& face : calculateFaces(*this, false))
+  {
+    size_t i0 = face.indexes[0];
+    size_t i1 = face.indexes[1];
+    size_t i2 = face.indexes[2];
+
+    auto& vert0 = verts.at(i0);
+    auto& vert1 = verts.at(i1);
+    auto& vert2 = verts.at(i2);
+
+    const glm::vec3& v0 = vert0.vert;
+    const glm::vec3& v1 = vert1.vert;
+    const glm::vec3& v2 = vert2.vert;
+
+    const glm::vec2& uv0 = vert0.texture;
+    const glm::vec2& uv1 = vert1.texture;
+    const glm::vec2& uv2 = vert2.texture;
+
+    glm::vec3 deltaPos1 = v1-v0;
+    glm::vec3 deltaPos2 = v2-v0;
+
+    glm::vec2 deltaUV1 = uv1-uv0;
+    glm::vec2 deltaUV2 = uv2-uv0;
+
+    float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+    glm::vec3 tangent = (deltaPos1 * deltaUV2.y   - deltaPos2 * deltaUV1.y)*r;
+    glm::vec3 bitangent = (deltaPos2 * deltaUV1.x   - deltaPos1 * deltaUV2.x)*r;
+
+    vert0.tangent += tangent;
+    vert1.tangent += tangent;
+    vert2.tangent += tangent;
+
+    vert0.bitangent += bitangent;
+    vert1.bitangent += bitangent;
+    vert2.bitangent += bitangent;
+  }
+
+  for(auto& vert : verts)
+  {
+    vert.tangent = glm::normalize(vert.tangent);
+    vert.bitangent = glm::normalize(vert.bitangent);
+  }
 }
 
 }
