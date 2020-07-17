@@ -17,6 +17,9 @@ struct TP_MATH_UTILS_SHARED_EXPORT Vertex3D
   // Used to calculate lighting from normal and normal map.
   glm::vec3 tangent{1,0,0};
   glm::vec3 bitangent{0,1,0};
+
+  //################################################################################################
+  void calculateSimpleTangentAndBitangent();
 };
 
 //##################################################################################################

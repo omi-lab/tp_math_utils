@@ -93,12 +93,29 @@ std::vector<Face_lt> calculateFaces(const Geometry3D& geometry, bool calculateNo
   if(calculateNormals)
     for(auto& face : faces)
       face.normal = glm::triangleNormal(
-          geometry.verts.at(size_t(face.indexes[0])).vert,
+            geometry.verts.at(size_t(face.indexes[0])).vert,
           geometry.verts.at(size_t(face.indexes[1])).vert,
           geometry.verts.at(size_t(face.indexes[2])).vert);
 
   return faces;
 }
+}
+
+//##################################################################################################
+void Vertex3D::calculateSimpleTangentAndBitangent()
+{
+  float f=-1.0;
+  for(const auto& v : {glm::vec3(1.0f,0.0f,0.0f),glm::vec3(1.0f,0.0f,0.0f),glm::vec3(1.0f,0.0f,0.0f)})
+  {
+    if(auto a=std::fabs(glm::dot(normal, v)); f<0 || a<f)
+    {
+      f=a;
+      tangent=v;
+    }
+  }
+
+  bitangent = glm::cross(normal, tangent);
+  tangent   = glm::cross(bitangent, normal);
 }
 
 //##################################################################################################
@@ -136,6 +153,8 @@ void Geometry3D::calculateVertexNormals()
         vert->normal/=float(*count);
       else
         vert->normal = {0.0f, 0.0f, 1.0f};
+
+      vert->calculateSimpleTangentAndBitangent();
     }
   }
 }
@@ -160,6 +179,7 @@ void Geometry3D::calculateFaceNormals()
       auto& v = newVerts.emplace_back();
       v = verts[size_t(i)];
       v.normal = face.normal;
+      v.calculateSimpleTangentAndBitangent();
     }
   }
 
@@ -200,16 +220,31 @@ void Geometry3D::calculateTangentsAndBitangents()
     glm::vec2 deltaUV2 = uv2-uv0;
 
     float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
-    glm::vec3 tangent = (deltaPos1 * deltaUV2.y   - deltaPos2 * deltaUV1.y)*r;
-    glm::vec3 bitangent = (deltaPos2 * deltaUV1.x   - deltaPos1 * deltaUV2.x)*r;
 
-    vert0.tangent += tangent;
-    vert1.tangent += tangent;
-    vert2.tangent += tangent;
+    if(glm::length2(deltaUV1)<0.00001f || glm::length2(deltaUV2)<0.00001f)
+    {
+      deltaUV1 = {1,0};
+      deltaUV2 = {0,1};
+      r = 1.0f;
+    }
 
-    vert0.bitangent += bitangent;
-    vert1.bitangent += bitangent;
-    vert2.bitangent += bitangent;
+    glm::vec3 tangent   = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y)*r;
+    glm::vec3 bitangent = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x)*r;
+
+    if(glm::length2(tangent)<0.1f || glm::length2(bitangent)<0.1f)
+    {
+
+    }
+    else
+    {
+      vert0.tangent += tangent;
+      vert1.tangent += tangent;
+      vert2.tangent += tangent;
+
+      vert0.bitangent += bitangent;
+      vert1.bitangent += bitangent;
+      vert2.bitangent += bitangent;
+    }
   }
 
   for(auto& vert : verts)
