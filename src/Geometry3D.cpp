@@ -114,9 +114,16 @@ void Vertex3D::calculateSimpleTangentAndBitangent()
     }
   }
 
+  makeTangentAndBitangentOrthogonal();
+}
+
+//##################################################################################################
+void Vertex3D::makeTangentAndBitangentOrthogonal()
+{
   bitangent = glm::cross(normal, tangent);
   tangent   = glm::cross(bitangent, normal);
 }
+
 
 //##################################################################################################
 void Geometry3D::calculateVertexNormals()
@@ -221,7 +228,7 @@ void Geometry3D::calculateTangentsAndBitangents()
 
     float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
 
-    if(glm::length2(deltaUV1)<0.00001f || glm::length2(deltaUV2)<0.00001f)
+    if(glm::length2(deltaUV1)<0.0000001f || glm::length2(deltaUV2)<0.0000001f)
     {
       deltaUV1 = {1,0};
       deltaUV2 = {0,1};
@@ -231,7 +238,7 @@ void Geometry3D::calculateTangentsAndBitangents()
     glm::vec3 tangent   = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y)*r;
     glm::vec3 bitangent = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x)*r;
 
-    if(glm::length2(tangent)<0.1f || glm::length2(bitangent)<0.1f)
+    if(glm::length2(tangent)<0.000001f || glm::length2(bitangent)<0.000001f)
     {
 
     }
@@ -249,8 +256,18 @@ void Geometry3D::calculateTangentsAndBitangents()
 
   for(auto& vert : verts)
   {
-    vert.tangent = glm::normalize(vert.tangent);
-    vert.bitangent = glm::normalize(vert.bitangent);
+    if(glm::length2(vert.tangent)<0.000001f || glm::length2(vert.bitangent)<0.000001f)
+    {
+      // If the tangents are to small calculate them from the normal.
+      vert.calculateSimpleTangentAndBitangent();
+    }
+    else
+    {
+      // Otherwise normalize them and make sure that they are orthogonal.
+      vert.tangent = glm::normalize(vert.tangent);
+      vert.bitangent = glm::normalize(vert.bitangent);
+      vert.makeTangentAndBitangentOrthogonal();
+    }
   }
 }
 
