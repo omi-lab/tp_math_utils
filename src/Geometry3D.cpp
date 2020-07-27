@@ -102,6 +102,41 @@ std::vector<Face_lt> calculateFaces(const Geometry3D& geometry, bool calculateNo
 }
 
 //##################################################################################################
+std::vector<std::string> normalCalculationModes()
+{
+  return
+  {
+    "None",
+    "CalculateFaceNormals",
+    "CalculateVertexNormals",
+    "CalculateTangentsAndBitangents"
+  };
+}
+
+//##################################################################################################
+std::string normalCalculationModeToString(NormalCalculationMode mode)
+{
+  switch(mode)
+  {
+  case NormalCalculationMode::None:                           return "None";
+  case NormalCalculationMode::CalculateFaceNormals:           return "CalculateFaceNormals";
+  case NormalCalculationMode::CalculateVertexNormals:         return "CalculateVertexNormals";
+  case NormalCalculationMode::CalculateTangentsAndBitangents: return "CalculateTangentsAndBitangents";
+  }
+  return "None";
+}
+
+//##################################################################################################
+NormalCalculationMode normalCalculationModeFromString(const std::string& mode)
+{
+  if(mode == "None")                           return NormalCalculationMode::None;
+  if(mode == "CalculateFaceNormals")           return NormalCalculationMode::CalculateFaceNormals;
+  if(mode == "CalculateVertexNormals")         return NormalCalculationMode::CalculateVertexNormals;
+  if(mode == "CalculateTangentsAndBitangents") return NormalCalculationMode::CalculateTangentsAndBitangents;
+  return NormalCalculationMode::None;
+}
+
+//##################################################################################################
 void Vertex3D::calculateSimpleTangentAndBitangent()
 {
   float f=-1.0;
@@ -124,6 +159,27 @@ void Vertex3D::makeTangentAndBitangentOrthogonal()
   tangent   = glm::cross(bitangent, normal);
 }
 
+//##################################################################################################
+void Geometry3D::calculateNormals(NormalCalculationMode mode)
+{
+  switch(mode)
+  {
+  case NormalCalculationMode::None:
+    break;
+
+  case NormalCalculationMode::CalculateFaceNormals:
+    calculateFaceNormals();
+    break;
+
+  case NormalCalculationMode::CalculateVertexNormals:
+    calculateVertexNormals();
+    break;
+
+  case NormalCalculationMode::CalculateTangentsAndBitangents:
+    calculateTangentsAndBitangents();
+    break;
+  }
+}
 
 //##################################################################################################
 void Geometry3D::calculateVertexNormals()
