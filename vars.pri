@@ -73,3 +73,6 @@ HEADERS += inc/tp_math_utils/BoxPacker.h
 
 #SOURCES += src/TFU.cpp
 HEADERS += inc/tp_math_utils/TFU.h
+
+SOURCES += src/Sphere.cpp
+HEADERS += inc/tp_math_utils/Sphere.h
