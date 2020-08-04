@@ -327,4 +327,17 @@ void Geometry3D::calculateTangentsAndBitangents()
   }
 }
 
+//##################################################################################################
+void Geometry3D::transform(const glm::mat4& m)
+{
+  glm::mat3 r(m);
+  for(auto& vert : verts)
+  {
+    vert.vert = tpProj(m, vert.vert);
+    vert.normal = r * vert.normal;
+    vert.tangent = r * vert.tangent;
+    vert.bitangent = r * vert.bitangent;
+  }
+}
+
 }
