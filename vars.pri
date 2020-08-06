@@ -11,9 +11,6 @@ HEADERS += inc/tp_math_utils/JSONUtils.h
 SOURCES += src/Plane.cpp
 HEADERS += inc/tp_math_utils/Plane.h
 
-SOURCES += src/PlaneFromPoints.cpp
-HEADERS += inc/tp_math_utils/PlaneFromPoints.h
-
 SOURCES += src/DistanceToPlane.cpp
 HEADERS += inc/tp_math_utils/DistanceToPlane.h
 
@@ -65,14 +62,8 @@ HEADERS += inc/tp_math_utils/AngleBetweenVectors.h
 SOURCES += src/StandardDeviation.cpp
 HEADERS += inc/tp_math_utils/StandardDeviation.h
 
-SOURCES += src/MatrixComposition.cpp
-HEADERS += inc/tp_math_utils/MatrixComposition.h
-
 #SOURCES += src/BoxPacker.cpp
 HEADERS += inc/tp_math_utils/BoxPacker.h
-
-#SOURCES += src/TFU.cpp
-HEADERS += inc/tp_math_utils/TFU.h
 
 SOURCES += src/Sphere.cpp
 HEADERS += inc/tp_math_utils/Sphere.h

@@ -12,37 +12,47 @@
 namespace tp_math_utils
 {
 
+//-- ivec2 -----------------------------------------------------------------------------------------
+
 //##################################################################################################
 inline nlohmann::json ivec2ToJSON(const glm::ivec2& vec)
 {
-  return nlohmann::json::array({vec.x, vec.y,});
+  return nlohmann::json::array({vec.x, vec.y});
+}
+
+//##################################################################################################
+inline glm::ivec2 ivec2FromJSON(const nlohmann::json& j, const glm::ivec2& defaultValue=glm::ivec2())
+{
+  return (j.is_array() && j.size()==2 && j.at(0).is_number() && j.at(1).is_number())?glm::ivec2(j.at(0), j.at(1)):defaultValue;
 }
 
 //##################################################################################################
 inline glm::ivec2 getJSONIvec2(const nlohmann::json& j, const std::string& key, const glm::ivec2& defaultValue)
 {
-  std::vector<nlohmann::json> c = tp_utils::getJSONArray(j, key);
-  if(c.size() == 2)
-    return glm::ivec2(c.at(0), c.at(1));
-
-  return defaultValue;
+  return ivec2FromJSON(TPJSON(j, key), defaultValue);
 }
+
+//-- vec2 ------------------------------------------------------------------------------------------
 
 //##################################################################################################
 inline nlohmann::json vec2ToJSON(const glm::vec2& vec)
 {
-  return nlohmann::json::array({vec.x, vec.y,});
+  return nlohmann::json::array({vec.x, vec.y});
+}
+
+//##################################################################################################
+inline glm::vec2 vec2FromJSON(const nlohmann::json& j, const glm::vec2& defaultValue=glm::vec2())
+{
+  return (j.is_array() && j.size()==2 && j.at(0).is_number() && j.at(1).is_number())?glm::vec2(j.at(0), j.at(1)):defaultValue;
 }
 
 //##################################################################################################
 inline glm::vec2 getJSONVec2(const nlohmann::json& j, const std::string& key, const glm::vec2& defaultValue)
 {
-  std::vector<nlohmann::json> c = tp_utils::getJSONArray(j, key);
-  if(c.size() == 2)
-    return glm::vec2(c.at(0), c.at(1));
-
-  return defaultValue;
+  return vec2FromJSON(TPJSON(j, key), defaultValue);
 }
+
+//-- vec3 ------------------------------------------------------------------------------------------
 
 //##################################################################################################
 inline nlohmann::json vec3ToJSON(const glm::vec3& vec)
@@ -51,20 +61,18 @@ inline nlohmann::json vec3ToJSON(const glm::vec3& vec)
 }
 
 //##################################################################################################
-inline glm::vec3 vec3FromJSON(const nlohmann::json& j)
+inline glm::vec3 vec3FromJSON(const nlohmann::json& j, const glm::vec3& defaultValue=glm::vec3())
 {
-  return (j.size() == 3)?glm::vec3(j.at(0), j.at(1), j.at(2)):glm::vec3(0,0,0);
+  return (j.is_array() && j.size()==3 && j.at(0).is_number() && j.at(1).is_number() && j.at(2).is_number())?glm::vec3(j.at(0), j.at(1), j.at(2)):defaultValue;
 }
 
 //##################################################################################################
 inline glm::vec3 getJSONVec3(const nlohmann::json& j, const std::string& key, const glm::vec3& defaultValue)
 {
-  std::vector<nlohmann::json> c = tp_utils::getJSONArray(j, key);
-  if(c.size() == 3)
-    return glm::vec3(c.at(0), c.at(1), c.at(2));
-
-  return defaultValue;
+  return vec3FromJSON(TPJSON(j, key), defaultValue);
 }
+
+//-- vec4 ------------------------------------------------------------------------------------------
 
 //##################################################################################################
 inline nlohmann::json vec4ToJSON(const glm::vec4& vec)
@@ -73,13 +81,15 @@ inline nlohmann::json vec4ToJSON(const glm::vec4& vec)
 }
 
 //##################################################################################################
+inline glm::vec4 vec4FromJSON(const nlohmann::json& j, const glm::vec4& defaultValue=glm::vec4())
+{
+  return (j.is_array() && j.size()==3 && j.at(0).is_number() && j.at(1).is_number() && j.at(2).is_number())?glm::vec4(j.at(0), j.at(1), j.at(2), j.at(3)):defaultValue;
+}
+
+//##################################################################################################
 inline glm::vec4 getJSONVec4(const nlohmann::json& j, const std::string& key, const glm::vec4& defaultValue)
 {
-  std::vector<nlohmann::json> c = tp_utils::getJSONArray(j, key);
-  if(c.size() == 4)
-    return glm::vec4(c.at(0), c.at(1), c.at(2), c.at(3));
-
-  return defaultValue;
+  return vec4FromJSON(TPJSON(j, key), defaultValue);
 }
 
 //##################################################################################################

@@ -39,6 +39,9 @@ public:
   //! Define a plane using three points on the surface of the plane
   const glm::vec3* threePoints()const;
 
+  //################################################################################################
+  static Plane planeFromPoints(const std::vector<glm::vec3>& points);
+
 private:
   mutable std::array<glm::vec3, 2> m_pointAndNormal{};
   mutable bool m_pointAndNormalValid;
