@@ -340,4 +340,29 @@ void Geometry3D::transform(const glm::mat4& m)
   }
 }
 
+//##################################################################################################
+void Geometry3D::addBackFaces()
+{
+  std::vector<Face_lt> faces = calculateFaces(*this, false);
+
+  size_t size = verts.size();
+  verts.resize(size*2);
+  for(size_t i=0; i<size; i++)
+  {
+    auto& dst = verts.at(i+size);
+    dst = verts.at(i);
+    dst.normal = -dst.normal;
+  }
+
+  auto& newTriangles = indexes.emplace_back();
+  newTriangles.type = triangles;
+  newTriangles.indexes.reserve(faces.size()*3);
+  for(const auto& face : faces)
+  {
+    newTriangles.indexes.push_back(face.indexes[2] + int(size));
+    newTriangles.indexes.push_back(face.indexes[1] + int(size));
+    newTriangles.indexes.push_back(face.indexes[0] + int(size));
+  }
+}
+
 }

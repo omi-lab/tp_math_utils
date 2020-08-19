@@ -6,16 +6,15 @@ namespace tp_math_utils
 {
 
 //##################################################################################################
-Geometry3D Sphere::icosahedralClass1(float radius,
-                                     size_t division,
-                                     int triangleFan,
-                                     int triangleStrip,
-                                     int triangles)
-{
-  std::vector<glm::vec3> verts;
-
-  return indexAndScale(radius, triangleFan, triangleStrip, triangles, verts);
-}
+//Geometry3D Sphere::icosahedralClass1(float radius,
+//                                     size_t division,
+//                                     int triangleFan,
+//                                     int triangleStrip,
+//                                     int triangles)
+//{
+//  std::vector<glm::vec3> verts;
+//  return indexAndScale(radius, triangleFan, triangleStrip, triangles, verts);
+//}
 
 //##################################################################################################
 Geometry3D Sphere::octahedralClass1(float radius,

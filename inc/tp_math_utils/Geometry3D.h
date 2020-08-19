@@ -75,6 +75,10 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
 
   //################################################################################################
   void transform(const glm::mat4& m);
+
+  //################################################################################################
+  //! Duplicate and reverse geometry to render back faces.
+  void addBackFaces();
 };
 
 }

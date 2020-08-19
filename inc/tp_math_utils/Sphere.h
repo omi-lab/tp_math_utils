@@ -10,11 +10,11 @@ namespace tp_math_utils
 struct TP_MATH_UTILS_SHARED_EXPORT Sphere
 {
   //################################################################################################
-  static Geometry3D icosahedralClass1(float radius,
-                                      size_t division,
-                                      int triangleFan,
-                                      int triangleStrip,
-                                      int triangles);
+  //static Geometry3D icosahedralClass1(float radius,
+  //                                    size_t division,
+  //                                    int triangleFan,
+  //                                    int triangleStrip,
+  //                                    int triangles);
 
   //################################################################################################
   static Geometry3D octahedralClass1(float radius,
