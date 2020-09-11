@@ -160,6 +160,55 @@ void Vertex3D::makeTangentAndBitangentOrthogonal()
 }
 
 //##################################################################################################
+std::string Geometry3D::stats()
+{
+  size_t indexCount{0};
+  size_t triangleCount{0};
+  for(const auto& index : indexes)
+  {
+    indexCount += index.indexes.size();
+
+    if(index.type == triangleFan)
+      triangleCount+=index.indexes.size()-2;
+    else if(index.type == triangleStrip)
+      triangleCount+=index.indexes.size()-2;
+    else if(index.type == triangles)
+      triangleCount+=index.indexes.size()/3;
+  }
+
+  return
+      std::string("Verts: ") + std::to_string(verts.size()) +
+      std::string(" indexes: ") + std::to_string(indexCount) +
+      std::string(" triangles: ") + std::to_string(triangleCount);
+}
+
+//##################################################################################################
+void Geometry3D::convertToTriangles()
+{
+  std::vector<Face_lt> faces = calculateFaces(*this, false);
+
+  indexes.clear();
+  Indexes3D& newIndexes = indexes.emplace_back();
+  newIndexes.type = triangles;
+  newIndexes.indexes.resize(faces.size()*3);
+  for(size_t i=0; i<newIndexes.indexes.size(); i++)
+    newIndexes.indexes[i] = int(i);
+
+  std::vector<Vertex3D> newVerts;
+  newVerts.reserve(faces.size()*3);
+  for(const auto& face : faces)
+  {
+    for(const auto& i : face.indexes)
+    {
+      auto& v = newVerts.emplace_back();
+      v = verts[size_t(i)];
+    }
+  }
+
+  verts = std::move(newVerts);
+}
+
+//##################################################################################################
 void Geometry3D::calculateNormals(NormalCalculationMode mode)
 {
   switch(mode)
@@ -227,14 +276,15 @@ void Geometry3D::calculateFaceNormals()
 {
   std::vector<Face_lt> faces = calculateFaces(*this, true);
 
-  std::vector<Vertex3D> newVerts;
   indexes.clear();
   Indexes3D& newIndexes = indexes.emplace_back();
   newIndexes.type = triangles;
-  newVerts.reserve(faces.size()*3);
   newIndexes.indexes.resize(faces.size()*3);
   for(size_t i=0; i<newIndexes.indexes.size(); i++)
     newIndexes.indexes[i] = int(i);
+
+  std::vector<Vertex3D> newVerts;
+  newVerts.reserve(faces.size()*3);
   for(const auto& face : faces)
   {
     for(const auto& i : face.indexes)
