@@ -160,6 +160,20 @@ void Vertex3D::makeTangentAndBitangentOrthogonal()
 }
 
 //##################################################################################################
+void Geometry3D::add(const Geometry3D& other)
+{
+  auto offset = verts.size();
+  verts.reserve(offset+other.verts.size());
+  for(const auto& vert : other.verts)
+    verts.push_back(vert);
+
+  indexes.reserve(indexes.size()+other.indexes.size());
+  for(const auto& index : other.indexes)
+    for(auto& i : indexes.emplace_back(index).indexes)
+      i+=int(offset);
+}
+
+//##################################################################################################
 std::string Geometry3D::stats()
 {
   size_t indexCount{0};

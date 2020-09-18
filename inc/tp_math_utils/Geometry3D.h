@@ -61,6 +61,9 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
   int triangleStrip{2}; //!< GL_TRIANGLE_STRIP
   int triangles    {3}; //!< GL_TRIANGLES
 
+  //##################################################################################################
+  void add(const Geometry3D& other);
+
   //################################################################################################
   std::string stats();
 
