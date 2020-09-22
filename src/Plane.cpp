@@ -43,7 +43,7 @@ Plane::Plane(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3):
 }
 
 //##################################################################################################
-const glm::vec3* Plane::pointAndNormal()const
+const glm::vec3* Plane::pointAndNormal() const
 {
   if(!m_pointAndNormalValid)
   {
@@ -61,7 +61,7 @@ const glm::vec3* Plane::pointAndNormal()const
 }
 
 //##################################################################################################
-const glm::vec3* Plane::threePoints()const
+const glm::vec3* Plane::threePoints() const
 {
   if(!m_threePointsValid)
   {

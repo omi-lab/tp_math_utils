@@ -19,13 +19,13 @@ public:
   void setPosition(const glm::vec3& position);
 
   //################################################################################################
-  const glm::vec3& position()const;
+  const glm::vec3& position() const;
 
   //################################################################################################
   void setScale(const glm::vec3& scale);
 
   //################################################################################################
-  const glm::vec3& scale()const;
+  const glm::vec3& scale() const;
 
   //################################################################################################
   //! Define the surface that drawing happens on
@@ -38,7 +38,7 @@ public:
   \sa upVector()
   \returns The normal of the transformation
   */
-  const glm::vec3& normal()const;
+  const glm::vec3& normal() const;
 
   //################################################################################################
   /*!
@@ -46,14 +46,14 @@ public:
   \sa normal()
   \returns The up vector of the transformation
   */
-  const glm::vec3& upVector()const;
+  const glm::vec3& upVector() const;
 
   //################################################################################################
   //! Return the matrix generated from the other parameters
-  const glm::mat4& matrix()const;
+  const glm::mat4& matrix() const;
 
   //################################################################################################
-  const Plane& plane()const;
+  const Plane& plane() const;
 
 private:
   Plane m_plane;

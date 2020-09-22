@@ -33,11 +33,11 @@ public:
 
   \return An array with two elements in it
   */
-  const glm::vec3* pointAndNormal()const;
+  const glm::vec3* pointAndNormal() const;
 
   //################################################################################################
   //! Define a plane using three points on the surface of the plane
-  const glm::vec3* threePoints()const;
+  const glm::vec3* threePoints() const;
 
   //################################################################################################
   static Plane planeFromPoints(const std::vector<glm::vec3>& points);

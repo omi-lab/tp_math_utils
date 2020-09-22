@@ -23,7 +23,7 @@ void Transformation::setPosition(const glm::vec3& position)
 }
 
 //##################################################################################################
-const glm::vec3& Transformation::position()const
+const glm::vec3& Transformation::position() const
 {
   return m_plane.pointAndNormal()[0];
 }
@@ -36,7 +36,7 @@ void Transformation::setScale(const glm::vec3& scale)
 }
 
 //##################################################################################################
-const glm::vec3& Transformation::scale()const
+const glm::vec3& Transformation::scale() const
 {
   return m_scale;
 }
@@ -50,19 +50,19 @@ void Transformation::setRotation(const glm::vec3& normal, const glm::vec3& upVec
 }
 
 //##################################################################################################
-const glm::vec3& Transformation::normal()const
+const glm::vec3& Transformation::normal() const
 {
   return m_plane.pointAndNormal()[1];
 }
 
 //##################################################################################################
-const glm::vec3& Transformation::upVector()const
+const glm::vec3& Transformation::upVector() const
 {
   return m_upVector;
 }
 
 //##################################################################################################
-const glm::mat4& Transformation::matrix()const
+const glm::mat4& Transformation::matrix() const
 {
   if(!m_matrixValid)
   {
@@ -81,7 +81,7 @@ const glm::mat4& Transformation::matrix()const
 }
 
 //##################################################################################################
-const Plane& Transformation::plane()const
+const Plane& Transformation::plane() const
 {
   return m_plane;
 }
