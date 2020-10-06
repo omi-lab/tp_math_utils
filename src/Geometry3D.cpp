@@ -140,7 +140,7 @@ NormalCalculationMode normalCalculationModeFromString(const std::string& mode)
 void Vertex3D::calculateSimpleTangentAndBitangent()
 {
   float f=-1.0;
-  for(const auto& v : {glm::vec3(1.0f,0.0f,0.0f),glm::vec3(1.0f,0.0f,0.0f),glm::vec3(1.0f,0.0f,0.0f)})
+  for(const auto& v : {glm::vec3(1.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f),glm::vec3(0.0f,0.0f,1.0f)})
   {
     if(auto a=std::fabs(glm::dot(normal, v)); f<0 || a<f)
     {
@@ -260,6 +260,10 @@ void Geometry3D::calculateVertexNormals()
     auto faceMax = face + faces.size();
     for(; face<faceMax; face++)
     {
+      if(std::isnan(face->normal.x) || std::isnan(face->normal.y) || std::isnan(face->normal.z) ||
+         std::isinf(face->normal.x) || std::isinf(face->normal.y) || std::isinf(face->normal.z))
+        continue;
+
       for(const auto& i : face->indexes)
       {
         auto ii = size_t(i);
@@ -276,7 +280,10 @@ void Geometry3D::calculateVertexNormals()
     for(; vert<vertMax; vert++, count++)
     {
       if(*count)
-        vert->normal/=float(*count);
+      {
+        //vert->normal/=float(*count);
+        vert->normal = glm::normalize(vert->normal);
+      }
       else
         vert->normal = {0.0f, 0.0f, 1.0f};
 
