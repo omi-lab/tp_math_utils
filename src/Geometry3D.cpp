@@ -174,7 +174,7 @@ void Geometry3D::add(const Geometry3D& other)
 }
 
 //##################################################################################################
-std::string Geometry3D::stats()
+std::string Geometry3D::stats() const
 {
   size_t indexCount{0};
   size_t triangleCount{0};

@@ -65,7 +65,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
   void add(const Geometry3D& other);
 
   //################################################################################################
-  std::string stats();
+  std::string stats() const;
 
   //################################################################################################
   void convertToTriangles();
