@@ -12,6 +12,7 @@ enum class NormalCalculationMode
   None,
   CalculateFaceNormals,
   CalculateVertexNormals,
+  CalculateAdaptiveNormals,
   CalculateTangentsAndBitangents
 };
 
@@ -78,6 +79,9 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
 
   //################################################################################################
   void calculateFaceNormals();
+
+  //################################################################################################
+  void calculateAdaptiveNormals();
 
   //################################################################################################
   void calculateTangentsAndBitangents();

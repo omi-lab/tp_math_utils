@@ -109,6 +109,7 @@ std::vector<std::string> normalCalculationModes()
     "None",
     "CalculateFaceNormals",
     "CalculateVertexNormals",
+    "CalculateAdaptiveNormals",
     "CalculateTangentsAndBitangents"
   };
 }
@@ -121,6 +122,7 @@ std::string normalCalculationModeToString(NormalCalculationMode mode)
   case NormalCalculationMode::None:                           return "None";
   case NormalCalculationMode::CalculateFaceNormals:           return "CalculateFaceNormals";
   case NormalCalculationMode::CalculateVertexNormals:         return "CalculateVertexNormals";
+  case NormalCalculationMode::CalculateAdaptiveNormals:       return "CalculateAdaptiveNormals";
   case NormalCalculationMode::CalculateTangentsAndBitangents: return "CalculateTangentsAndBitangents";
   }
   return "None";
@@ -132,6 +134,7 @@ NormalCalculationMode normalCalculationModeFromString(const std::string& mode)
   if(mode == "None")                           return NormalCalculationMode::None;
   if(mode == "CalculateFaceNormals")           return NormalCalculationMode::CalculateFaceNormals;
   if(mode == "CalculateVertexNormals")         return NormalCalculationMode::CalculateVertexNormals;
+  if(mode == "CalculateAdaptiveNormals")       return NormalCalculationMode::CalculateAdaptiveNormals;
   if(mode == "CalculateTangentsAndBitangents") return NormalCalculationMode::CalculateTangentsAndBitangents;
   return NormalCalculationMode::None;
 }
@@ -142,7 +145,7 @@ void Vertex3D::calculateSimpleTangentAndBitangent()
   float f=-1.0;
   for(const auto& v : {glm::vec3(1.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f),glm::vec3(0.0f,0.0f,1.0f)})
   {
-    if(auto a=std::fabs(glm::dot(normal, v)); f<0 || a<f)
+    if(auto a=std::fabs(glm::dot(normal, v)); a>f)
     {
       f=a;
       tangent=v;
@@ -238,6 +241,10 @@ void Geometry3D::calculateNormals(NormalCalculationMode mode)
     calculateVertexNormals();
     break;
 
+  case NormalCalculationMode::CalculateAdaptiveNormals:
+    calculateAdaptiveNormals();
+    break;
+
   case NormalCalculationMode::CalculateTangentsAndBitangents:
     calculateTangentsAndBitangents();
     break;
@@ -249,7 +256,7 @@ void Geometry3D::calculateVertexNormals()
 {
   const size_t vMax = verts.size();
 
-  std::vector<uint_fast8_t> normalCounts(vMax, 0);
+  std::vector<int> normalCounts(vMax, 0);
 
   for(auto& vert : verts)
     vert.normal = {0.0f, 0.0f, 0.0f};
@@ -318,6 +325,102 @@ void Geometry3D::calculateFaceNormals()
   }
 
   verts = std::move(newVerts);
+}
+
+//##################################################################################################
+void Geometry3D::calculateAdaptiveNormals()
+{
+  const size_t vMax = verts.size();
+
+  for(auto& vert : verts)
+    vert.normal = {0.0f, 0.0f, 0.0f};
+
+  struct VertCluster_lt
+  {
+    glm::vec3 normal{0,0,0};
+    int count{0};
+    int newVertIndex{0};
+  };
+
+  struct VertDetails_lt
+  {
+    std::vector<VertCluster_lt> clusters;
+  };
+
+  std::vector<VertDetails_lt> clusters(vMax);
+
+  std::vector<Face_lt> faces = calculateFaces(*this, true);
+  std::vector<std::array<int, 3>> faceClusters(faces.size());
+
+  const float minDot=0.2f;
+
+  size_t newVertsCount=0;
+  for(size_t f=0; f<faces.size(); f++)
+  {
+    const auto& face = faces.at(f);
+
+    for(size_t i=0; i<3; i++)
+    {
+      auto& vertClusters = clusters.at(face.indexes.at(i));
+
+      bool done=false;
+      for(size_t c=0; c<vertClusters.clusters.size(); c++)
+      {
+        auto& cluster = vertClusters.clusters.at(c);
+        if(glm::dot((cluster.normal/float(cluster.count)), face.normal)>minDot)
+        {
+          faceClusters.at(f).at(i) = c;
+          cluster.normal += face.normal;
+          cluster.count++;
+          done=true;
+          break;
+        }
+      }
+
+      if(!done)
+      {
+        newVertsCount++;
+        faceClusters.at(f).at(i) = vertClusters.clusters.size();
+        auto& cluster = vertClusters.clusters.emplace_back();
+        cluster.normal = face.normal;
+        cluster.count = 1;
+      }
+    }
+  }
+
+  std::vector<Vertex3D> newVerts;
+  newVerts.reserve(newVertsCount);
+  for(size_t c=0; c<clusters.size(); c++)
+  {
+    auto& vertClusters = clusters.at(c);
+    for(auto& cluster : vertClusters.clusters)
+    {
+      cluster.newVertIndex = newVerts.size();
+      auto& newVert = newVerts.emplace_back();
+      newVert = verts.at(c);
+      newVert.normal = cluster.normal / float(cluster.count);
+      newVert.calculateSimpleTangentAndBitangent();
+    }
+  }
+
+  verts = std::move(newVerts);
+
+  indexes.clear();
+  Indexes3D& newIndexes = indexes.emplace_back();
+  newIndexes.type = triangles;
+  newIndexes.indexes.reserve(faces.size()*3);
+
+  for(size_t f=0; f<faceClusters.size(); f++)
+  {
+    const auto& face = faces.at(f);
+    const auto& faceCluster = faceClusters.at(f);
+
+    for(size_t i=0; i<3; i++)
+    {
+      const auto& vertClusters = clusters.at(face.indexes.at(i));
+      newIndexes.indexes.push_back(vertClusters.clusters.at(faceCluster.at(i)).newVertIndex);
+    }
+  }
 }
 
 //##################################################################################################
