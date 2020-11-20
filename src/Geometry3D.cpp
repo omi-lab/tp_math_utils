@@ -142,10 +142,10 @@ NormalCalculationMode normalCalculationModeFromString(const std::string& mode)
 //##################################################################################################
 void Vertex3D::calculateSimpleTangentAndBitangent()
 {
-  float f=-1.0;
+  float f=1.0;
   for(const auto& v : {glm::vec3(1.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f),glm::vec3(0.0f,0.0f,1.0f)})
   {
-    if(auto a=std::fabs(glm::dot(normal, v)); a>f)
+    if(auto a=std::fabs(glm::dot(normal, v)); a<f)
     {
       f=a;
       tangent=v;
@@ -338,7 +338,6 @@ void Geometry3D::calculateAdaptiveNormals()
   struct VertCluster_lt
   {
     glm::vec3 normal{0,0,0};
-    int count{0};
     int newVertIndex{0};
   };
 
@@ -352,7 +351,7 @@ void Geometry3D::calculateAdaptiveNormals()
   std::vector<Face_lt> faces = calculateFaces(*this, true);
   std::vector<std::array<int, 3>> faceClusters(faces.size());
 
-  const float minDot=0.2f;
+  const float minDot=0.9f;
 
   size_t newVertsCount=0;
   for(size_t f=0; f<faces.size(); f++)
@@ -367,11 +366,10 @@ void Geometry3D::calculateAdaptiveNormals()
       for(size_t c=0; c<vertClusters.clusters.size(); c++)
       {
         auto& cluster = vertClusters.clusters.at(c);
-        if(glm::dot((cluster.normal/float(cluster.count)), face.normal)>minDot)
+        if(glm::dot(glm::normalize(cluster.normal), face.normal)>minDot)
         {
           faceClusters.at(f).at(i) = c;
           cluster.normal += face.normal;
-          cluster.count++;
           done=true;
           break;
         }
@@ -383,27 +381,28 @@ void Geometry3D::calculateAdaptiveNormals()
         faceClusters.at(f).at(i) = vertClusters.clusters.size();
         auto& cluster = vertClusters.clusters.emplace_back();
         cluster.normal = face.normal;
-        cluster.count = 1;
       }
     }
   }
 
-  std::vector<Vertex3D> newVerts;
-  newVerts.reserve(newVertsCount);
-  for(size_t c=0; c<clusters.size(); c++)
   {
-    auto& vertClusters = clusters.at(c);
-    for(auto& cluster : vertClusters.clusters)
+    std::vector<Vertex3D> newVerts;
+    newVerts.reserve(newVertsCount);
+    for(size_t c=0; c<clusters.size(); c++)
     {
-      cluster.newVertIndex = newVerts.size();
-      auto& newVert = newVerts.emplace_back();
-      newVert = verts.at(c);
-      newVert.normal = cluster.normal / float(cluster.count);
-      newVert.calculateSimpleTangentAndBitangent();
+      auto& vertClusters = clusters.at(c);
+      for(auto& cluster : vertClusters.clusters)
+      {
+        cluster.newVertIndex = newVerts.size();
+        auto& newVert = newVerts.emplace_back();
+        newVert = verts.at(c);
+        newVert.normal = glm::normalize(cluster.normal);
+        newVert.calculateSimpleTangentAndBitangent();
+      }
     }
-  }
 
-  verts = std::move(newVerts);
+    verts = std::move(newVerts);
+  }
 
   indexes.clear();
   Indexes3D& newIndexes = indexes.emplace_back();
@@ -421,6 +420,8 @@ void Geometry3D::calculateAdaptiveNormals()
       newIndexes.indexes.push_back(vertClusters.clusters.at(faceCluster.at(i)).newVertIndex);
     }
   }
+
+  //calculateTangentsAndBitangents();
 }
 
 //##################################################################################################
@@ -458,7 +459,10 @@ void Geometry3D::calculateTangentsAndBitangents()
 
     float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
 
-    if(glm::length2(deltaUV1)<0.0000001f || glm::length2(deltaUV2)<0.0000001f)
+    if(glm::length2(deltaUV1)<0.0000001f ||
+       glm::length2(deltaUV2)<0.0000001f ||
+       glm::isinf(r) ||
+       glm::isnan(r))
     {
       deltaUV1 = {1,0};
       deltaUV2 = {0,1};
@@ -468,7 +472,7 @@ void Geometry3D::calculateTangentsAndBitangents()
     glm::vec3 tangent   = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y)*r;
     glm::vec3 bitangent = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x)*r;
 
-    if(glm::length2(tangent)<0.000001f || glm::length2(bitangent)<0.000001f)
+    if(glm::length2(tangent)<0.0000001f || glm::length2(bitangent)<0.0000001f)
     {
 
     }
@@ -486,7 +490,7 @@ void Geometry3D::calculateTangentsAndBitangents()
 
   for(auto& vert : verts)
   {
-    if(glm::length2(vert.tangent)<0.000001f || glm::length2(vert.bitangent)<0.000001f)
+    if(glm::length2(vert.tangent)<0.0000001f || glm::length2(vert.bitangent)<0.0000001f)
     {
       // If the tangents are to small calculate them from the normal.
       vert.calculateSimpleTangentAndBitangent();
