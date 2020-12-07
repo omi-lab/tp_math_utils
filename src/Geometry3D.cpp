@@ -1,5 +1,9 @@
 #include "tp_math_utils/Geometry3D.h"
 
+#include "tp_utils/DebugUtils.h"
+
+#include "nanoflann.hpp"
+
 #include "glm/gtx/norm.hpp"
 #include "glm/gtx/normal.hpp"
 
@@ -327,9 +331,90 @@ void Geometry3D::calculateFaceNormals()
   verts = std::move(newVerts);
 }
 
+namespace
+{
+struct VertCloud
+{
+  std::vector<Vertex3D>  pts;
+  inline size_t kdtree_get_point_count() const { return pts.size(); }
+  inline float kdtree_get_pt(const size_t idx, const size_t dim) const
+  {
+    switch(dim)
+    {
+    case 0: return pts[idx].vert.x;
+    case 1: return pts[idx].vert.y;
+    case 2: return pts[idx].vert.z;
+    case 3: return pts[idx].color.x;
+    case 4: return pts[idx].color.y;
+    case 5: return pts[idx].color.z;
+    case 6: return pts[idx].texture.x;
+    }
+
+    return pts[idx].texture.y;
+  }
+
+  template <class BBOX>
+  bool kdtree_get_bbox(BBOX&) const { return false; }
+};
+}
+
+//##################################################################################################
+void Geometry3D::combineSimilarVerts()
+{
+  size_t insertPos=0;
+  std::vector<size_t> idxLookup;
+  idxLookup.resize(verts.size());
+
+  typedef nanoflann::KDTreeSingleIndexDynamicAdaptor<nanoflann::L2_Simple_Adaptor<float, VertCloud>, VertCloud, 8> KDTree;
+
+  VertCloud cloud;
+  cloud.pts.reserve(verts.size());
+  KDTree tree(8, cloud, nanoflann::KDTreeSingleIndexAdaptorParams(10 /* max leaf */) );
+
+  for(size_t i=0; i<verts.size(); i++)
+  {
+    const auto& vert = verts.at(i);
+
+    bool found=false;
+
+    {
+      float query[8] = {vert.vert.x, vert.vert.y, vert.vert.z, vert.color.x, vert.color.y, vert.color.z, vert.texture.x, vert.texture.y};
+
+      size_t index;
+      float dist2;
+      nanoflann::KNNResultSet<float> resultSet(1);
+      resultSet.init(&index, &dist2);
+      if(tree.findNeighbors(resultSet, query, nanoflann::SearchParams(10)))
+      {
+        if(dist2 < 0.0000001f)
+        {
+          found = true;
+          idxLookup[i] = index;
+        }
+      }
+    }
+
+    if(!found)
+    {
+      cloud.pts.push_back(vert);
+      tree.addPoints(insertPos, insertPos);
+      idxLookup[i] = insertPos;
+      insertPos++;
+    }
+  }
+
+  verts.swap(cloud.pts);
+
+  for(auto& ii : indexes)
+    for(auto& i : ii.indexes)
+      i = idxLookup[i];
+}
+
 //##################################################################################################
 void Geometry3D::calculateAdaptiveNormals()
 {
+  combineSimilarVerts();
+
   const size_t vMax = verts.size();
 
   for(auto& vert : verts)
