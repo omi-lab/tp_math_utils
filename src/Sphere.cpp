@@ -130,14 +130,14 @@ Geometry3D Sphere::indexAndScale(float radius,
          std::fabs(v.y-vert.y)<e &&
          std::fabs(v.z-vert.z)<e)
       {
-        index = i;
+        index = int(i);
         break;
       }
     }
 
     if(index==-1)
     {
-      index = geometry.verts.size();
+      index = int(geometry.verts.size());
       geometry.verts.emplace_back().vert = vert;
     }
 

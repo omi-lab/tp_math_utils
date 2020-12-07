@@ -407,7 +407,7 @@ void Geometry3D::combineSimilarVerts()
 
   for(auto& ii : indexes)
     for(auto& i : ii.indexes)
-      i = idxLookup[i];
+      i = int(idxLookup[size_t(i)]);
 }
 
 //##################################################################################################
@@ -453,7 +453,7 @@ void Geometry3D::calculateAdaptiveNormals()
         auto& cluster = vertClusters.clusters.at(c);
         if(glm::dot(glm::normalize(cluster.normal), face.normal)>minDot)
         {
-          faceClusters.at(f).at(i) = c;
+          faceClusters.at(f).at(i) = int(c);
           cluster.normal += face.normal;
           done=true;
           break;
@@ -463,7 +463,7 @@ void Geometry3D::calculateAdaptiveNormals()
       if(!done)
       {
         newVertsCount++;
-        faceClusters.at(f).at(i) = vertClusters.clusters.size();
+        faceClusters.at(f).at(i) = int(vertClusters.clusters.size());
         auto& cluster = vertClusters.clusters.emplace_back();
         cluster.normal = face.normal;
       }
@@ -478,7 +478,7 @@ void Geometry3D::calculateAdaptiveNormals()
       auto& vertClusters = clusters.at(c);
       for(auto& cluster : vertClusters.clusters)
       {
-        cluster.newVertIndex = newVerts.size();
+        cluster.newVertIndex = int(newVerts.size());
         auto& newVert = newVerts.emplace_back();
         newVert = verts.at(c);
         newVert.normal = glm::normalize(cluster.normal);
