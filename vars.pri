@@ -44,6 +44,12 @@ HEADERS += inc/tp_math_utils/Ellipse.h
 SOURCES += src/Polygon.cpp
 HEADERS += inc/tp_math_utils/Polygon.h
 
+SOURCES += src/Material.cpp
+HEADERS += inc/tp_math_utils/Material.h
+
+SOURCES += src/Light.cpp
+HEADERS += inc/tp_math_utils/Light.h
+
 SOURCES += src/Geometry3D.cpp
 HEADERS += inc/tp_math_utils/Geometry3D.h
 

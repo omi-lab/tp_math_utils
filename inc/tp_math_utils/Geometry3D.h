@@ -1,7 +1,7 @@
 #ifndef tp_math_utils_Geometry3D_h
 #define tp_math_utils_Geometry3D_h
 
-#include "tp_math_utils/Globals.h"
+#include "tp_math_utils/Material.h"
 
 namespace tp_math_utils
 {
@@ -62,6 +62,8 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
   int triangleStrip{2}; //!< GL_TRIANGLE_STRIP
   int triangles    {3}; //!< GL_TRIANGLES
 
+  Material material;
+
   //##################################################################################################
   void add(const Geometry3D& other);
 
@@ -95,6 +97,9 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
   //################################################################################################
   //! Duplicate and reverse geometry to render back faces.
   void addBackFaces();
+
+  //################################################################################################
+  tp_utils::StringID getName() const;
 };
 
 }

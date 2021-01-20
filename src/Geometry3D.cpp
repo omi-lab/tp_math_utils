@@ -628,4 +628,10 @@ void Geometry3D::addBackFaces()
   }
 }
 
+//##################################################################################################
+tp_utils::StringID Geometry3D::getName() const
+{
+  return (!comments.empty())?tp_utils::StringID(comments.front()):material.name;
+}
+
 }
