@@ -6,6 +6,10 @@
 namespace tp_math_utils
 {
 
+#define TP_TRIANGLES      0x0004 //!< GL_TRIANGLE_FAN
+#define TP_TRIANGLE_STRIP 0x0005 //!< GL_TRIANGLE_STRIP
+#define TP_TRIANGLE_FAN   0x0006 //!< GL_TRIANGLES
+
 //##################################################################################################
 enum class NormalCalculationMode
 {
@@ -58,9 +62,9 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
   std::vector<Vertex3D> verts;
   std::vector<Indexes3D> indexes;
 
-  int triangleFan  {1}; //!< GL_TRIANGLE_FAN
-  int triangleStrip{2}; //!< GL_TRIANGLE_STRIP
-  int triangles    {3}; //!< GL_TRIANGLES
+  int triangleFan  {TP_TRIANGLES     };
+  int triangleStrip{TP_TRIANGLE_STRIP};
+  int triangles    {TP_TRIANGLE_FAN  };
 
   Material material;
 
