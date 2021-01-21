@@ -62,9 +62,9 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
   std::vector<Vertex3D> verts;
   std::vector<Indexes3D> indexes;
 
-  int triangleFan  {TP_TRIANGLES     };
+  int triangleFan  {TP_TRIANGLE_FAN  };
   int triangleStrip{TP_TRIANGLE_STRIP};
-  int triangles    {TP_TRIANGLE_FAN  };
+  int triangles    {TP_TRIANGLES     };
 
   Material material;
 
