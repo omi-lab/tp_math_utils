@@ -113,8 +113,7 @@ std::vector<std::string> normalCalculationModes()
     "None",
     "CalculateFaceNormals",
     "CalculateVertexNormals",
-    "CalculateAdaptiveNormals",
-    "CalculateTangentsAndBitangents"
+    "CalculateAdaptiveNormals"
   };
 }
 
@@ -127,7 +126,6 @@ std::string normalCalculationModeToString(NormalCalculationMode mode)
   case NormalCalculationMode::CalculateFaceNormals:           return "CalculateFaceNormals";
   case NormalCalculationMode::CalculateVertexNormals:         return "CalculateVertexNormals";
   case NormalCalculationMode::CalculateAdaptiveNormals:       return "CalculateAdaptiveNormals";
-  case NormalCalculationMode::CalculateTangentsAndBitangents: return "CalculateTangentsAndBitangents";
   }
   return "None";
 }
@@ -139,31 +137,7 @@ NormalCalculationMode normalCalculationModeFromString(const std::string& mode)
   if(mode == "CalculateFaceNormals")           return NormalCalculationMode::CalculateFaceNormals;
   if(mode == "CalculateVertexNormals")         return NormalCalculationMode::CalculateVertexNormals;
   if(mode == "CalculateAdaptiveNormals")       return NormalCalculationMode::CalculateAdaptiveNormals;
-  if(mode == "CalculateTangentsAndBitangents") return NormalCalculationMode::CalculateTangentsAndBitangents;
   return NormalCalculationMode::None;
-}
-
-//##################################################################################################
-void Vertex3D::calculateSimpleTangentAndBitangent()
-{
-  float f=1.0;
-  for(const auto& v : {glm::vec3(1.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f),glm::vec3(0.0f,0.0f,1.0f)})
-  {
-    if(auto a=std::fabs(glm::dot(normal, v)); a<f)
-    {
-      f=a;
-      tangent=v;
-    }
-  }
-
-  makeTangentAndBitangentOrthogonal();
-}
-
-//##################################################################################################
-void Vertex3D::makeTangentAndBitangentOrthogonal()
-{
-  bitangent = glm::cross(normal, tangent);
-  tangent   = glm::cross(bitangent, normal);
 }
 
 //##################################################################################################
@@ -248,10 +222,6 @@ void Geometry3D::calculateNormals(NormalCalculationMode mode)
   case NormalCalculationMode::CalculateAdaptiveNormals:
     calculateAdaptiveNormals();
     break;
-
-  case NormalCalculationMode::CalculateTangentsAndBitangents:
-    calculateTangentsAndBitangents();
-    break;
   }
 }
 
@@ -291,14 +261,9 @@ void Geometry3D::calculateVertexNormals()
     for(; vert<vertMax; vert++, count++)
     {
       if(*count)
-      {
-        //vert->normal/=float(*count);
         vert->normal = glm::normalize(vert->normal);
-      }
       else
         vert->normal = {0.0f, 0.0f, 1.0f};
-
-      vert->calculateSimpleTangentAndBitangent();
     }
   }
 }
@@ -324,7 +289,6 @@ void Geometry3D::calculateFaceNormals()
       auto& v = newVerts.emplace_back();
       v = verts[size_t(i)];
       v.normal = face.normal;
-      v.calculateSimpleTangentAndBitangent();
     }
   }
 
@@ -482,7 +446,6 @@ void Geometry3D::calculateAdaptiveNormals()
         auto& newVert = newVerts.emplace_back();
         newVert = verts.at(c);
         newVert.normal = glm::normalize(cluster.normal);
-        newVert.calculateSimpleTangentAndBitangent();
       }
     }
 
@@ -505,89 +468,6 @@ void Geometry3D::calculateAdaptiveNormals()
       newIndexes.indexes.push_back(vertClusters.clusters.at(faceCluster.at(i)).newVertIndex);
     }
   }
-
-  //calculateTangentsAndBitangents();
-}
-
-//##################################################################################################
-void Geometry3D::calculateTangentsAndBitangents()
-{
-  for(auto& vert : verts)
-  {
-    vert.tangent = {0.0f,0.0f,0.0f};
-    vert.bitangent = {0.0f,0.0f,0.0f};
-  }
-
-  for(const auto& face : calculateFaces(*this, false))
-  {
-    size_t i0 = face.indexes[0];
-    size_t i1 = face.indexes[1];
-    size_t i2 = face.indexes[2];
-
-    auto& vert0 = verts.at(i0);
-    auto& vert1 = verts.at(i1);
-    auto& vert2 = verts.at(i2);
-
-    const glm::vec3& v0 = vert0.vert;
-    const glm::vec3& v1 = vert1.vert;
-    const glm::vec3& v2 = vert2.vert;
-
-    const glm::vec2& uv0 = vert0.texture;
-    const glm::vec2& uv1 = vert1.texture;
-    const glm::vec2& uv2 = vert2.texture;
-
-    glm::vec3 deltaPos1 = v1-v0;
-    glm::vec3 deltaPos2 = v2-v0;
-
-    glm::vec2 deltaUV1 = uv1-uv0;
-    glm::vec2 deltaUV2 = uv2-uv0;
-
-    float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
-
-    if(glm::length2(deltaUV1)<0.0000001f ||
-       glm::length2(deltaUV2)<0.0000001f ||
-       glm::isinf(r) ||
-       glm::isnan(r))
-    {
-      deltaUV1 = {1,0};
-      deltaUV2 = {0,1};
-      r = 1.0f;
-    }
-
-    glm::vec3 tangent   = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y)*r;
-    glm::vec3 bitangent = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x)*r;
-
-    if(glm::length2(tangent)<0.0000001f || glm::length2(bitangent)<0.0000001f)
-    {
-
-    }
-    else
-    {
-      vert0.tangent += tangent;
-      vert1.tangent += tangent;
-      vert2.tangent += tangent;
-
-      vert0.bitangent += bitangent;
-      vert1.bitangent += bitangent;
-      vert2.bitangent += bitangent;
-    }
-  }
-
-  for(auto& vert : verts)
-  {
-    if(glm::length2(vert.tangent)<0.0000001f || glm::length2(vert.bitangent)<0.0000001f)
-    {
-      // If the tangents are to small calculate them from the normal.
-      vert.calculateSimpleTangentAndBitangent();
-    }
-    else
-    {
-      // Otherwise normalize them and make sure that they are orthogonal.
-      vert.tangent = glm::normalize(vert.tangent);
-      vert.bitangent = glm::normalize(vert.bitangent);
-      vert.makeTangentAndBitangentOrthogonal();
-    }
-  }
 }
 
 //##################################################################################################
@@ -598,8 +478,6 @@ void Geometry3D::transform(const glm::mat4& m)
   {
     vert.vert = tpProj(m, vert.vert);
     vert.normal = r * vert.normal;
-    vert.tangent = r * vert.tangent;
-    vert.bitangent = r * vert.bitangent;
   }
 }
 

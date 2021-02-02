@@ -16,8 +16,7 @@ enum class NormalCalculationMode
   None,
   CalculateFaceNormals,
   CalculateVertexNormals,
-  CalculateAdaptiveNormals,
-  CalculateTangentsAndBitangents
+  CalculateAdaptiveNormals
 };
 
 //##################################################################################################
@@ -36,16 +35,6 @@ struct TP_MATH_UTILS_SHARED_EXPORT Vertex3D
   glm::vec4 color{1,0,0,1};
   glm::vec2 texture{0,0};
   glm::vec3 normal{0,0,1};
-
-  // Used to calculate lighting from normal and normal map.
-  glm::vec3 tangent{1,0,0};
-  glm::vec3 bitangent{0,1,0};
-
-  //################################################################################################
-  void calculateSimpleTangentAndBitangent();
-
-  //################################################################################################
-  void makeTangentAndBitangentOrthogonal();
 };
 
 //##################################################################################################
@@ -91,9 +80,6 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
 
   //################################################################################################
   void combineSimilarVerts();
-
-  //################################################################################################
-  void calculateTangentsAndBitangents();
 
   //################################################################################################
   void transform(const glm::mat4& m);
