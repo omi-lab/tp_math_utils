@@ -17,9 +17,10 @@ nlohmann::json Material::saveState() const
   j["specular"]         = tp_math_utils::vec3ToJSON(specular);
 
   j["alpha"]            = alpha;
-
   j["roughness"]        = roughness;
   j["metalness"]        = metalness;
+  j["transmission"]     = transmission;
+  j["ior"]              = ior;
 
   j["albedoScale"]      = albedoScale;
   j["specularScale"]    = specularScale;
@@ -57,6 +58,8 @@ void Material::loadState(const nlohmann::json& j)
   alpha           = TPJSONFloat(j, "alpha", alpha);
   roughness       = TPJSONFloat(j, "roughness", roughness);
   metalness       = TPJSONFloat(j, "metalness", metalness);
+  transmission    = TPJSONFloat(j, "transmission", transmission);
+  ior             = TPJSONFloat(j, "ior", ior);
 
   albedoScale     = TPJSONFloat(j, "albedoScale", 1.0f);
   specularScale   = TPJSONFloat(j, "specularScale", 1.0f);

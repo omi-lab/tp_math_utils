@@ -19,6 +19,8 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
   float alpha{1.0f};                    //!< mtl: d
   float roughness{1.0f};                //!<
   float metalness{0.0f};                //!<
+  float transmission{0.0f};             //!< Transmission for refractive materials like glass or water.
+  float ior{1.45f};                     //!< Transmission for refractive materials like glass or water.
 
   float albedoScale{1.0f};              //!< Multiplied by the albedo
   float specularScale{1.0f};            //!< Multiplied by the specular
