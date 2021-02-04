@@ -67,7 +67,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
   void convertToTriangles();
 
   //################################################################################################
-  void calculateNormals(NormalCalculationMode mode);
+  void calculateNormals(NormalCalculationMode mode, float minDot=0.9f);
 
   //################################################################################################
   void calculateVertexNormals();
@@ -76,7 +76,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
   void calculateFaceNormals();
 
   //################################################################################################
-  void calculateAdaptiveNormals();
+  void calculateAdaptiveNormals(float minDot=0.9f);
 
   //################################################################################################
   void combineSimilarVerts();

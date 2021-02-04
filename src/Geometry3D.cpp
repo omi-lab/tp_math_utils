@@ -204,7 +204,7 @@ void Geometry3D::convertToTriangles()
 }
 
 //##################################################################################################
-void Geometry3D::calculateNormals(NormalCalculationMode mode)
+void Geometry3D::calculateNormals(NormalCalculationMode mode, float minDot)
 {
   switch(mode)
   {
@@ -220,7 +220,7 @@ void Geometry3D::calculateNormals(NormalCalculationMode mode)
     break;
 
   case NormalCalculationMode::CalculateAdaptiveNormals:
-    calculateAdaptiveNormals();
+    calculateAdaptiveNormals(minDot);
     break;
   }
 }
@@ -375,7 +375,7 @@ void Geometry3D::combineSimilarVerts()
 }
 
 //##################################################################################################
-void Geometry3D::calculateAdaptiveNormals()
+void Geometry3D::calculateAdaptiveNormals(float minDot)
 {
   combineSimilarVerts();
 
@@ -399,8 +399,6 @@ void Geometry3D::calculateAdaptiveNormals()
 
   std::vector<Face_lt> faces = calculateFaces(*this, true);
   std::vector<std::array<int, 3>> faceClusters(faces.size());
-
-  const float minDot=0.9f;
 
   size_t newVertsCount=0;
   for(size_t f=0; f<faces.size(); f++)
