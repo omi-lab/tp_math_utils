@@ -13,17 +13,23 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
 {
   tp_utils::StringID name;
 
-  glm::vec3 albedo{0.4f, 0.0f, 0.0f};   //!< mtl: Kd or Ka
+  glm::vec3 albedo  {0.4f, 0.0f, 0.0f}; //!< mtl: Kd or Ka
   glm::vec3 specular{0.1f, 0.1f, 0.1f}; //!< mtl: Ks
+  glm::vec3 sss     {1.0f, 1.0f, 1.0f}; //!< Subsurface scattering color.
+  glm::vec3 emission{0.0f, 0.0f, 0.0f}; //!< Emission color.
+
+  float albedoScale{1.0f};              //!< Multiplied by the albedo
+  float specularScale{1.0f};            //!< Multiplied by the specular
+  float sssScale{0.0f};                 //!< Subsurface scattering factor.
+  float emissionScale{0.0f};            //!< Subsurface scattering factor.
 
   float alpha{1.0f};                    //!< mtl: d
   float roughness{1.0f};                //!<
   float metalness{0.0f};                //!<
   float transmission{0.0f};             //!< Transmission for refractive materials like glass or water.
-  float ior{1.45f};                     //!< Transmission for refractive materials like glass or water.
+  float ior{1.45f};                     //!< Index of refraction.
 
-  float albedoScale{1.0f};              //!< Multiplied by the albedo
-  float specularScale{1.0f};            //!< Multiplied by the specular
+  glm::vec3 sssRadius{0.2f,0.2f,0.2f};  //!< Subsurface scattering radius per color.
 
   float useAmbient    {1.0f};           //!< Should the ambient light be used to modulate albedo.
   float useDiffuse    {1.0f};           //!< Should the diffuse calculation be used to modulate albedo.
