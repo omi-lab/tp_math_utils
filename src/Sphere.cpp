@@ -145,7 +145,11 @@ Geometry3D Sphere::indexAndScale(float radius,
   }
 
   for(auto& vert : geometry.verts)
-    vert.vert = glm::normalize(vert.vert) * radius;
+  {
+    vert.vert = glm::normalize(vert.vert);
+    vert.texture = {(vert.vert.x+1.0f)/2.0f, (-vert.vert.z+1.0f)/2.0f};
+    vert.vert *= radius;
+  }
 
   return geometry;
 }
