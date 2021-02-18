@@ -38,7 +38,10 @@ void deserializeProperties(const nlohmann::json& j, Polygon& polygon)
   try
   {
     for(nlohmann::json::const_iterator it = j.begin(); it != j.end(); ++it)
-      polygon.properties[it.key()] = it.value();
+    {
+      std::string value = it.value();
+      polygon.properties[it.key()] = value;
+    }
   }
   catch(...)
   {
