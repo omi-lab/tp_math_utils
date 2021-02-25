@@ -20,7 +20,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
   float albedoScale{1.0f};              //!< Multiplied by the albedo
   float sssScale{0.0f};                 //!< Subsurface scattering factor.
   float emissionScale{0.0f};            //!< Subsurface scattering factor.
-  float heightScale{1.0f};              //!< Used to scale subdivision height maps.
+  float heightScale{0.01f};              //!< Used to scale subdivision height maps.
   float heightMidlevel{0.5f};           //!< Used to offset subdivision height maps.
 
   float alpha{1.0f};                    //!< mtl: d
