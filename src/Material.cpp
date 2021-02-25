@@ -14,14 +14,14 @@ nlohmann::json Material::saveState() const
   j["name"] = name.keyString();
 
   j["albedo"]           = tp_math_utils::vec3ToJSON(albedo);
-  j["specular"]         = tp_math_utils::vec3ToJSON(specular);
   j["sss"]              = tp_math_utils::vec3ToJSON(sss);
   j["emission"]         = tp_math_utils::vec3ToJSON(emission);
 
   j["albedoScale"]      = albedoScale;
-  j["specularScale"]    = specularScale;
   j["sssScale"]         = sssScale;
   j["emissionScale"]    = emissionScale;
+  j["heightScale"]      = heightScale;
+  j["heightMidlevel"]   = heightMidlevel;
 
   j["alpha"]            = alpha;
   j["roughness"]        = roughness;
@@ -41,13 +41,14 @@ nlohmann::json Material::saveState() const
 
   j["tileTextures"]     = tileTextures;
 
-  j["albedoTexture"]    = albedoTexture   .keyString();
-  j["specularTexture"]  = specularTexture .keyString();
-  j["alphaTexture"]     = alphaTexture    .keyString();
-  j["normalsTexture"]   = normalsTexture  .keyString();
+  j[   "albedoTexture"] =    albedoTexture.keyString();
+  j[    "alphaTexture"] =     alphaTexture.keyString();
+  j[  "normalsTexture"] =   normalsTexture.keyString();
   j["roughnessTexture"] = roughnessTexture.keyString();
   j["metalnessTexture"] = metalnessTexture.keyString();
-  j["aoTexture"]        = aoTexture       .keyString();
+  j[ "emissionTexture"] =  emissionTexture.keyString();
+  j[      "sssTexture"] =       sssTexture.keyString();
+  j[   "heightTexture"] =    heightTexture.keyString();
 
   return j;
 }
@@ -58,14 +59,14 @@ void Material::loadState(const nlohmann::json& j)
   name = TPJSONString(j, "name");
 
   albedo           = tp_math_utils::vec3FromJSON(TPJSON(j, "albedo"  ), albedo  );
-  specular         = tp_math_utils::vec3FromJSON(TPJSON(j, "specular"), specular);
   sss              = tp_math_utils::vec3FromJSON(TPJSON(j, "sss"     ), sss     );
   emission         = tp_math_utils::vec3FromJSON(TPJSON(j, "emission"), emission);
 
-  albedoScale      = TPJSONFloat(j, "albedoScale"  , albedoScale  );
-  specularScale    = TPJSONFloat(j, "specularScale", specularScale);
-  sssScale         = TPJSONFloat(j, "sssScale"     , sssScale     );
-  emissionScale    = TPJSONFloat(j, "emissionScale", emissionScale);
+  albedoScale      = TPJSONFloat(j, "albedoScale"   , albedoScale   );
+  sssScale         = TPJSONFloat(j, "sssScale"      , sssScale      );
+  emissionScale    = TPJSONFloat(j, "emissionScale" , emissionScale );
+  heightScale      = TPJSONFloat(j, "heightScale"   , heightScale   );
+  heightMidlevel   = TPJSONFloat(j, "heightMidlevel", heightMidlevel);
 
   alpha            = TPJSONFloat(j, "alpha"       , alpha       );
   roughness        = TPJSONFloat(j, "roughness"   , roughness   );
@@ -85,13 +86,14 @@ void Material::loadState(const nlohmann::json& j)
 
   tileTextures     = TPJSONBool(j, "tileTextures", false);
 
-  albedoTexture    = TPJSONString(j, "albedoTexture"   );
-  specularTexture  = TPJSONString(j, "specularTexture" );
-  alphaTexture     = TPJSONString(j, "alphaTexture"    );
-  normalsTexture   = TPJSONString(j, "normalsTexture"  );
+  albedoTexture    = TPJSONString(j,    "albedoTexture");
+  alphaTexture     = TPJSONString(j,     "alphaTexture");
+  normalsTexture   = TPJSONString(j,   "normalsTexture");
   roughnessTexture = TPJSONString(j, "roughnessTexture");
   metalnessTexture = TPJSONString(j, "metalnessTexture");
-  aoTexture        = TPJSONString(j, "aoTexture"       );
+  emissionTexture  = TPJSONString(j,  "emissionTexture");
+  sssTexture       = TPJSONString(j,       "sssTexture");
+  heightTexture    = TPJSONString(j,    "heightTexture");
 }
 
 }

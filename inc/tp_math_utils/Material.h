@@ -14,14 +14,14 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
   tp_utils::StringID name;
 
   glm::vec3 albedo  {0.4f, 0.0f, 0.0f}; //!< mtl: Kd or Ka
-  glm::vec3 specular{0.1f, 0.1f, 0.1f}; //!< mtl: Ks
   glm::vec3 sss     {1.0f, 1.0f, 1.0f}; //!< Subsurface scattering color.
   glm::vec3 emission{0.0f, 0.0f, 0.0f}; //!< Emission color.
 
   float albedoScale{1.0f};              //!< Multiplied by the albedo
-  float specularScale{1.0f};            //!< Multiplied by the specular
   float sssScale{0.0f};                 //!< Subsurface scattering factor.
   float emissionScale{0.0f};            //!< Subsurface scattering factor.
+  float heightScale{1.0f};              //!< Used to scale subdivision height maps.
+  float heightMidlevel{0.5f};           //!< Used to offset subdivision height maps.
 
   float alpha{1.0f};                    //!< mtl: d
   float roughness{1.0f};                //!<
@@ -42,12 +42,13 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
   bool tileTextures{false};             //!< True to GL_REPEAT textures else GL_CLAMP_TO_EDGE
 
   tp_utils::StringID    albedoTexture;  //!< mtl: map_Kd or map_Ka
-  tp_utils::StringID  specularTexture;  //!< mtl: map_Ks
   tp_utils::StringID     alphaTexture;  //!< mtl: map_d
   tp_utils::StringID   normalsTexture;  //!< mtl: map_Bump
   tp_utils::StringID roughnessTexture;  //!<
   tp_utils::StringID metalnessTexture;  //!<
-  tp_utils::StringID        aoTexture;  //!<
+  tp_utils::StringID  emissionTexture;  //!<
+  tp_utils::StringID       sssTexture;  //!<
+  tp_utils::StringID    heightTexture;  //!< Subdivision height.
 
   //################################################################################################
   nlohmann::json saveState() const;
