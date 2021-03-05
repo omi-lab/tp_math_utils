@@ -41,14 +41,10 @@ nlohmann::json Material::saveState() const
 
   j["tileTextures"]     = tileTextures;
 
-  j[   "albedoTexture"] =    albedoTexture.keyString();
-  j[    "alphaTexture"] =     alphaTexture.keyString();
-  j[  "normalsTexture"] =   normalsTexture.keyString();
-  j["roughnessTexture"] = roughnessTexture.keyString();
-  j["metalnessTexture"] = metalnessTexture.keyString();
-  j[ "emissionTexture"] =  emissionTexture.keyString();
-  j[      "sssTexture"] =       sssTexture.keyString();
-  j[   "heightTexture"] =    heightTexture.keyString();
+  viewTypedTextures([&](const auto& type, const auto& value, const auto&)
+  {
+    j[type] = value.keyString();
+  });
 
   return j;
 }
@@ -86,14 +82,10 @@ void Material::loadState(const nlohmann::json& j)
 
   tileTextures     = TPJSONBool(j, "tileTextures", false);
 
-  albedoTexture    = TPJSONString(j,    "albedoTexture");
-  alphaTexture     = TPJSONString(j,     "alphaTexture");
-  normalsTexture   = TPJSONString(j,   "normalsTexture");
-  roughnessTexture = TPJSONString(j, "roughnessTexture");
-  metalnessTexture = TPJSONString(j, "metalnessTexture");
-  emissionTexture  = TPJSONString(j,  "emissionTexture");
-  sssTexture       = TPJSONString(j,       "sssTexture");
-  heightTexture    = TPJSONString(j,    "heightTexture");
+  updateTypedTextures([&](const auto& type, auto& value, const auto&)
+  {
+    value = TPJSONString(j, type);
+  });
 }
 
 }

@@ -5,6 +5,8 @@
 
 #include "json.hpp"
 
+#include <unordered_set>
+
 namespace tp_math_utils
 {
 
@@ -49,6 +51,49 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
   tp_utils::StringID  emissionTexture;  //!<
   tp_utils::StringID       sssTexture;  //!<
   tp_utils::StringID    heightTexture;  //!< Subdivision height.
+
+  //################################################################################################
+  template<typename T>
+  void updateTypedTextures(const T& closure)
+  {
+    closure(   "albedoTexture",    albedoTexture, "Albedo"   );
+    closure(    "alphaTexture",     alphaTexture, "Alpha"    );
+    closure(  "normalsTexture",   normalsTexture, "Normals"  );
+    closure("roughnessTexture", roughnessTexture, "Roughness");
+    closure("metalnessTexture", metalnessTexture, "Metalness");
+    closure( "emissionTexture",  emissionTexture, "Emission" );
+    closure(      "sssTexture",       sssTexture, "SSS"      );
+    closure(   "heightTexture",    heightTexture, "Height"   );
+  }
+
+  //################################################################################################
+  template<typename T>
+  void viewTypedTextures(const T& closure) const
+  {
+    const_cast<Material*>(this)->updateTypedTextures([&](const auto& type, const auto& value, const auto& pretty){closure(type, value, pretty);});
+  }
+
+  //################################################################################################
+  template<typename T>
+  void updateTextures(const T& closure)
+  {
+    updateTypedTextures([&](const auto&, auto& value, const auto&){closure(value);});
+  }
+
+  //################################################################################################
+  template<typename T>
+  void viewTextures(const T& closure) const
+  {
+    viewTypedTextures([&](const auto&, const auto& value, const auto&){closure(value);});
+  }
+
+  //################################################################################################
+  inline std::unordered_set<tp_utils::StringID> allTextures() const
+  {
+    std::unordered_set<tp_utils::StringID> allTextures;
+    viewTextures([&](const tp_utils::StringID& value){if(value.isValid())allTextures.insert(value);});
+    return allTextures;
+  }
 
   //################################################################################################
   nlohmann::json saveState() const;
