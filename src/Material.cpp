@@ -13,33 +13,40 @@ nlohmann::json Material::saveState() const
 
   j["name"] = name.keyString();
 
-  j["albedo"]           = tp_math_utils::vec3ToJSON(albedo);
-  j["sss"]              = tp_math_utils::vec3ToJSON(sss);
-  j["emission"]         = tp_math_utils::vec3ToJSON(emission);
+  j["albedo"]                = tp_math_utils::vec3ToJSON(albedo);
+  j["sss"]                   = tp_math_utils::vec3ToJSON(sss);
+  j["emission"]              = tp_math_utils::vec3ToJSON(emission);
+  j["velvet"]                = tp_math_utils::vec3ToJSON(velvet);
 
-  j["albedoScale"]      = albedoScale;
-  j["sssScale"]         = sssScale;
-  j["emissionScale"]    = emissionScale;
-  j["heightScale"]      = heightScale;
-  j["heightMidlevel"]   = heightMidlevel;
+  j["albedoScale"]           = albedoScale;
+  j["sssScale"]              = sssScale;
+  j["emissionScale"]         = emissionScale;
+  j["velvetScale"]           = velvetScale;
+  j["heightScale"]           = heightScale;
+  j["heightMidlevel"]        = heightMidlevel;
 
-  j["alpha"]            = alpha;
-  j["roughness"]        = roughness;
-  j["metalness"]        = metalness;
-  j["transmission"]     = transmission;
-  j["ior"]              = ior;
+  j["alpha"]                 = alpha;
+  j["roughness"]             = roughness;
+  j["metalness"]             = metalness;
+  j["transmission"]          = transmission;
+  j["transmissionRoughness"] = transmissionRoughness;
+  j["ior"]                   = ior;
+  j["sheen"]                 = sheen;
+  j["sheenTint"]             = sheenTint;
+  j["clearCoat"]             = clearCoat;
+  j["clearCoatRoughness"]    = clearCoatRoughness;
 
-  j["sssRadius"]        = tp_math_utils::vec3ToJSON(sssRadius);
+  j["sssRadius"]             = tp_math_utils::vec3ToJSON(sssRadius);
 
-  j["useAmbient"]       = useAmbient;
-  j["useDiffuse"]       = useDiffuse;
-  j["useNdotL"]         = useNdotL;
-  j["useAttenuation"]   = useAttenuation;
-  j["useShadow"]        = useShadow;
-  j["useLightMask"]     = useLightMask;
-  j["useReflection"]    = useReflection;
+  j["useAmbient"]            = useAmbient;
+  j["useDiffuse"]            = useDiffuse;
+  j["useNdotL"]              = useNdotL;
+  j["useAttenuation"]        = useAttenuation;
+  j["useShadow"]             = useShadow;
+  j["useLightMask"]          = useLightMask;
+  j["useReflection"]         = useReflection;
 
-  j["tileTextures"]     = tileTextures;
+  j["tileTextures"]          = tileTextures;
 
   viewTypedTextures([&](const auto& type, const auto& value, const auto&)
   {
@@ -54,21 +61,28 @@ void Material::loadState(const nlohmann::json& j)
 {
   name = TPJSONString(j, "name");
 
-  albedo           = tp_math_utils::vec3FromJSON(TPJSON(j, "albedo"  ), albedo  );
-  sss              = tp_math_utils::vec3FromJSON(TPJSON(j, "sss"     ), sss     );
-  emission         = tp_math_utils::vec3FromJSON(TPJSON(j, "emission"), emission);
+  albedo                = tp_math_utils::vec3FromJSON(TPJSON(j, "albedo"  ), albedo  );
+  sss                   = tp_math_utils::vec3FromJSON(TPJSON(j, "sss"     ), sss     );
+  emission              = tp_math_utils::vec3FromJSON(TPJSON(j, "emission"), emission);
+  velvet                = tp_math_utils::vec3FromJSON(TPJSON(j, "velvet"  ), velvet  );
 
-  albedoScale      = TPJSONFloat(j, "albedoScale"   , albedoScale   );
-  sssScale         = TPJSONFloat(j, "sssScale"      , sssScale      );
-  emissionScale    = TPJSONFloat(j, "emissionScale" , emissionScale );
-  heightScale      = TPJSONFloat(j, "heightScale"   , heightScale   );
-  heightMidlevel   = TPJSONFloat(j, "heightMidlevel", heightMidlevel);
+  albedoScale           = TPJSONFloat(j, "albedoScale"   , albedoScale   );
+  sssScale              = TPJSONFloat(j, "sssScale"      , sssScale      );
+  emissionScale         = TPJSONFloat(j, "emissionScale" , emissionScale );
+  velvetScale           = TPJSONFloat(j, "velvetScale"   , velvetScale   );
+  heightScale           = TPJSONFloat(j, "heightScale"   , heightScale   );
+  heightMidlevel        = TPJSONFloat(j, "heightMidlevel", heightMidlevel);
 
-  alpha            = TPJSONFloat(j, "alpha"       , alpha       );
-  roughness        = TPJSONFloat(j, "roughness"   , roughness   );
-  metalness        = TPJSONFloat(j, "metalness"   , metalness   );
-  transmission     = TPJSONFloat(j, "transmission", transmission);
-  ior              = TPJSONFloat(j, "ior"         , ior         );
+  alpha                 = TPJSONFloat(j, "alpha"                , alpha                );
+  roughness             = TPJSONFloat(j, "roughness"            , roughness            );
+  metalness             = TPJSONFloat(j, "metalness"            , metalness            );
+  transmission          = TPJSONFloat(j, "transmission"         , transmission         );
+  transmissionRoughness = TPJSONFloat(j, "transmissionRoughness", transmissionRoughness);
+  ior                   = TPJSONFloat(j, "ior"                  , ior                  );
+  sheen                 = TPJSONFloat(j, "sheen"                , sheen                );
+  sheenTint             = TPJSONFloat(j, "sheenTint"            , sheenTint            );
+  clearCoat             = TPJSONFloat(j, "clearCoat"            , clearCoat            );
+  clearCoatRoughness    = TPJSONFloat(j, "clearCoatRoughness"   , clearCoatRoughness   );
 
   sssRadius        = tp_math_utils::vec3FromJSON(TPJSON(j, "sssRadius"), sssRadius);
 
