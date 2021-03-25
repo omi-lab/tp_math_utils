@@ -1,4 +1,5 @@
 #include "tp_math_utils/Geometry3D.h"
+#include "tp_math_utils/JSONUtils.h"
 
 #include "tp_utils/DebugUtils.h"
 
@@ -508,6 +509,24 @@ void Geometry3D::addBackFaces()
 tp_utils::StringID Geometry3D::getName() const
 {
   return (!comments.empty())?tp_utils::StringID(comments.front()):material.name;
+}
+
+//##################################################################################################
+nlohmann::json Geometry::saveState() const
+{
+  nlohmann::json j;
+  j["geometry"] = vec2VectorToJSON(geometry);
+  j["transform"] = mat4ToJSON(transform);
+  j["material"] = material.saveState();
+  return j;
+}
+
+//##################################################################################################
+void Geometry::loadState(const nlohmann::json& j)
+{
+  geometry = vec2VectorFromJSON(TPJSON(j, "geometry"));
+  transform = mat4FromJSON(TPJSON(j, "transform"));
+  material.loadState(TPJSON(j, "material"));
 }
 
 }

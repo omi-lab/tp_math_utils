@@ -92,6 +92,20 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
   tp_utils::StringID getName() const;
 };
 
+//##################################################################################################
+struct TP_MATH_UTILS_SHARED_EXPORT Geometry
+{
+  std::vector<glm::vec2> geometry;
+  glm::mat4 transform{1.0f};
+  tp_math_utils::Material material;
+
+  //################################################################################################
+  nlohmann::json saveState() const;
+
+  //################################################################################################
+  void loadState(const nlohmann::json& j);
+};
+
 }
 
 #endif
