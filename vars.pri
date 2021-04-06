@@ -3,6 +3,7 @@ TEMPLATE = lib
 
 DEFINES += TP_MATH_UTILS_LIBRARY
 
+SOURCES += src/Globals.cpp
 HEADERS += inc/tp_math_utils/Globals.h
 
 #SOURCES += src/JSONUtils.cpp

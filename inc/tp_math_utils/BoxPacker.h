@@ -72,18 +72,7 @@ struct BoxPacker
         maxSize = inputBox.rotatedHeight;
     }
 
-    auto po2 = [](size_t v)
-    {
-      v--;
-      v |= v >> 1;
-      v |= v >> 2;
-      v |= v >> 4;
-      v |= v >> 8;
-      v |= v >> 16;
-      v++;
-      return v;
-    };
-    maxSize = po2(maxSize);
+    maxSize = powerOf2(maxSize);
 
     std::vector<size_t> sortedBoxes;
     sortedBoxes.reserve(inputBoxes.size());

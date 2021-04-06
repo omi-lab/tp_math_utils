@@ -1,0 +1,27 @@
+#include "tp_math_utils/Globals.h"
+
+namespace tp_math_utils
+{
+
+//##################################################################################################
+bool isPowerOf2(size_t v)
+{
+  return v && (powerOf2(v) == v);
+}
+
+//##################################################################################################
+size_t powerOf2(size_t v)
+{
+  v--;
+  v |= v >> 1;
+  v |= v >> 2;
+  v |= v >> 4;
+  v |= v >> 8;
+  if constexpr(sizeof(size_t)>= 4) v |= v >> 16; // sizeof(size_t) >=  32bit
+  if constexpr(sizeof(size_t)>= 8) v |= v >> 32; // sizeof(size_t) >=  64bit
+  if constexpr(sizeof(size_t)>=16) v |= v >> 64; // sizeof(size_t) >= 128bit
+  v++;
+  return v;
+}
+
+}
