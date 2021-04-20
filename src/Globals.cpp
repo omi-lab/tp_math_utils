@@ -1,5 +1,5 @@
 #include "tp_math_utils/Globals.h"
-
+#include <limits>
 namespace tp_math_utils
 {
 
@@ -19,7 +19,11 @@ size_t powerOf2(size_t v)
   v |= v >> 8;
   if constexpr(sizeof(size_t)>= 4) v |= v >> 16; // sizeof(size_t) >=  32bit
   if constexpr(sizeof(size_t)>= 8) v |= v >> 32; // sizeof(size_t) >=  64bit
+
+#ifndef TP_WIN32_MSVC
   if constexpr(sizeof(size_t)>=16) v |= v >> 64; // sizeof(size_t) >= 128bit
+#endif
+
   v++;
   return v;
 }
