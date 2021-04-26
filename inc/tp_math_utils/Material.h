@@ -57,6 +57,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
   tp_utils::StringID             metalnessTexture; //!< Grey scale
   tp_utils::StringID              emissionTexture; //!< Color
   tp_utils::StringID                   sssTexture; //!< Color
+  tp_utils::StringID              sssScaleTexture; //!< Grey scale
   tp_utils::StringID                heightTexture; //!< Grey scale, Subdivision height.
   tp_utils::StringID          transmissionTexture; //!< Grey scale
   tp_utils::StringID transmissionRoughnessTexture; //!< Grey scale
@@ -66,6 +67,9 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
   tp_utils::StringID    clearCoatRoughnessTexture; //!< Grey scale
   tp_utils::StringID                velvetTexture; //!< Color
   tp_utils::StringID          velvetFactorTexture; //!< Grey scale, Mix 1=Velvet, 0=Principled
+  tp_utils::StringID      iridescentFactorTexture; //!< Grey scale, Mix 1=Iridescent color, 0=Base color.
+  tp_utils::StringID      iridescentOffsetTexture; //!< Grey scale, rotate the hue of the iridescent color.
+  tp_utils::StringID   iridescentFrequencyTexture; //!< Grey scale, multiplied with the hue angle to alter the frequency of color change.
 
 
   //################################################################################################
@@ -79,6 +83,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
     closure(            "metalnessTexture",             metalnessTexture, "Metalness"             );
     closure(             "emissionTexture",              emissionTexture, "Emission"              );
     closure(                  "sssTexture",                   sssTexture, "SSS"                   );
+    closure(             "sssScaleTexture",              sssScaleTexture, "SSS scale"             );
     closure(               "heightTexture",                heightTexture, "Height"                );
     closure(         "transmissionTexture",          transmissionTexture, "Transmission"          );
     closure("transmissionRoughnessTexture", transmissionRoughnessTexture, "Transmission roughness");
@@ -87,7 +92,10 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
     closure(            "clearCoatTexture",             clearCoatTexture, "Clear coat"            );
     closure(   "clearCoatRoughnessTexture",    clearCoatRoughnessTexture, "Clear coat roughness"  );
     closure(               "velvetTexture",                velvetTexture, "Velvet"                );
-    closure(         "velvetFactorTexture",          velvetFactorTexture, "Velvet factor"         );
+    closure(         "velvetFactorTexture",          velvetFactorTexture, "Velvet factor"         );    
+    closure(     "iridescentFactorTexture",      iridescentFactorTexture, "Iridescent factor"     );
+    closure(     "iridescentOffsetTexture",      iridescentOffsetTexture, "Iridescent offset"     );
+    closure(  "iridescentFrequencyTexture",   iridescentFrequencyTexture, "Iridescent frequency"  );
   }
 
   //################################################################################################
