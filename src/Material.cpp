@@ -36,6 +36,10 @@ nlohmann::json Material::saveState() const
   j["clearCoat"]             = clearCoat;
   j["clearCoatRoughness"]    = clearCoatRoughness;
 
+  j["iridescentFactor"]    = iridescentFactor;
+  j["iridescentOffset"]    = iridescentOffset;
+  j["iridescentFrequency"]    = iridescentFrequency;
+
   j["sssRadius"]             = tp_math_utils::vec3ToJSON(sssRadius);
 
   j["useAmbient"]            = useAmbient;
@@ -83,6 +87,9 @@ void Material::loadState(const nlohmann::json& j)
   sheenTint             = TPJSONFloat(j, "sheenTint"            , sheenTint            );
   clearCoat             = TPJSONFloat(j, "clearCoat"            , clearCoat            );
   clearCoatRoughness    = TPJSONFloat(j, "clearCoatRoughness"   , clearCoatRoughness   );
+  iridescentFactor      = TPJSONFloat(j, "iridescentFactor"     , iridescentFactor     );
+  iridescentOffset      = TPJSONFloat(j, "iridescentOffset"     , iridescentOffset     );
+  iridescentFrequency   = TPJSONFloat(j, "iridescentFrequency"  , iridescentFrequency  );
 
   sssRadius        = tp_math_utils::vec3FromJSON(TPJSON(j, "sssRadius"), sssRadius);
 

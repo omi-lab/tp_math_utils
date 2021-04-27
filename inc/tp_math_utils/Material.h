@@ -38,6 +38,10 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
   float clearCoat{0.0f};                //!<
   float clearCoatRoughness{0.0f};       //!<
 
+  float    iridescentFactor{0.0f};
+  float    iridescentOffset{0.0f};
+  float iridescentFrequency{0.0f};
+
   glm::vec3 sssRadius{0.2f,0.2f,0.2f};  //!< Subsurface scattering radius per color.
 
   float useAmbient    {1.0f};           //!< Should the ambient light be used to modulate albedo.
