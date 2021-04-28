@@ -3,6 +3,8 @@
 
 #include "tp_utils/StringID.h"
 
+#include "lib_platform/RandomDevice.h"
+
 #if defined(TP_MATH_UTILS_LIBRARY)
 #  define TP_MATH_UTILS_SHARED_EXPORT TP_EXPORT
 #else
@@ -32,7 +34,7 @@ namespace tp_math_utils
 //##################################################################################################
 struct TP_MATH_UTILS_SHARED_EXPORT RNG
 {
-  std::random_device rd;
+  lib_platform::RandomDevice rd;
   std::minstd_rand0 mt;
 
   //################################################################################################
