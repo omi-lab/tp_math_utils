@@ -10,7 +10,7 @@ void deserializeGeometry(const nlohmann::json& j, Polygon& polygon)
 {
   try
   {
-    for(const nlohmann::json& shape : tp_utils::getJSONValue(j, "coordinates", nlohmann::json()))
+    for(const nlohmann::json& shape : TPJSON(j, "coordinates"))
     {
       std::vector<glm::vec2> loop;
       for(const nlohmann::json& coord : shape)
@@ -52,8 +52,8 @@ void deserializeProperties(const nlohmann::json& j, Polygon& polygon)
 //##################################################################################################
 void deserializePolygon(const nlohmann::json& j, Polygon& polygon)
 {
-  deserializeGeometry(tp_utils::getJSONValue(j, "geometry", nlohmann::json()), polygon);
-  deserializeProperties(tp_utils::getJSONValue(j, "properties", nlohmann::json()), polygon);
+  deserializeGeometry(TPJSON(j, "geometry"), polygon);
+  deserializeProperties(TPJSON(j, "properties"), polygon);
 }
 
 //##################################################################################################

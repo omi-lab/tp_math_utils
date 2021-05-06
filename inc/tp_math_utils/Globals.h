@@ -98,6 +98,10 @@ bool isPowerOf2(size_t v);
 //! Round up to nearest power of 2, 0=0, overflow=0
 size_t powerOf2(size_t v);
 
+//##################################################################################################
+//! Round to the nearest
+size_t closestPowerOf2(size_t v);
+
 }
 
 //##################################################################################################

@@ -28,4 +28,12 @@ size_t powerOf2(size_t v)
   return v;
 }
 
+//##################################################################################################
+size_t closestPowerOf2(size_t v)
+{
+  size_t vUp = powerOf2(v);
+  size_t vDn = vUp >> 1;
+  return ((vUp-v) < (v-vDn))?vUp:vDn;
+}
+
 }

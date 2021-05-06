@@ -38,7 +38,7 @@ nlohmann::json Material::saveState() const
 
   j["iridescentFactor"]    = iridescentFactor;
   j["iridescentOffset"]    = iridescentOffset;
-  j["iridescentFrequency"]    = iridescentFrequency;
+  j["iridescentFrequency"] = iridescentFrequency;
 
   j["sssRadius"]             = tp_math_utils::vec3ToJSON(sssRadius);
 
