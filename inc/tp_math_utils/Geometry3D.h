@@ -35,6 +35,9 @@ struct TP_MATH_UTILS_SHARED_EXPORT Vertex3D
   glm::vec4 color{1,0,0,1};
   glm::vec2 texture{0,0};
   glm::vec3 normal{0,0,1};
+
+  //################################################################################################
+  static Vertex3D interpolate(float u, float v, const Vertex3D& v0, const Vertex3D& v1, const Vertex3D& v2);
 };
 
 //##################################################################################################

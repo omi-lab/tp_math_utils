@@ -142,6 +142,20 @@ NormalCalculationMode normalCalculationModeFromString(const std::string& mode)
 }
 
 //##################################################################################################
+Vertex3D Vertex3D::interpolate(float u, float v, const Vertex3D& v0, const Vertex3D& v1, const Vertex3D& v2)
+{
+  float w = 1.0f - (u+v);
+  tp_math_utils::Vertex3D result;
+
+  result.vert    = (w*v0.vert   ) + (u*v1.vert   ) + (v*v2.vert   );
+  result.color   = (w*v0.color  ) + (u*v1.color  ) + (v*v2.color  );
+  result.texture = (w*v0.texture) + (u*v1.texture) + (v*v2.texture);
+  result.normal  = (w*v0.normal ) + (u*v1.normal ) + (v*v2.normal );
+
+  return result;
+}
+
+//##################################################################################################
 void Geometry3D::add(const Geometry3D& other)
 {
   auto offset = verts.size();
@@ -201,7 +215,7 @@ void Geometry3D::convertToTriangles()
     }
   }
 
-  verts = std::move(newVerts);
+  verts.swap(newVerts);
 }
 
 //##################################################################################################
