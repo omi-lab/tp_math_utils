@@ -10,10 +10,13 @@ namespace tp_math_utils
 //##################################################################################################
 float angleBetweenVectors(const glm::vec3& a, const glm::vec3& b)
 {
-  glm::vec3 v1 = glm::normalize(a);
-  glm::vec3 v2 = glm::normalize(b);
+  return angleBetweenUnitVectors(glm::normalize(a), glm::normalize(b));
+}
 
-  float dot = tpBound(-1.0f, glm::dot(v1, v2), 1.0f);
+//##################################################################################################
+float angleBetweenUnitVectors(const glm::vec3& v1, const glm::vec3& v2)
+{
+  float dot = glm::dot(v1, v2);
 
   if(std::isnan(dot))
     return 0.0f;
