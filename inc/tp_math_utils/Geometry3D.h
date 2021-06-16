@@ -6,6 +6,8 @@
 namespace tp_math_utils
 {
 
+class Plane;
+
 #define TP_TRIANGLES      0x0004 //!< GL_TRIANGLE_FAN
 #define TP_TRIANGLE_STRIP 0x0005 //!< GL_TRIANGLE_STRIP
 #define TP_TRIANGLE_FAN   0x0006 //!< GL_TRIANGLES
@@ -35,6 +37,10 @@ struct TP_MATH_UTILS_SHARED_EXPORT Vertex3D
   glm::vec4 color{1,0,0,1};
   glm::vec2 texture{0,0};
   glm::vec3 normal{0,0,1};
+
+  //################################################################################################
+  //! Lerp: (1-u)*v0 + u*v1
+  static Vertex3D interpolate(float u, const Vertex3D& v0, const Vertex3D& v1);
 
   //################################################################################################
   static Vertex3D interpolate(float u, float v, const Vertex3D& v0, const Vertex3D& v1, const Vertex3D& v2);
@@ -90,6 +96,10 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
   //################################################################################################
   //! Duplicate and reverse geometry to render back faces.
   void addBackFaces();
+
+  //################################################################################################
+  // Create subdivisions in the mesh to split the parts outside of the given frustum.
+  void subdivideAroundFrustum(const std::array<tp_math_utils::Plane, 6>& frustumPlanes);
 
   //################################################################################################
   tp_utils::StringID getName() const;
