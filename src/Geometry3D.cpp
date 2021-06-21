@@ -537,7 +537,7 @@ void Geometry3D::addBackFaces()
 }
 
 //##################################################################################################
-void Geometry3D::subdivideAroundFrustum(const std::array<tp_math_utils::Plane, 6>& frustumPlanes)
+void Geometry3D::subdivideAroundFrustum(const glm::mat4& modelMatrix, const std::array<tp_math_utils::Plane, 6>& frustumPlanes)
 {
   // Calculate the faces of the mesh.
   std::vector<Face_lt> faces = calculateFaces(*this, false);
@@ -547,6 +547,12 @@ void Geometry3D::subdivideAroundFrustum(const std::array<tp_math_utils::Plane, 6
   Indexes3D& newIndexes = indexes.emplace_back();
   newIndexes.type = triangles;
   newIndexes.indexes.reserve(faces.size() * 3);
+
+  // Transform all vertices from model space to world space.
+  std::vector<glm::vec4> worldSpaceVertices;
+  worldSpaceVertices.reserve(verts.size());
+  for (auto& modelSpaceVertex : verts)
+    worldSpaceVertices.emplace_back(modelMatrix * glm::vec4(modelSpaceVertex.vert, 1.0f));
 
   std::function<void(const std::array<int, 3>&, size_t)> subdivideFaceWithPlane = [&](const std::array<int, 3>& faceIndexes, size_t planeIdx)
   {
@@ -560,35 +566,35 @@ void Geometry3D::subdivideAroundFrustum(const std::array<tp_math_utils::Plane, 6
 
     const auto& frustumPlane = frustumPlanes[planeIdx];
     ++planeIdx;
-    // @TODO if an edge or a vertex of the triangle is exactly on a plane, ignore.
-    // @TODO don't do it for all planes? = ignore if the plane and the face are almost parallel to each other i.e. normal dot prod close to 1 or -1.
 
     // Test intersection between plane and each edge of the triangle.
-    Vertex3D intersectionVertices[2];
+    Vertex3D intersectionVertices[2]; // in model space
+    glm::vec3 intersectionPoints[2]; // in world space
     size_t nonIntersectedEdgeIdx = 2;
     int intersectionCount = 0;
     for (size_t edgeIdx = 0; edgeIdx < 3; ++edgeIdx)
     {
-      const Vertex3D& edgeVertex0 = verts[faceIndexes[edgeIdx]];
-      const Vertex3D& edgeVertex1 = verts[faceIndexes[(edgeIdx + 1) % 3]];
-      // Find intersection on the edge line.
-      tp_math_utils::Ray triangleEdge(edgeVertex0.vert, edgeVertex1.vert);
-      glm::vec3 intersectionPoint;
-      if (tp_math_utils::rayPlaneIntersection(triangleEdge, frustumPlane, intersectionPoint))
+      // Edge vertices in world space.
+      const glm::vec3& edgeVertex0 = glm::vec3(worldSpaceVertices[faceIndexes[edgeIdx]]);
+      const glm::vec3& edgeVertex1 = glm::vec3(worldSpaceVertices[faceIndexes[(edgeIdx + 1) % 3]]);
+      // Find intersection in world space with the edge line (this returns false if edge is parallel to the plane or on the plane).
+      const tp_math_utils::Ray triangleEdge(edgeVertex0, edgeVertex1);
+      if (tp_math_utils::rayPlaneIntersection(triangleEdge, frustumPlane, intersectionPoints[intersectionCount]))
       {
-        float edgeLength = glm::distance(edgeVertex0.vert, edgeVertex1.vert);
-        float distanceToEdgeVertex0 = glm::distance(intersectionPoint, edgeVertex0.vert);
+        // @TODO eliminate the intersection if it is out the plane (or might be easier to check if out of frustum by using view-projection matrix).
+        float edgeLength = glm::distance(edgeVertex0, edgeVertex1);
+        float distanceToEdgeVertex0 = glm::distance(intersectionPoints[intersectionCount], edgeVertex0);
         // If the intersection is already a triangle vertex or outside the edge, no need to subdivide.
         if (distanceToEdgeVertex0 >= edgeLength
-            || glm::distance(intersectionPoint, edgeVertex1.vert) >= edgeLength)
+            || glm::distance(intersectionPoints[intersectionCount], edgeVertex1) >= edgeLength)
         {
           nonIntersectedEdgeIdx = edgeIdx;
           continue;
         }
 
         float t = distanceToEdgeVertex0 / edgeLength;
-        // Make a new vertex using the intersection point.
-        intersectionVertices[intersectionCount] = Vertex3D::interpolate(t, edgeVertex0, edgeVertex1);
+        // Make a new vertex at the intersection point (in model space).
+        intersectionVertices[intersectionCount] = Vertex3D::interpolate(t, verts[faceIndexes[edgeIdx]], verts[faceIndexes[(edgeIdx + 1) % 3]]);
         ++intersectionCount;
       }
       else
@@ -608,8 +614,12 @@ void Geometry3D::subdivideAroundFrustum(const std::array<tp_math_utils::Plane, 6
     {
       // Add the new vertices.
       int firstIntersectionIndex = static_cast<int>(verts.size());
+      // Model space
       verts.emplace_back(std::move(intersectionVertices[0]));
       verts.emplace_back(std::move(intersectionVertices[1]));
+      // World space
+      worldSpaceVertices.emplace_back(glm::vec4(intersectionPoints[0], 1.0f));
+      worldSpaceVertices.emplace_back(glm::vec4(intersectionPoints[1], 1.0f));
 
       // Define the indexes for the 3 triangles resulting of the subdivision.
       // 1st triangle: using the non-intersected edge + 1st intersection point
@@ -641,7 +651,7 @@ void Geometry3D::subdivideAroundFrustum(const std::array<tp_math_utils::Plane, 6
     // @TODO if all vertices of the triangle are outside or inside the frustum, ignore (can be determined by using the view-projection matrix).
 
     // Start by subdividing along the first plane (it will then recursively divide along other planes).
-      subdivideFaceWithPlane(face.indexes, 0);
+    subdivideFaceWithPlane(face.indexes, 0);
   }
 }
 

@@ -8,6 +8,10 @@ namespace tp_math_utils
 {
 
 //##################################################################################################
+/*!
+Return false if ray is parallel to the plane (including ray belongs to the plane),
+true otherwise with intersection parameter filled.
+*/
 bool rayPlaneIntersection(const Ray& ray, const Plane& plane, glm::vec3& intersection)
 {
   const glm::vec3* p = plane.threePoints();
@@ -41,6 +45,10 @@ bool rayPlaneIntersection(const Ray& ray, const Plane& plane, glm::vec3& interse
 }
 
 //##################################################################################################
+/*!
+Return false if ray is parallel to the plane (including ray belongs to the plane),
+true otherwise with intersection parameter filled.
+*/
 bool rayPlaneIntersection(const Ray& ray, const Plane& plane, glm::dvec3& intersection)
 {
   const glm::vec3* pp = plane.threePoints();
@@ -69,7 +77,7 @@ bool rayPlaneIntersection(const Ray& ray, const Plane& plane, glm::dvec3& inters
 //  //fX = vIntersect2d.x;
 //  //fY = vIntersect2d.y;
 
-  // Note that to find the 3D point on the world-space ray use this
+  // Find the 3D world-space coordinates of the intersection point.
   intersection = r1 + (r1-r2) * fPercent;
   return true;
 }
