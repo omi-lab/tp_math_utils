@@ -28,6 +28,7 @@ nlohmann::json Material::saveState() const
   j["alpha"]                 = alpha;
   j["roughness"]             = roughness;
   j["metalness"]             = metalness;
+  j["specular"]              = specular;
   j["transmission"]          = transmission;
   j["transmissionRoughness"] = transmissionRoughness;
   j["ior"]                   = ior;
@@ -80,6 +81,7 @@ void Material::loadState(const nlohmann::json& j)
   alpha                 = TPJSONFloat(j, "alpha"                , alpha                );
   roughness             = TPJSONFloat(j, "roughness"            , roughness            );
   metalness             = TPJSONFloat(j, "metalness"            , metalness            );
+  specular              = TPJSONFloat(j, "specular"             , specular             );
   transmission          = TPJSONFloat(j, "transmission"         , transmission         );
   transmissionRoughness = TPJSONFloat(j, "transmissionRoughness", transmissionRoughness);
   ior                   = TPJSONFloat(j, "ior"                  , ior                  );
