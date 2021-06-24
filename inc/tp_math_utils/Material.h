@@ -30,6 +30,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
   float alpha{1.0f};                    //!< mtl: d
   float roughness{1.0f};                //!<
   float metalness{0.0f};                //!<
+  float specular{0.0f};                 //!<
   float transmission{0.0f};             //!< Transmission for refractive materials like glass or water.
   float transmissionRoughness{0.0f};    //!<
   float ior{1.45f};                     //!< Index of refraction.
@@ -59,6 +60,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
   tp_utils::StringID               normalsTexture; //!< Unit vector, mtl: map_Bump
   tp_utils::StringID             roughnessTexture; //!< Grey scale
   tp_utils::StringID             metalnessTexture; //!< Grey scale
+  tp_utils::StringID              specularTexture; //!< Grey scale
   tp_utils::StringID              emissionTexture; //!< Color
   tp_utils::StringID                   sssTexture; //!< Color
   tp_utils::StringID              sssScaleTexture; //!< Grey scale
@@ -85,6 +87,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
     closure(              "normalsTexture",               normalsTexture, "Normals"               );
     closure(            "roughnessTexture",             roughnessTexture, "Roughness"             );
     closure(            "metalnessTexture",             metalnessTexture, "Metalness"             );
+    closure(             "specularTexture",              specularTexture, "Specular"              );
     closure(             "emissionTexture",              emissionTexture, "Emission"              );
     closure(                  "sssTexture",                   sssTexture, "SSS"                   );
     closure(             "sssScaleTexture",              sssScaleTexture, "SSS scale"             );
