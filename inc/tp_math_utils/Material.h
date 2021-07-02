@@ -28,9 +28,9 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
   float heightMidlevel{0.5f};           //!< Used to offset subdivision height maps.
 
   float alpha{1.0f};                    //!< mtl: d
-  float roughness{1.0f};                //!<
+  float roughness{0.5f};                //!<
   float metalness{0.0f};                //!<
-  float specular{0.0f};                 //!<
+  float specular{0.5f};                 //!<
   float transmission{0.0f};             //!< Transmission for refractive materials like glass or water.
   float transmissionRoughness{0.0f};    //!<
   float ior{1.45f};                     //!< Index of refraction.
@@ -43,7 +43,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
   float    iridescentOffset{0.0f};
   float iridescentFrequency{0.0f};
 
-  glm::vec3 sssRadius{0.2f,0.2f,0.2f};  //!< Subsurface scattering radius per color.
+  glm::vec3 sssRadius{1.0f,0.2f,0.1f};  //!< Subsurface scattering radius per color.
 
   float useAmbient    {1.0f};           //!< Should the ambient light be used to modulate albedo.
   float useDiffuse    {1.0f};           //!< Should the diffuse calculation be used to modulate albedo.
