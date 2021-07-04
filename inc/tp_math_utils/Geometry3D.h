@@ -99,7 +99,9 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
 
   //################################################################################################
   // Create subdivisions in the mesh to split the parts outside of the given frustum.
-  void subdivideAroundFrustum(const glm::mat4& modelMatrix, const std::array<tp_math_utils::Plane, 6>& frustumPlanes);
+  void subdivideAroundFrustum(const glm::mat4& modelMatrix,
+                              const std::array<tp_math_utils::Plane, 6>& frustumPlanes,
+                              const std::function<bool(const glm::vec4&)>& isPointInCamera);
 
   //################################################################################################
   tp_utils::StringID getName() const;

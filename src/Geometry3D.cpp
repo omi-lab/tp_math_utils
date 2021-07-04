@@ -537,7 +537,9 @@ void Geometry3D::addBackFaces()
 }
 
 //##################################################################################################
-void Geometry3D::subdivideAroundFrustum(const glm::mat4& modelMatrix, const std::array<tp_math_utils::Plane, 6>& frustumPlanes)
+void Geometry3D::subdivideAroundFrustum(const glm::mat4& modelMatrix,
+                                        const std::array<tp_math_utils::Plane, 6>& frustumPlanes,
+                                        const std::function<bool(const glm::vec4&)>& isPointInCamera)
 {
   // Calculate the faces of the mesh.
   std::vector<Face_lt> faces = calculateFaces(*this, false);
@@ -558,7 +560,7 @@ void Geometry3D::subdivideAroundFrustum(const glm::mat4& modelMatrix, const std:
   {
     if (planeIdx >= frustumPlanes.size())
     {
-      // We reached the last subdivision: add the indexes of the provided triangle.
+      // We reached the last subdivision level: add the indexes of the provided triangle.
       for (size_t i = 0; i < faceIndexes.size(); ++i)
         newIndexes.indexes.emplace_back(faceIndexes[i]);
       return;
@@ -581,7 +583,6 @@ void Geometry3D::subdivideAroundFrustum(const glm::mat4& modelMatrix, const std:
       const tp_math_utils::Ray triangleEdge(edgeVertex0, edgeVertex1);
       if (tp_math_utils::rayPlaneIntersection(triangleEdge, frustumPlane, intersectionPoints[intersectionCount]))
       {
-        // @TODO eliminate the intersection if it is out the plane (or might be easier to check if out of frustum by using view-projection matrix).
         float edgeLength = glm::distance(edgeVertex0, edgeVertex1);
         float distanceToEdgeVertex0 = glm::distance(intersectionPoints[intersectionCount], edgeVertex0);
         // If the intersection is already a triangle vertex or outside the edge, no need to subdivide.
@@ -600,56 +601,64 @@ void Geometry3D::subdivideAroundFrustum(const glm::mat4& modelMatrix, const std:
       else
         nonIntersectedEdgeIdx = edgeIdx;
 
-      // There can either be two intersection points or 0 (if triangle is completely outside or inside the frustum).
+      // There can either be 2 intersection points or 0 (if triangle is entirely on one side or the other of the plane).
       if (intersectionCount > 1 || ((edgeIdx > 0) && (intersectionCount == 0)))
         break;
     }
 
+    // 1st possibility: no intersection.
     if (intersectionCount == 0)
     {
-      // No intersection, recurse on the same triangle with the next plane.
+      // Recurse on the same triangle with the next plane.
       subdivideFaceWithPlane(faceIndexes, planeIdx);
+      return;
     }
-    else
+
+    // 2nd possibility: both intersections are outside the frustum.
+    if (!isPointInCamera(glm::vec4(intersectionPoints[0], 1.0f))
+        && !isPointInCamera(glm::vec4(intersectionPoints[1], 1.0f)))
     {
-      // Add the new vertices.
-      int firstIntersectionIndex = static_cast<int>(verts.size());
-      // Model space
-      verts.emplace_back(std::move(intersectionVertices[0]));
-      verts.emplace_back(std::move(intersectionVertices[1]));
-      // World space
-      worldSpaceVertices.emplace_back(glm::vec4(intersectionPoints[0], 1.0f));
-      worldSpaceVertices.emplace_back(glm::vec4(intersectionPoints[1], 1.0f));
-
-      // Define the indexes for the 3 triangles resulting of the subdivision.
-      // 1st triangle: using the non-intersected edge + 1st intersection point
-      int index0 = faceIndexes[nonIntersectedEdgeIdx];
-      int index1 = faceIndexes[(nonIntersectedEdgeIdx + 1) % 3];
-      int index2 = firstIntersectionIndex;
-      // Recurse on this new triangle with the next plane.
-      subdivideFaceWithPlane({index0, index1, index2}, planeIdx);
-
-      // 2nd triangle: using 1st intersection point, 2nd intersection point, 1st vertex of non-intersected edge (or opposite vertex to non-intersected edge).
-      index0 = firstIntersectionIndex;
-      index1 = firstIntersectionIndex + 1;
-      index2 = (nonIntersectedEdgeIdx != 1) ? faceIndexes[nonIntersectedEdgeIdx] : faceIndexes[(nonIntersectedEdgeIdx + 2) % 3];
-      // Recurse on this new triangle with the next plane.
-      subdivideFaceWithPlane({index0, index1, index2}, planeIdx);
-
-      // 3rd triangle: using 2nd intersection point, 1st intersection point, opposite vertex to non-intersected edge (or 2nd vertex of non-intersected edge).
-      index0 = firstIntersectionIndex + 1;
-      index1 = firstIntersectionIndex;
-      index2 = (nonIntersectedEdgeIdx != 1) ? faceIndexes[(nonIntersectedEdgeIdx + 2) % 3] : faceIndexes[(nonIntersectedEdgeIdx + 1) % 3];
-      // Recurse on this new triangle with the next plane.
-      subdivideFaceWithPlane({index0, index1, index2}, planeIdx);
+      // No need to subdivide, recurse on the same triangle with the next plane.
+      subdivideFaceWithPlane(faceIndexes, planeIdx);
+      return;
     }
+
+    // 3rd possibility: subdivide in 3 triangles.
+    // Add the new vertices.
+    int firstIntersectionIndex = static_cast<int>(verts.size());
+    // Model space
+    verts.emplace_back(std::move(intersectionVertices[0]));
+    verts.emplace_back(std::move(intersectionVertices[1]));
+    // World space
+    worldSpaceVertices.emplace_back(glm::vec4(intersectionPoints[0], 1.0f));
+    worldSpaceVertices.emplace_back(glm::vec4(intersectionPoints[1], 1.0f));
+
+    // Define the indexes for the 3 triangles resulting of the subdivision.
+    // 1st triangle: using the non-intersected edge + 1st intersection point
+    int index0 = faceIndexes[nonIntersectedEdgeIdx];
+    int index1 = faceIndexes[(nonIntersectedEdgeIdx + 1) % 3];
+    int index2 = firstIntersectionIndex;
+    // Recurse on this new triangle with the next plane.
+    subdivideFaceWithPlane({index0, index1, index2}, planeIdx);
+
+    // 2nd triangle: using 1st intersection point, 2nd intersection point, 1st vertex of non-intersected edge (or opposite vertex to non-intersected edge).
+    index0 = firstIntersectionIndex;
+    index1 = firstIntersectionIndex + 1;
+    index2 = (nonIntersectedEdgeIdx != 1) ? faceIndexes[nonIntersectedEdgeIdx] : faceIndexes[(nonIntersectedEdgeIdx + 2) % 3];
+    // Recurse on this new triangle with the next plane.
+    subdivideFaceWithPlane({index0, index1, index2}, planeIdx);
+
+    // 3rd triangle: using 2nd intersection point, 1st intersection point, opposite vertex to non-intersected edge (or 2nd vertex of non-intersected edge).
+    index0 = firstIntersectionIndex + 1;
+    index1 = firstIntersectionIndex;
+    index2 = (nonIntersectedEdgeIdx != 1) ? faceIndexes[(nonIntersectedEdgeIdx + 2) % 3] : faceIndexes[(nonIntersectedEdgeIdx + 1) % 3];
+    // Recurse on this new triangle with the next plane.
+    subdivideFaceWithPlane({index0, index1, index2}, planeIdx);
   };
 
   // For each triangle of the mesh
   for (const auto& face : faces)
   {
-    // @TODO if all vertices of the triangle are outside or inside the frustum, ignore (can be determined by using the view-projection matrix).
-
     // Start by subdividing along the first plane (it will then recursively divide along other planes).
     subdivideFaceWithPlane(face.indexes, 0);
   }
