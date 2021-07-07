@@ -538,8 +538,8 @@ void Geometry3D::addBackFaces()
 
 //##################################################################################################
 void Geometry3D::subdivideAroundFrustum(const glm::mat4& modelMatrix,
-                                        const std::array<tp_math_utils::Plane, 6>& frustumPlanes,
-                                        const std::function<bool(const glm::vec4&)>& isPointInCamera)
+                                        const std::vector<tp_math_utils::Plane>& frustumPlanes,
+                                        const std::function<bool(const glm::vec3&, glm::vec4*)>& isPointInCamera)
 {
   // Calculate the faces of the mesh.
   std::vector<Face_lt> faces = calculateFaces(*this, false);
@@ -556,7 +556,8 @@ void Geometry3D::subdivideAroundFrustum(const glm::mat4& modelMatrix,
   for (auto& modelSpaceVertex : verts)
     worldSpaceVertices.emplace_back(modelMatrix * glm::vec4(modelSpaceVertex.vert, 1.0f));
 
-  std::function<void(const std::array<int, 3>&, size_t)> subdivideFaceWithPlane = [&](const std::array<int, 3>& faceIndexes, size_t planeIdx)
+  std::function<void(const std::array<int, 3>&, size_t)> subdivideFaceWithPlane =
+      [&](const std::array<int, 3>& faceIndexes, size_t planeIdx)
   {
     if (planeIdx >= frustumPlanes.size())
     {
@@ -594,7 +595,7 @@ void Geometry3D::subdivideAroundFrustum(const glm::mat4& modelMatrix,
         }
 
         float t = distanceToEdgeVertex0 / edgeLength;
-        // Make a new vertex at the intersection point (in model space).
+        // Create a new vertex at the intersection point (in model space).
         intersectionVertices[intersectionCount] = Vertex3D::interpolate(t, verts[faceIndexes[edgeIdx]], verts[faceIndexes[(edgeIdx + 1) % 3]]);
         ++intersectionCount;
       }
@@ -614,16 +615,46 @@ void Geometry3D::subdivideAroundFrustum(const glm::mat4& modelMatrix,
       return;
     }
 
-    // 2nd possibility: both intersections are outside the frustum.
-    if (!isPointInCamera(glm::vec4(intersectionPoints[0], 1.0f))
-        && !isPointInCamera(glm::vec4(intersectionPoints[1], 1.0f)))
+    // 2nd possibility: intersection edge is entirely outside the frustum.
+    glm::vec4 offsetPoint0;
+    glm::vec4 offsetPoint1;
+    bool point0InCamera = isPointInCamera(intersectionPoints[0], &offsetPoint0);
+    bool point1InCamera = isPointInCamera(intersectionPoints[1], &offsetPoint0);
+    // Detect case where both intersections are outside and on the same side of the frustum.
+    if (!point0InCamera && !point1InCamera)
     {
-      // No need to subdivide, recurse on the same triangle with the next plane.
-      subdivideFaceWithPlane(faceIndexes, planeIdx);
-      return;
+      glm::vec4 mult = offsetPoint0 * offsetPoint1;
+      if (mult.x >= 0 && mult.y >= 0 && mult.z >= 0 && mult.w >= 0)
+      {
+        // No need to subdivide, recurse on the same triangle with the next plane.
+        subdivideFaceWithPlane(faceIndexes, planeIdx);
+        return;
+      }
     }
 
-    // 3rd possibility: subdivide in 3 triangles.
+    // Detect case where one intersection is on the frustum edge and the rest is outside.
+    size_t pointInFrustumIdx = 2;
+    if (point0InCamera)
+    {
+      if (!point1InCamera) pointInFrustumIdx = 0;
+    }
+    else
+    {
+      if (point1InCamera) pointInFrustumIdx = 1;
+    }
+    if (pointInFrustumIdx == 0 || pointInFrustumIdx == 1)
+    {
+      glm::vec3 offsetPoint = intersectionPoints[pointInFrustumIdx] +
+          0.01f * (intersectionPoints[(pointInFrustumIdx + 1) % 2] - intersectionPoints[pointInFrustumIdx]);
+      if (!isPointInCamera(offsetPoint, nullptr))
+      {
+        // No need to subdivide, recurse on the same triangle with the next plane.
+        subdivideFaceWithPlane(faceIndexes, planeIdx);
+        return;
+      }
+    }
+
+    // 3rd possibility: intersection edge is inside the frustum (partially at least): subdivide in 3 triangles.
     // Add the new vertices.
     int firstIntersectionIndex = static_cast<int>(verts.size());
     // Model space
