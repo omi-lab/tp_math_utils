@@ -77,6 +77,7 @@ void Sphere::divideClass1(size_t division,
     double stepJ = 1.0 / double(i+1);
 
     std::vector<glm::vec3> next;
+    next.reserve(i+2);
     next.push_back(bb);
 
     for(size_t j=0; j<i; j++)

@@ -1,7 +1,7 @@
 #ifndef tp_math_utils_Plane_h
 #define tp_math_utils_Plane_h
 
-#include "tp_math_utils/Globals.h"
+#include "tp_math_utils/Geometry3D.h"
 
 #include <array>
 
@@ -41,6 +41,9 @@ public:
 
   //################################################################################################
   static Plane planeFromPoints(const std::vector<glm::vec3>& points);
+
+  //################################################################################################
+  Geometry3D geometry(float scaleI, float scaleJ, float scaleU, float scaleV, size_t tilesI=1, size_t tilesJ=1) const;
 
 private:
   mutable std::array<glm::vec3, 2> m_pointAndNormal{};

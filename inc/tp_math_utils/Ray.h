@@ -22,7 +22,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT Ray
 //##################################################################################################
 struct TP_MATH_UTILS_SHARED_EXPORT DRay
 {
-  DRay(const glm::dvec3& p0_={0.0, 0.0, 0.0}, const glm::dvec3 p1_={0.0, 0.0, 0.0}):
+  DRay(const glm::dvec3& p0_={0.0, 0.0, 0.0}, const glm::dvec3& p1_={0.0, 0.0, 0.0}):
     p0(p0_),
     p1(p1_)
   {

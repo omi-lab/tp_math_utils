@@ -66,8 +66,11 @@ inline const std::vector<glm::vec2> vec2VectorFromJSON(const nlohmann::json& j)
 {
   std::vector<glm::vec2> coords;
   if(j.is_array())
+  {
+    coords.reserve(j.size());
     for(const auto& jj : j)
       coords.push_back(vec2FromJSON(jj));
+  }
   return coords;
 }
 
@@ -105,8 +108,11 @@ inline const std::vector<glm::vec3> vec3VectorFromJSON(const nlohmann::json& j)
 {
   std::vector<glm::vec3> coords;
   if(j.is_array())
+  {
+    coords.reserve(j.size());
     for(const auto& jj : j)
       coords.push_back(vec3FromJSON(jj));
+  }
   return coords;
 }
 
@@ -144,8 +150,11 @@ inline const std::vector<glm::vec4> vec4VectorFromJSON(const nlohmann::json& j)
 {
   std::vector<glm::vec4> coords;
   if(j.is_array())
+  {
+    coords.reserve(j.size());
     for(const auto& jj : j)
       coords.push_back(vec4FromJSON(jj));
+  }
   return coords;
 }
 

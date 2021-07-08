@@ -35,7 +35,7 @@ value at both ends defines a cylinder.
 */
 struct TP_MATH_UTILS_SHARED_EXPORT DCone
 {
-  DCone(const glm::dvec3& p0_={0.0, 0.0, 0.0}, double r0_=0.0, const glm::dvec3 p1_={0.0, 0.0, 0.0}, double r1_=0.0):
+  DCone(const glm::dvec3& p0_={0.0, 0.0, 0.0}, double r0_=0.0, const glm::dvec3& p1_={0.0, 0.0, 0.0}, double r1_=0.0):
     p0(p0_),
     p1(p1_),
     r0(r0_),

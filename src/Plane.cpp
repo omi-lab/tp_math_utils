@@ -185,5 +185,54 @@ Plane Plane::planeFromPoints(const std::vector<glm::vec3>& points)
 
   return Plane(centroid, normal);
 }
+//##################################################################################################
+Geometry3D Plane::geometry(float scaleI, float scaleJ, float scaleU, float scaleV, size_t tilesI, size_t tilesJ) const
+{
+  Geometry3D geometry;
+
+  if(tilesI<1 || tilesJ<1)
+    return geometry;
+
+  const glm::vec3* points = threePoints();
+  glm::vec3 normal = pointAndNormal()[1];
+
+  if(scaleI<0.0f)normal = normal*-1.0f;
+  if(scaleJ<0.0f)normal = normal*-1.0f;
+
+  for(size_t i=0; i<=tilesI; i++)
+  {
+    float fI = float(i)/float(tilesI);
+    float currentI = fI * scaleI;
+    float currentU = fI * scaleU;
+
+    if(i>0)
+    {
+      Indexes3D& indexes = geometry.indexes.emplace_back();
+      indexes.type = geometry.triangleStrip;
+    }
+
+    for(size_t j=0; j<=tilesJ; j++)
+    {
+      float fJ = float(j)/float(tilesJ);
+      float currentJ = fJ * scaleJ;
+      float currentV = fJ * scaleV;
+
+      Vertex3D& v = geometry.verts.emplace_back();
+      v.normal = normal;
+      v.vert = points[0] + (points[1]*currentI) + (points[2]*currentJ);
+      v.texture = {currentU, currentV};
+
+      if(i>0)
+      {
+        Indexes3D& indexes = geometry.indexes.back();
+        int idx = int(geometry.verts.size())-1;
+        indexes.indexes.push_back(idx);
+        indexes.indexes.push_back(idx-(int(tilesJ)+1));
+      }
+    }
+  }
+
+  return geometry;
+}
 
 }
