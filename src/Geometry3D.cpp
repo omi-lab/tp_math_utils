@@ -619,7 +619,7 @@ void Geometry3D::subdivideAroundFrustum(const glm::mat4& modelMatrix,
     glm::vec4 offsetPoint0;
     glm::vec4 offsetPoint1;
     bool point0InCamera = isPointInCamera(intersectionPoints[0], &offsetPoint0);
-    bool point1InCamera = isPointInCamera(intersectionPoints[1], &offsetPoint0);
+    bool point1InCamera = isPointInCamera(intersectionPoints[1], &offsetPoint1);
     // Detect case where both intersections are outside and on the same side of the frustum.
     if (!point0InCamera && !point1InCamera)
     {
