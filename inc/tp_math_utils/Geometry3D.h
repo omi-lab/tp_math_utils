@@ -98,10 +98,25 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
   void addBackFaces();
 
   //################################################################################################
-  // Create subdivisions in the mesh to split the parts outside of the given frustum.
-  void subdivideAroundFrustum(const glm::mat4& modelMatrix,
+  void subdivideToTargetSize(const glm::mat4& modelMatrix,
+                             float targetEdgeLength,
+                             unsigned int maxSubdivisions);
+  //################################################################################################
+  // Divide the mesh in subdivisions to split the parts outside of the given frustum.
+  void divideAroundFrustum(const glm::mat4& modelMatrix,
                               const std::vector<tp_math_utils::Plane>& frustumPlanes,
                               const std::function<bool(const glm::vec3&, glm::vec4*)>& isPointInCamera);
+
+  //################################################################################################
+  /*! Divide the mesh in subdivisions to split the parts outside of the given frustum
+   *  then subdivide parts inside the frustum further until target size is reached or smaller.
+   *  @param[out] maxSubdivisions Safeguard to limit the subdividing recursions.
+  */
+  void subdivideToTargetSizeInsideFrustum(const glm::mat4& modelMatrix,
+                                          const std::vector<tp_math_utils::Plane>& frustumPlanes,
+                                          const std::function<bool(const glm::vec3&, glm::vec4*)>& isPointInCamera,
+                                          float targetEdgeLength,
+                                          unsigned int maxSubdivisions);
 
   //################################################################################################
   tp_utils::StringID getName() const;
