@@ -45,6 +45,14 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
 
   glm::vec3 sssRadius{1.0f,0.2f,0.1f};  //!< Subsurface scattering radius per color.
 
+  float albedoBrightness{0.0f};         //!< Modify the albedo texture brightness.
+  float albedoContrast  {0.0f};         //!< Modify the albedo texture contrast.
+  float albedoGamma     {1.0f};         //!< Modify the albedo texture gamma.
+  float albedoHue       {0.5f};         //!< Modify the albedo texture hue.
+  float albedoSaturation{1.0f};         //!< Modify the albedo texture saturation.
+  float albedoValue     {1.0f};         //!< Modify the albedo texture value.
+  float albedoFactor    {1.0f};         //!< Modify the albedo texture factor.
+
   float useAmbient    {1.0f};           //!< Should the ambient light be used to modulate albedo.
   float useDiffuse    {1.0f};           //!< Should the diffuse calculation be used to modulate albedo.
   float useNdotL      {1.0f};           //!< Should the angel of the light be used to calculate the color.
@@ -99,7 +107,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
     closure(            "clearCoatTexture",             clearCoatTexture, "Clear coat"            );
     closure(   "clearCoatRoughnessTexture",    clearCoatRoughnessTexture, "Clear coat roughness"  );
     closure(               "velvetTexture",                velvetTexture, "Velvet"                );
-    closure(         "velvetFactorTexture",          velvetFactorTexture, "Velvet factor"         );    
+    closure(         "velvetFactorTexture",          velvetFactorTexture, "Velvet factor"         );
     closure(     "iridescentFactorTexture",      iridescentFactorTexture, "Iridescent factor"     );
     closure(     "iridescentOffsetTexture",      iridescentOffsetTexture, "Iridescent offset"     );
     closure(  "iridescentFrequencyTexture",   iridescentFrequencyTexture, "Iridescent frequency"  );

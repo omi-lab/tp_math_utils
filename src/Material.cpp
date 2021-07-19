@@ -37,11 +37,19 @@ nlohmann::json Material::saveState() const
   j["clearCoat"]             = clearCoat;
   j["clearCoatRoughness"]    = clearCoatRoughness;
 
-  j["iridescentFactor"]    = iridescentFactor;
-  j["iridescentOffset"]    = iridescentOffset;
-  j["iridescentFrequency"] = iridescentFrequency;
+  j["iridescentFactor"]      = iridescentFactor;
+  j["iridescentOffset"]      = iridescentOffset;
+  j["iridescentFrequency"]   = iridescentFrequency;
 
   j["sssRadius"]             = tp_math_utils::vec3ToJSON(sssRadius);
+
+  j["albedoBrightness"]      = albedoBrightness;
+  j["albedoContrast"]        = albedoContrast;
+  j["albedoGamma"]           = albedoGamma;
+  j["albedoHue"]             = albedoHue;
+  j["albedoSaturation"]      = albedoSaturation;
+  j["albedoValue"]           = albedoValue;
+  j["albedoFactor"]          = albedoFactor;
 
   j["useAmbient"]            = useAmbient;
   j["useDiffuse"]            = useDiffuse;
@@ -94,6 +102,14 @@ void Material::loadState(const nlohmann::json& j)
   iridescentFrequency   = TPJSONFloat(j, "iridescentFrequency"  , iridescentFrequency  );
 
   sssRadius        = tp_math_utils::vec3FromJSON(TPJSON(j, "sssRadius"), sssRadius);
+
+  albedoBrightness = TPJSONFloat(j, "albedoBrightness", albedoBrightness);
+  albedoContrast   = TPJSONFloat(j, "albedoContrast"  , albedoContrast  );
+  albedoGamma      = TPJSONFloat(j, "albedoGamma"     , albedoGamma     );
+  albedoHue        = TPJSONFloat(j, "albedoHue"       , albedoHue       );
+  albedoSaturation = TPJSONFloat(j, "albedoSaturation", albedoSaturation);
+  albedoValue      = TPJSONFloat(j, "albedoValue"     , albedoValue     );
+  albedoFactor     = TPJSONFloat(j, "albedoFactor"    , albedoFactor    );
 
   useAmbient       = TPJSONFloat(j, "useAmbient"    , useAmbient    );
   useDiffuse       = TPJSONFloat(j, "useDiffuse"    , useDiffuse    );
