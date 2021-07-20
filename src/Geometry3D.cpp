@@ -798,7 +798,8 @@ void Geometry3D::subdivideToTargetSize(const glm::mat4& modelMatrix,
 
   // For each triangle of the mesh,
   for (const auto& face : faces)
-    subdivideFaceToTarget(face.indexes, verts, newIndexes.indexes, modelMatrix, targetEdgeLength, maxSubdivisions);
+    subdivideFaceToTarget(face.indexes, verts, newIndexes.indexes, modelMatrix,
+                          targetEdgeLength, maxSubdivisions);
 }
 
 //##################################################################################################
@@ -838,8 +839,9 @@ void Geometry3D::subdivideToTargetSizeInsideFrustum(const glm::mat4& modelMatrix
   newIndexes.indexes.reserve(faces.size() * 3);
 
   // For each triangle of the mesh,
-  for (const auto& face : faces)divideFaceWithFrustum(face.indexes, verts, newIndexes.indexes, modelMatrix,
-                                                      frustumPlanes, isPointInCamera, targetEdgeLength, maxSubdivisions);
+  for (const auto& face : faces)
+    divideFaceWithFrustum(face.indexes, verts, newIndexes.indexes, modelMatrix,
+                          frustumPlanes, isPointInCamera, targetEdgeLength, maxSubdivisions);
 }
 
 //##################################################################################################
