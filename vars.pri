@@ -54,6 +54,9 @@ HEADERS += inc/tp_math_utils/Light.h
 SOURCES += src/Geometry3D.cpp
 HEADERS += inc/tp_math_utils/Geometry3D.h
 
+#SOURCES += src/SubdivideGeometry3D.cpp
+HEADERS += inc/tp_math_utils/SubdivideGeometry3D.h
+
 SOURCES += src/ClosestPointsOnLines.cpp
 HEADERS += inc/tp_math_utils/ClosestPointsOnLines.h
 
