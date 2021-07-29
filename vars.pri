@@ -77,3 +77,6 @@ HEADERS += inc/tp_math_utils/BoxPacker.h
 
 SOURCES += src/Sphere.cpp
 HEADERS += inc/tp_math_utils/Sphere.h
+
+SOURCES += src/Frustum.cpp
+HEADERS += inc/tp_math_utils/Frustum.h

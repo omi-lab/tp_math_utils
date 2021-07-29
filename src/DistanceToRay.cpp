@@ -23,4 +23,27 @@ float distanceToRay(const glm::vec3& point, const Ray& ray, glm::vec3& pointOnRa
   return glm::distance(point, pointOnRay);
 }
 
+
+//##################################################################################################
+float distanceToLineSegment(const glm::vec3& point, const Ray& lineSegment, glm::vec3& pointOnRay)
+{
+  pointOnRay = closestPointOnLineSegment(point, lineSegment);
+  return glm::distance(point, pointOnRay);
+}
+
+//##################################################################################################
+glm::vec3 closestPointOnLineSegment(const glm::vec3& point, const Ray& lineSegment)
+{
+  glm::dvec3 v = lineSegment.p1 - lineSegment.p0;
+  glm::dvec3 w = point - lineSegment.p0;
+
+  double c1 = glm::dot(w,v);
+  double c2 = glm::dot(v,v);
+  double b = std::clamp(c1 / c2, 0.0, 1.0);
+
+  return glm::dvec3(lineSegment.p0) + b * v;
+}
+
+
+
 }

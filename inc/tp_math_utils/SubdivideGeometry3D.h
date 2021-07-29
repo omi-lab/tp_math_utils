@@ -4,10 +4,11 @@
 #include "tp_math_utils/Geometry3D.h"
 
 #include "tp_utils/DebugUtils.h"
+#include "tp_utils/TimeUtils.h"
 
 #include "glm/gtx/norm.hpp"
 
-#include <set>
+#include <list>
 
 namespace tp_math_utils
 {
@@ -21,14 +22,6 @@ class SubdivideGeometry3D
   enum class TIdx : size_t {}; //!< Index into the triangles array. (m_triangles[TIdx])
   enum class MIdx : size_t {}; //!< Index into the mesh array.      (m_geometry->indexes[MIdx])
 
-  struct PairHash
-  {
-      template <class T1, class T2>
-      std::size_t operator() (const std::pair<T1, T2> &pair) const {
-          return std::hash<T1>()(pair.first) ^ std::hash<T2>()(pair.second);
-      }
-  };
-
   struct Triangle_lt
   {
     MIdx iM{0};          //!< Index of the mesh that this triangle is part of.
@@ -39,22 +32,13 @@ class SubdivideGeometry3D
 
   struct Edge_lt
   {
-    PIdx iPs[2];
     std::vector<TIdx> iTs; //!< Indexes of triangles that share this edge.
+    PIdx iPs[2];
     float length;
-    bool visible{false};   //!< Can the camera see any of the triangles attached to this edge.
 
     bool contains(PIdx iP)
     {
       return (iPs[0] == iP) || (iPs[1] == iP);
-    }
-  };
-
-  struct EdgeLessThan
-  {
-    bool operator()(const Edge_lt* a, const Edge_lt* b) const
-    {
-      return a->length < b->length;
     }
   };
 
@@ -107,8 +91,6 @@ public:
 
       // Again guess how many triangles and edges we may need.
       m_triangles.reserve(faceCount*2);
-      //m_edges.reserve(faceCount*3*2);
-      m_edgeLookup.reserve(faceCount*3*2);
 
       for(size_t iM=0; iM<geometry->indexes.size(); iM++)
       {
@@ -138,7 +120,7 @@ public:
       }
     }
 
-    popDeadEdges();
+    removeDeadEdges();
   }
 
   //################################################################################################
@@ -153,7 +135,7 @@ public:
 
     size_t count=0;
 
-    std::unique_ptr<Edge_lt> edge{takeLastEdge()};
+    std::unique_ptr<Edge_lt> edge{tpTakeLast(m_edges)};
 
     struct ExistingNewVerts
     {
@@ -234,9 +216,30 @@ public:
       }
     }
 
-    popDeadEdges();
+    removeDeadEdges();
 
     return count;
+  }
+
+  //################################################################################################
+  void reindex()
+  {
+    m_edges.clear();
+
+    auto triangleExcluded = [&](const Triangle_lt& t)
+    {
+      return t.exclude;
+    };
+
+    m_triangles.erase(std::remove_if(m_triangles.begin(), m_triangles.end(), triangleExcluded), m_triangles.end());
+
+    for(size_t iT=0; iT<m_triangles.size(); iT++)
+    {
+      const Triangle_lt& t = m_triangles.at(iT);
+      insertEdge(positionIndex(t.iVs[0]), positionIndex(t.iVs[1]), TIdx(iT));
+      insertEdge(positionIndex(t.iVs[1]), positionIndex(t.iVs[2]), TIdx(iT));
+      insertEdge(positionIndex(t.iVs[2]), positionIndex(t.iVs[0]), TIdx(iT));
+    }
   }
 
   //################################################################################################
@@ -271,7 +274,7 @@ public:
   //################################################################################################
   float longestEdge() const
   {
-    return m_edges.empty()?0.0f:(*m_edges.rbegin())->length;
+    return m_edges.empty()?0.0f:m_edges.back()->length;
   }
 
 private:
@@ -318,17 +321,17 @@ private:
   }
 
   //################################################################################################
-  float areaOfTraingle(const Triangle_lt& triangle)
+  bool pointsAreColinear(const Triangle_lt& triangle)
   {
-    glm::vec3 v0 = position(triangle.iVs[0]);
-    glm::vec3 v1 = position(triangle.iVs[1]);
-    glm::vec3 v2 = position(triangle.iVs[2]);
+    glm::dvec3 v0 = position(triangle.iVs[0]);
+    glm::dvec3 v1 = position(triangle.iVs[1]);
+    glm::dvec3 v2 = position(triangle.iVs[2]);
 
-    glm::vec3 e1 = v1-v0;
-    glm::vec3 e2 = v2-v0;
-    glm::vec3 e3 = glm::cross(e1, e2);
+    glm::dvec3 e1 = v1-v0;
+    glm::dvec3 e2 = v2-v0;
+    glm::dvec3 e3 = glm::cross(e1, e2);
 
-    return 0.5f * glm::length(e3);
+    return glm::length2(e3) < 0.0000000000001;
   }
 
   //################################################################################################
@@ -339,6 +342,9 @@ private:
     PIdx i2 = positionIndex(triangle.iVs[2]);
 
     if(i0==i1 || i0==i2 || i1==i2)
+      return false;
+
+    if(pointsAreColinear(triangle))
       return false;
 
     return true;
@@ -363,49 +369,66 @@ private:
   }
 
   //################################################################################################
+  void debugCounts()
+  {
+    static int64_t lastT{0};
+    if(tp_utils::currentTimeMS()>lastT)
+    {
+      lastT = tp_utils::currentTimeMS() + 4000;
+
+      size_t visible=0;
+      size_t notVisible=0;
+      for(const auto& triangle : m_triangles)
+      {
+        if(triangle.exclude)
+          continue;
+
+        if(triangle.visible)
+          visible++;
+        else
+          notVisible++;
+      }
+
+      tpWarning() << "Edges: " << m_edges.size() << " Visible: " << visible << " Not visible: " << notVisible;
+    }
+  }
+
+  //################################################################################################
   void insertEdge(PIdx iP0, PIdx iP1, TIdx iT)
   {
+    debugCounts();
+
     if(iP1<iP0)
       std::swap(iP0, iP1);
 
-    auto updateVisible = [&](Edge_lt* e)
-    {
-      e->visible = false;
-      for(TIdx iT : e->iTs)
-      {
-        const auto& t = triangle(iT);
-        if(t.visible && !t.exclude)
-        {
-          e->visible=true;
-          return;
-        }
-      }
-    };
-
-    if(auto i = m_edgeLookup.find({iP0, iP1}); i!=m_edgeLookup.end())
-    {
-      i->second->iTs.push_back(iT);
-      updateVisible(i->second);
+    float length = m_edgeLength(position(iP0), position(iP1));
+    if(length < m_maxLength)
       return;
+
+    Edge_lt key;
+    key.length = length;
+    auto i = std::lower_bound(m_edges.begin(), m_edges.end(), &key, [&](const auto& a, const auto& b)
+    {
+      return a->length < b->length;
+    });
+
+    for(; i!=m_edges.end() && (*i)->length<=length; ++i)
+    {
+      if((*i)->iPs[0] == iP0 && (*i)->iPs[1] == iP1)
+      {
+        (*i)->iTs.push_back(iT);
+        return;
+      }
     }
 
-    float length = m_edgeLength(position(iP0), position(iP1));
-    if(length >= m_maxLength)
     {
-      auto e = new Edge_lt();
+      Edge_lt* e = new Edge_lt();
       e->iPs[0] = iP0;
       e->iPs[1] = iP1;
       e->iTs.push_back(iT);
       e->length = length;
-      updateVisible(e);
 
-      //{
-      //  auto i = std::lower_bound(m_edges.begin(), m_edges.end(), length, [](const Edge_lt* a, float b){return a->length < b;});
-      //  m_edges.insert(i, e);
-      //  m_edgeLookup[{iP0, iP1}] = e;
-      //}
-      m_edges.insert(e);
-      m_edgeLookup[{iP0, iP1}] = e;
+      m_edges.insert(i, std::unique_ptr<Edge_lt>(e));
     }
   }
 
@@ -424,7 +447,7 @@ private:
   //################################################################################################
   glm::vec3& position(VIdx idx)
   {
-    return m_positions.at(positionIndex(idx));
+    return m_positions.at(size_t(positionIndex(idx)));
   }
 
   //################################################################################################
@@ -441,25 +464,21 @@ private:
 
   //################################################################################################
   //! If an edge is not connected to any visible triangles we don't need to care about it.
-  /*!
-  This pops dead edges until the list is empty or a valid edge if found.
-  */
-  void popDeadEdges()
+  void removeDeadEdges()
   {
-    while(!m_edges.empty() && !(*m_edges.rbegin())->visible)
-      takeLastEdge();
-  }
+    auto edgeVisible = [&](const std::unique_ptr<Edge_lt>& e)
+    {
+      for(TIdx iT : e->iTs)
+      {
+        const auto& t = triangle(iT);
+        if(t.visible && !t.exclude)
+          return false;
+      }
+      return true;
+    };
 
-  //################################################################################################
-  Edge_lt* takeLastEdge()
-  {
-    auto i = m_edges.rbegin();
-    Edge_lt* e = *i;
-    m_edges.erase(std::next(i).base());
-    m_edgeLookup.erase({e->iPs[0], e->iPs[1]});
-    return e;
+    m_edges.erase(std::remove_if(m_edges.begin(), m_edges.end(), edgeVisible), m_edges.end());
   }
-
 
   Geometry3D* m_geometry;
   TriangleVisible m_triangleVisible;
@@ -470,8 +489,7 @@ private:
   std::vector<PIdx>        m_positionLookup;
   std::vector<Triangle_lt> m_triangles;
 
-  std::multiset<Edge_lt*, EdgeLessThan>                         m_edges;
-  std::unordered_map<std::pair<PIdx, PIdx>, Edge_lt*, PairHash> m_edgeLookup;
+  std::vector<std::unique_ptr<Edge_lt>> m_edges;
 };
 
 }
