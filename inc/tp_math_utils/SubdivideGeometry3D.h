@@ -8,6 +8,7 @@
 
 #include "glm/gtx/norm.hpp"
 
+#include <deque>
 #include <list>
 
 namespace tp_math_utils
@@ -136,6 +137,15 @@ public:
     size_t count=0;
 
     std::unique_ptr<Edge_lt> edge{tpTakeLast(m_edges)};
+    //edge.swap(m_edges.back());
+    //m_edges.pop_back();
+
+    //auto i = container.begin() + (container.size()-1);
+    //typename T::value_type t;
+    //std::swap(t, *i);
+    //container.erase(i);
+    //return t;
+
 
     struct ExistingNewVerts
     {
