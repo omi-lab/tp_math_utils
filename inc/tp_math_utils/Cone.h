@@ -13,7 +13,7 @@ value at both ends defines a cylinder.
 */
 struct TP_MATH_UTILS_SHARED_EXPORT Cone
 {
-  Cone(const glm::vec3& p0_={0.0f, 0.0f, 0.0f}, float r0_=0.0f, const glm::vec3 p1_={0.0f, 0.0f, 0.0f}, float r1_=0.0f):
+  Cone(const glm::vec3& p0_={0.0f, 0.0f, 0.0f}, float r0_=0.0f, const glm::vec3& p1_={0.0f, 0.0f, 0.0f}, float r1_=0.0f):
     p0(p0_),
     p1(p1_),
     r0(r0_),

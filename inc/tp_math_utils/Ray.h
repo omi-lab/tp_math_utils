@@ -9,7 +9,7 @@ namespace tp_math_utils
 //##################################################################################################
 struct TP_MATH_UTILS_SHARED_EXPORT Ray
 {
-  Ray(const glm::vec3& p0_={0.0f, 0.0f, 0.0f}, const glm::vec3 p1_={0.0f, 0.0f, 0.0f}):
+  Ray(const glm::vec3& p0_={0.0f, 0.0f, 0.0f}, const glm::vec3& p1_={0.0f, 0.0f, 0.0f}):
     p0(p0_),
     p1(p1_)
   {
