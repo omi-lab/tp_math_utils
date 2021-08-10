@@ -331,7 +331,7 @@ private:
   }
 
   //################################################################################################
-  bool pointsAreColinear(const Triangle_lt& triangle)
+  double triangleArea2(const Triangle_lt& triangle)
   {
     glm::dvec3 v0 = position(triangle.iVs[0]);
     glm::dvec3 v1 = position(triangle.iVs[1]);
@@ -341,7 +341,13 @@ private:
     glm::dvec3 e2 = v2-v0;
     glm::dvec3 e3 = glm::cross(e1, e2);
 
-    return glm::length2(e3) < 0.0000000000001;
+    return glm::length2(e3);
+  }
+
+  //################################################################################################
+  bool pointsAreColinear(const Triangle_lt& triangle)
+  {
+    return triangleArea2(triangle) < 0.00000000000000001;
   }
 
   //################################################################################################
@@ -364,10 +370,13 @@ private:
   void linkLastTriangle()
   {
     TIdx iT = TIdx(m_triangles.size()-1);
-    const Triangle_lt& t = m_triangles.back();
+    Triangle_lt& t = m_triangles.back();
 
     if(isTraingleValid(t))
     {
+      if(t.visible && triangleArea2(t)<0.000000000000001)
+        t.visible = false;
+
       insertEdge(positionIndex(t.iVs[0]), positionIndex(t.iVs[1]), iT);
       insertEdge(positionIndex(t.iVs[1]), positionIndex(t.iVs[2]), iT);
       insertEdge(positionIndex(t.iVs[2]), positionIndex(t.iVs[0]), iT);
