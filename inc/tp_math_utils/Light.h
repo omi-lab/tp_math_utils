@@ -45,10 +45,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT Light
   float linear{0.1f};
   float quadratic{0.1f};
 
-  // Spot light textures can contain multiple shapes, this is used to select what to use. The
-  // default image contains only a single shape.
-  glm::vec2 spotLightUV{0.0f, 0.0f}; //!< The origin of the spot light texture.
-  glm::vec2 spotLightWH{1.0f, 1.0f}; //!< The size of the spot light texture as a fraction.
+  float spotLightBlend{0.6f}; //!< How sharp is the edge of the light 0=sharp 1=soft
 
   float near{0.1f};        //!< Near plane of the light frustum.
   float far{100.0f};       //!< Far plane of the light frustum.

@@ -86,8 +86,7 @@ nlohmann::json Light::saveState() const
   j["linear"] = linear;
   j["quadratic"] = quadratic;
 
-  j["spotLightUV"] = tp_math_utils::vec2ToJSON(spotLightUV);
-  j["spotLightWH"] = tp_math_utils::vec2ToJSON(spotLightWH);
+  j["spotLightBlend"] = spotLightBlend;
 
   j["near"]        = near;
   j["far"]         = far;
@@ -118,8 +117,7 @@ void Light::loadState(const nlohmann::json& j)
   linear = TPJSONFloat(j, "linear", linear);
   quadratic = TPJSONFloat(j, "quadratic", quadratic);
 
-  spotLightUV = tp_math_utils::getJSONVec2(j, "spotLightUV", spotLightUV);
-  spotLightWH = tp_math_utils::getJSONVec2(j, "spotLightWH", spotLightWH);
+  spotLightBlend = TPJSONFloat(j, "spotLightBlend", spotLightBlend);
 
   near        = TPJSONFloat(j, "near"       , near       );
   far         = TPJSONFloat(j, "far"        , far        );
