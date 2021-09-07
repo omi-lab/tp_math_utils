@@ -63,6 +63,11 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
 
   bool tileTextures{false};             //!< True to GL_REPEAT textures else GL_CLAMP_TO_EDGE
 
+  glm::vec2      skewUV{0.0f, 0.0f}; //!< Skew the texture coords. m[1][0] = glm::tan(glm::radians(skewUV.x)); m[0][1] = glm::tan(glm::radians(skewUV.y));
+  glm::vec2     scaleUV{1.0f, 1.0f}; //!< Scale the texture coords.
+  glm::vec2 translateUV{0.0f, 0.0f}; //!< Translate the texture coords.
+  float        rotateUV{0.0f};       //!< Rotate the texture coords.
+
   tp_utils::StringID                albedoTexture; //!< Color,       mtl: map_Kd or map_Ka
   tp_utils::StringID                 alphaTexture; //!< Grey scale,  mtl: map_d
   tp_utils::StringID               normalsTexture; //!< Unit vector, mtl: map_Bump
@@ -141,6 +146,9 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
     viewTextures([&](const tp_utils::StringID& value){if(value.isValid())allTextures.insert(value);});
     return allTextures;
   }
+
+  //################################################################################################
+  glm::mat3 uvMatrix() const;
 
   //################################################################################################
   nlohmann::json saveState() const;

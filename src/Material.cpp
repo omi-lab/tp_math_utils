@@ -2,9 +2,44 @@
 #include "tp_math_utils/JSONUtils.h"
 
 #include "tp_utils/JSONUtils.h"
+#include "tp_utils/DebugUtils.h"
+
+#include "glm/gtc/matrix_transform.hpp"
 
 namespace tp_math_utils
 {
+
+namespace
+{
+//##################################################################################################
+glm::mat4 skew(const glm::mat4& m_, const glm::vec2& uv)
+{
+  glm::mat4 m{1.0f};
+  m[1][0] = glm::tan(glm::radians(uv.x));
+  m[0][1] = glm::tan(glm::radians(uv.y));
+  return m_ * m;
+}
+
+//##################################################################################################
+glm::mat4 translate(const glm::mat4& m_, const glm::vec2& uv)
+{
+  glm::mat4 m{1.0f};
+  m[2][0] = uv.x;
+  m[2][1] = uv.y;
+  return m_ * m;
+}
+}
+
+//##################################################################################################
+glm::mat3 Material::uvMatrix() const
+{
+  glm::mat4 m{1.0f};
+  m = glm::scale(m, glm::vec3(scaleUV.x, scaleUV.y, 0.0f));
+  m = skew(m, skewUV);
+  m = glm::rotate(m, glm::radians(rotateUV), {0.0f, 0.0f, 1.0f});
+  m = translate(m, translateUV);
+  return m;
+}
 
 //##################################################################################################
 nlohmann::json Material::saveState() const
@@ -60,6 +95,11 @@ nlohmann::json Material::saveState() const
   j["useReflection"]         = useReflection;
 
   j["tileTextures"]          = tileTextures;
+
+  j["skewUV"]                = tp_math_utils::vec2ToJSON(skewUV);
+  j["scaleUV"]               = tp_math_utils::vec2ToJSON(scaleUV);
+  j["translateUV"]           = tp_math_utils::vec2ToJSON(translateUV);
+  j["rotateUV"]              = rotateUV;
 
   viewTypedTextures([&](const auto& type, const auto& value, const auto&)
   {
@@ -120,6 +160,11 @@ void Material::loadState(const nlohmann::json& j)
   useReflection    = TPJSONFloat(j, "useReflection" , useReflection );
 
   tileTextures     = TPJSONBool(j, "tileTextures", false);
+
+  skewUV      = tp_math_utils::getJSONVec2(j,      "skewUV",      skewUV);
+  scaleUV     = tp_math_utils::getJSONVec2(j,     "scaleUV",     scaleUV);
+  translateUV = tp_math_utils::getJSONVec2(j, "translateUV", translateUV);
+  rotateUV    = TPJSONFloat               (j,   "rotateUV" ,    rotateUV);
 
   updateTypedTextures([&](const auto& type, auto& value, const auto&)
   {
