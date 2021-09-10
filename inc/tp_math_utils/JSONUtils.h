@@ -11,6 +11,7 @@
 
 namespace tp_math_utils
 {
+#define TPJSONIVec2 tp_math_utils::getJSONIvec2
 
 //-- ivec2 -----------------------------------------------------------------------------------------
 
