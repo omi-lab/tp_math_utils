@@ -11,7 +11,11 @@
 
 namespace tp_math_utils
 {
+#define TPJSONVec2  tp_math_utils::getJSONVec2
+#define TPJSONVec3  tp_math_utils::getJSONVec3
+#define TPJSONVec4  tp_math_utils::getJSONVec4
 #define TPJSONIVec2 tp_math_utils::getJSONIvec2
+#define TPJSONMat4  tp_math_utils::getJSONMat4
 
 //-- ivec2 -----------------------------------------------------------------------------------------
 
