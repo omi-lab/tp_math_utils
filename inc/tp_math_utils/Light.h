@@ -52,7 +52,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT Light
   float fov{50.0f};        //!< Field of view for spot lights.
   float orthoRadius{10.0f}; //!< The radius of fixed directional light ortho projection.
 
-  glm::vec3 offsetScale{0.0f, 0.1f, 0.0f};
+  glm::vec3 offsetScale{0.0f, 0.0f, 0.0f};
 
   //################################################################################################
   void setPosition(const glm::vec3& position);
@@ -79,7 +79,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT Light
   static std::vector<Light> loadLights(const nlohmann::json& j);
 
   //################################################################################################
-  static const std::vector<glm::vec3>& lightLevelOffsets();
+  static const std::vector<glm::vec2>& lightLevelOffsets();
 };
 
 }
