@@ -543,6 +543,23 @@ tp_utils::StringID Geometry3D::getName() const
 }
 
 //##################################################################################################
+size_t Geometry3D::sizeInBytes(const std::vector<Geometry3D>& geometry)
+{
+  size_t size{0};
+  for(const auto& mesh : geometry)
+  {
+    for(const auto& indexes : mesh.indexes)
+      size += indexes.indexes.size() * sizeof(int);
+
+    size += mesh.verts.size() * sizeof(Vertex3D);
+
+    for(const auto& comment : mesh.comments)
+      size += comment.size();
+  }
+  return size;
+}
+
+//##################################################################################################
 nlohmann::json Geometry::saveState() const
 {
   nlohmann::json j;

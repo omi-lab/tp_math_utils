@@ -99,6 +99,10 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
 
   //################################################################################################
   tp_utils::StringID getName() const;
+
+  //################################################################################################
+  //! Estimate the memory usage of some geometry.
+  static size_t sizeInBytes(const std::vector<Geometry3D>& geometry);
 };
 
 //##################################################################################################
