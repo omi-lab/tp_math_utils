@@ -34,7 +34,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT Light
 
   glm::mat4 viewMatrix{1.0}; //!< World to light
 
-  glm::vec3 ambient {0.4f, 0.4f, 0.4f};
+  glm::vec3 ambient {0.0f, 0.0f, 0.0f};
   glm::vec3 diffuse {0.6f, 0.6f, 0.6f};
   glm::vec3 specular{1.0f, 1.0f, 1.0f};
 
@@ -43,7 +43,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT Light
   // Used to calculate the fall off in brightness as we get further from a point light.
   float constant{1.0f};
   float linear{0.1f};
-  float quadratic{0.1f};
+  float quadratic{0.0f};
 
   float spotLightBlend{0.6f}; //!< How sharp is the edge of the light 0=sharp 1=soft
 
