@@ -36,25 +36,36 @@ struct TP_MATH_UTILS_SHARED_EXPORT RNG
 {
   lib_platform::RandomDevice rd;
   std::minstd_rand0 mt;
+  std::uniform_real_distribution<float> uniformDist;
 
   //################################################################################################
   RNG():
-    mt(rd())
+    mt(rd()),
+    uniformDist(-1.0f, 1.0f)
   {
 
   }
 
   //################################################################################################
+  //! Returns a pseudo-random floating-point value within [0,1].
   float randF()
   {
     return float(mt())*(1.0f/2147483646.0f);
   }
 
   //################################################################################################
+  //! Returns a pseudo-random floating-point value within [-1,1].
   float randF2()
   {
     return (float(mt())*(2.0f/2147483646.0f))-1.0f;
   }  
+
+  //################################################################################################
+  //! Returns a random floating-point value, uniformly distributed within the given interval.
+  float randUniformDistribution()
+  {
+    return uniformDist(mt);
+  }
 
   //################################################################################################
   float randRange(float min, float max)
