@@ -70,7 +70,7 @@ nlohmann::json Light::saveState() const
 {
   nlohmann::json j;
 
-  j["name"] = name.keyString();
+  j["name"] = name.toString();
 
   j["type"] = lightTypeToString(type);
 
