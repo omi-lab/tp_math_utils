@@ -5,6 +5,7 @@
 
 #include "tp_utils/DebugUtils.h"
 #include "tp_utils/TimeUtils.h"
+#include "tp_utils/Parallel.h"
 
 #include "glm/gtx/norm.hpp"
 
@@ -23,12 +24,17 @@ class SubdivideGeometry3D
   enum class TIdx : size_t {}; //!< Index into the triangles array. (m_triangles[TIdx])
   enum class MIdx : size_t {}; //!< Index into the mesh array.      (m_geometry->indexes[MIdx])
 
+  struct Edge_lt;
+
   struct Triangle_lt
   {
     MIdx iM{0};          //!< Index of the mesh that this triangle is part of.
     VIdx iVs[3];         //!< Indexes of the 3 corner verts that make up this triangle.
     bool visible{false}; //!< Can the camera see this triangle.
     bool exclude{false}; //!< Set true once the triangle has been split.
+
+    float lengths[3];
+    Edge_lt* edges[3];
   };
 
   struct Edge_lt
@@ -116,7 +122,8 @@ public:
 
           triangle.visible = m_triangleVisible(v0, v1, v2);
 
-          linkLastTriangle();
+          std::unordered_set<Edge_lt*> dirtyEdges;
+          linkLastTriangle(dirtyEdges);
         }
       }
     }
@@ -136,16 +143,7 @@ public:
 
     size_t count=0;
 
-    std::unique_ptr<Edge_lt> edge{tpTakeLast(m_edges)};
-    //edge.swap(m_edges.back());
-    //m_edges.pop_back();
-
-    //auto i = container.begin() + (container.size()-1);
-    //typename T::value_type t;
-    //std::swap(t, *i);
-    //container.erase(i);
-    //return t;
-
+    std::unique_ptr<Edge_lt> edge = tpTakeLast(m_edges);
 
     struct ExistingNewVerts
     {
@@ -154,86 +152,93 @@ public:
     };
 
     std::vector<ExistingNewVerts> midVerts;
-
-    // Calculate the midpoint
-    glm::vec3 p0 = position(edge->iPs[0]);
-    glm::vec3 p1 = position(edge->iPs[1]);
-
-    PIdx iPNew = PIdx(m_positions.size());
-    m_positions.push_back((p0 + p1) / 2.0f);
-
-    for(TIdx iT : edge->iTs)
+    std::unordered_set<Edge_lt*> dirtyEdges;
     {
-      Triangle_lt& t = triangle(iT);
-      if(t.exclude)
-        continue;
+      // Calculate the midpoint
+      glm::vec3 p0 = position(edge->iPs[0]);
+      glm::vec3 p1 = position(edge->iPs[1]);
 
-      t.exclude = true;
+      PIdx iPNew = PIdx(m_positions.size());
+      m_positions.push_back((p0 + p1) / 2.0f);
 
-      for(size_t a=0; a<3; a++)
+      for(TIdx iT : edge->iTs)
       {
-        VIdx iV0 = t.iVs[0];
-        VIdx iV1 = t.iVs[1];
-        PIdx iP0 = positionIndex(iV0);
-        PIdx iP1 = positionIndex(iV1);
-        if(edge->contains(iP0) && edge->contains(iP1))
-        {
-          if(iV1<iV0)
-            std::swap(iV0, iV1);
+        Triangle_lt& t = triangle(iT);
+        if(t.exclude)
+          continue;
 
-          bool found=false;
-          for(const auto& midVert : midVerts)
+        t.exclude = true;
+
+        if(t.edges[0])dirtyEdges.insert(t.edges[0]);
+        if(t.edges[1])dirtyEdges.insert(t.edges[1]);
+        if(t.edges[2])dirtyEdges.insert(t.edges[2]);
+
+        for(size_t a=0; a<3; a++)
+        {
+          VIdx iV0 = t.iVs[0];
+          VIdx iV1 = t.iVs[1];
+          PIdx iP0 = positionIndex(iV0);
+          PIdx iP1 = positionIndex(iV1);
+          if(edge->contains(iP0) && edge->contains(iP1))
           {
-            if(midVert.iVs[0] == iV0 && midVert.iVs[1] == iV1)
+            if(iV1<iV0)
+              std::swap(iV0, iV1);
+
+            bool found=false;
+            for(const auto& midVert : midVerts)
             {
-              found = true;
-              splitTriangle(t, midVert.iVNew);
-              count++;
-              break;
+              if(midVert.iVs[0] == iV0 && midVert.iVs[1] == iV1)
+              {
+                found = true;
+                splitTriangle(t, midVert.iVNew, dirtyEdges);
+                count++;
+                break;
+              }
             }
-          }
 
-          if(found)
+            if(found)
+              break;
+
+            auto& midVert = midVerts.emplace_back();
+            midVert.iVs[0] = iV0;
+            midVert.iVs[1] = iV1;
+            midVert.iVNew  = VIdx(m_geometry->verts.size());
+
+            {
+              m_positionLookup.push_back(iPNew);
+              auto& newVert = m_geometry->verts.emplace_back();
+              newVert.vert    = position(iPNew);
+              const auto& v0 = vertex(iV0);
+              const auto& v1 = vertex(iV1);
+              newVert.color   = (v0.color   + v1.color  ) / 2.0f;
+              newVert.texture = (v0.texture + v1.texture) / 2.0f;
+              newVert.normal  = glm::normalize(v0.normal  + v1.normal);
+            }
+
+            splitTriangle(t, midVert.iVNew, dirtyEdges);
+            count++;
             break;
-
-          auto& midVert = midVerts.emplace_back();
-          midVert.iVs[0] = iV0;
-          midVert.iVs[1] = iV1;
-          midVert.iVNew  = VIdx(m_geometry->verts.size());
+          }
 
           {
-            m_positionLookup.push_back(iPNew);
-            auto& newVert = m_geometry->verts.emplace_back();
-            newVert.vert    = position(iPNew);
-            const auto& v0 = vertex(iV0);
-            const auto& v1 = vertex(iV1);
-            newVert.color   = (v0.color   + v1.color  ) / 2.0f;
-            newVert.texture = (v0.texture + v1.texture) / 2.0f;
-            newVert.normal  = glm::normalize(v0.normal  + v1.normal);
+            VIdx iV  = t.iVs[0];
+            t.iVs[0] = t.iVs[1];
+            t.iVs[1] = t.iVs[2];
+            t.iVs[2] = iV;
           }
-
-          splitTriangle(t, midVert.iVNew);
-          count++;
-          break;
-        }
-
-        {
-          VIdx iV  = t.iVs[0];
-          t.iVs[0] = t.iVs[1];
-          t.iVs[1] = t.iVs[2];
-          t.iVs[2] = iV;
         }
       }
     }
 
-    removeDeadEdges();
+    removeDeadEdges(dirtyEdges);
 
     return count;
   }
 
   //################################################################################################
-  void reindex()
+  void reindex(float lengthF)
   {
+    m_maxLength = lengthF;
     m_edges.clear();
 
     auto triangleExcluded = [&](const Triangle_lt& t)
@@ -243,13 +248,26 @@ public:
 
     m_triangles.erase(std::remove_if(m_triangles.begin(), m_triangles.end(), triangleExcluded), m_triangles.end());
 
+    struct Positions
+    {
+      PIdx iPs[3];
+    };
+
     for(size_t iT=0; iT<m_triangles.size(); iT++)
     {
-      const Triangle_lt& t = m_triangles.at(iT);
-      insertEdge(positionIndex(t.iVs[0]), positionIndex(t.iVs[1]), TIdx(iT));
-      insertEdge(positionIndex(t.iVs[1]), positionIndex(t.iVs[2]), TIdx(iT));
-      insertEdge(positionIndex(t.iVs[2]), positionIndex(t.iVs[0]), TIdx(iT));
+      Triangle_lt& t = m_triangles.at(iT);
+
+       PIdx iPs[3];
+       iPs[0] = positionIndex(t.iVs[0]);
+       iPs[1] = positionIndex(t.iVs[1]);
+       iPs[2] = positionIndex(t.iVs[2]);
+
+      t.edges[0] = insertEdge(iPs[0], iPs[1], TIdx(iT), t.lengths[0]);
+      t.edges[1] = insertEdge(iPs[1], iPs[2], TIdx(iT), t.lengths[1]);
+      t.edges[2] = insertEdge(iPs[2], iPs[0], TIdx(iT), t.lengths[2]);
     }
+
+    removeDeadEdges();
   }
 
   //################################################################################################
@@ -290,7 +308,7 @@ public:
 private:
 
   //################################################################################################
-  void splitTriangle(const Triangle_lt t, VIdx iVNew)
+  void splitTriangle(const Triangle_lt t, VIdx iVNew, std::unordered_set<Edge_lt*>& dirtyEdges)
   {
     // We know that the edge that needs cutting is between t.verts[0] and t.verts[1] because the
     // triangle is rotated until this is true by divideOnce.
@@ -314,7 +332,7 @@ private:
       newTriangle.iVs[2] = t.iVs[2];
 
       newTriangle.visible = t.visible?m_triangleVisible(p0, pNew, p2):false;
-      linkLastTriangle();
+      linkLastTriangle(dirtyEdges);
     }
 
     {
@@ -326,7 +344,7 @@ private:
       newTriangle.iVs[2] = t.iVs[2];
 
       newTriangle.visible = t.visible?m_triangleVisible(pNew, p1, p2):false;
-      linkLastTriangle();
+      linkLastTriangle(dirtyEdges);
     }
   }
 
@@ -367,7 +385,7 @@ private:
   }
 
   //################################################################################################
-  void linkLastTriangle()
+  void linkLastTriangle(std::unordered_set<Edge_lt*>& dirtyEdges)
   {
     TIdx iT = TIdx(m_triangles.size()-1);
     Triangle_lt& t = m_triangles.back();
@@ -377,9 +395,18 @@ private:
       if(t.visible && triangleArea2(t)<0.000000000000001)
         t.visible = false;
 
-      insertEdge(positionIndex(t.iVs[0]), positionIndex(t.iVs[1]), iT);
-      insertEdge(positionIndex(t.iVs[1]), positionIndex(t.iVs[2]), iT);
-      insertEdge(positionIndex(t.iVs[2]), positionIndex(t.iVs[0]), iT);
+      t.edges[0] = insertEdge(positionIndex(t.iVs[0]), positionIndex(t.iVs[1]), iT);
+      t.edges[1] = insertEdge(positionIndex(t.iVs[1]), positionIndex(t.iVs[2]), iT);
+      t.edges[2] = insertEdge(positionIndex(t.iVs[2]), positionIndex(t.iVs[0]), iT);
+
+      if(t.edges[0])dirtyEdges.insert(t.edges[0]);
+      if(t.edges[1])dirtyEdges.insert(t.edges[1]);
+      if(t.edges[2])dirtyEdges.insert(t.edges[2]);
+
+      t.lengths[0] = m_edgeLength(position(t.iVs[0]), position(t.iVs[1]));
+      t.lengths[1] = m_edgeLength(position(t.iVs[1]), position(t.iVs[2]));
+      t.lengths[2] = m_edgeLength(position(t.iVs[2]), position(t.iVs[0]));
+
     }
     else
     {
@@ -411,18 +438,20 @@ private:
       tpWarning() << "Edges: " << m_edges.size() << " Visible: " << visible << " Not visible: " << notVisible;
     }
   }
+  //################################################################################################
+  Edge_lt* insertEdge(PIdx iP0, PIdx iP1, TIdx iT)
+  {
+    return insertEdge(iP0, iP1, iT, m_edgeLength(position(iP0), position(iP1)));
+  }
 
   //################################################################################################
-  void insertEdge(PIdx iP0, PIdx iP1, TIdx iT)
+  Edge_lt* insertEdge(PIdx iP0, PIdx iP1, TIdx iT, float length)
   {
-    debugCounts();
+    if(length < m_maxLength)
+      return nullptr;
 
     if(iP1<iP0)
       std::swap(iP0, iP1);
-
-    float length = m_edgeLength(position(iP0), position(iP1));
-    if(length < m_maxLength)
-      return;
 
     Edge_lt key;
     key.length = length;
@@ -436,7 +465,7 @@ private:
       if((*i)->iPs[0] == iP0 && (*i)->iPs[1] == iP1)
       {
         (*i)->iTs.push_back(iT);
-        return;
+        return (*i).get();
       }
     }
 
@@ -448,6 +477,7 @@ private:
       e->length = length;
 
       m_edges.insert(i, std::unique_ptr<Edge_lt>(e));
+      return e;
     }
   }
 
@@ -482,21 +512,78 @@ private:
   }
 
   //################################################################################################
+  void unlinkEdge(const Edge_lt* e)
+  {
+    for(TIdx iT : e->iTs)
+    {
+      auto& t = triangle(iT);
+      if(t.edges[0] == e) t.edges[0]=nullptr;
+      if(t.edges[1] == e) t.edges[1]=nullptr;
+      if(t.edges[2] == e) t.edges[2]=nullptr;
+    }
+  }
+
+  //################################################################################################
+  bool edgeNotVisible(const Edge_lt* e)
+  {
+    for(TIdx iT : e->iTs)
+    {
+      const auto& t = triangle(iT);
+      if(t.visible && !t.exclude)
+        return false;
+    }
+
+    return true;
+  }
+
+
+  //################################################################################################
   //! If an edge is not connected to any visible triangles we don't need to care about it.
   void removeDeadEdges()
   {
-    auto edgeVisible = [&](const std::unique_ptr<Edge_lt>& e)
+    auto edgeNotVisible = [&](const std::unique_ptr<Edge_lt>& e)
     {
-      for(TIdx iT : e->iTs)
-      {
-        const auto& t = triangle(iT);
-        if(t.visible && !t.exclude)
-          return false;
-      }
-      return true;
+      bool r = this->edgeNotVisible(e.get());
+      if(r)
+        unlinkEdge(e.get());
+      return r;
     };
 
-    m_edges.erase(std::remove_if(m_edges.begin(), m_edges.end(), edgeVisible), m_edges.end());
+    m_edges.erase(std::remove_if(m_edges.begin(), m_edges.end(), edgeNotVisible), m_edges.end());
+  }
+
+  //################################################################################################
+  void removeDeadEdges(const std::unordered_set<Edge_lt*>& dirtyEdges)
+  {
+    std::unordered_set<Edge_lt*> deadEdges;
+    for(auto dirtyEdge : dirtyEdges)
+      if(edgeNotVisible(dirtyEdge))
+        deadEdges.insert(dirtyEdge);
+
+    for(auto e : deadEdges)
+      unlinkEdge(e);
+
+    if(deadEdges.size() == 1)
+    {
+      auto e = *deadEdges.begin();
+      for(auto i=m_edges.rbegin(); i!=m_edges.rend(); ++i)
+      {
+        if(i->get() == e)
+        {
+          m_edges.erase(--(i.base()));
+          break;
+        }
+      }
+    }
+    else
+    {
+      auto edgeNotVisible = [&](const std::unique_ptr<Edge_lt>& e)
+      {
+        return tpContains(deadEdges, e.get());
+      };
+
+      m_edges.erase(std::remove_if(m_edges.begin(), m_edges.end(), edgeNotVisible), m_edges.end());
+    }
   }
 
   Geometry3D* m_geometry;
