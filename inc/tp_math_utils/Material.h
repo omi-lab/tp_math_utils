@@ -162,6 +162,9 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
   nlohmann::json saveState() const;
 
   //################################################################################################
+  nlohmann::json saveExtendedState() const;
+
+  //################################################################################################
   void loadState(const nlohmann::json& j);
 };
 

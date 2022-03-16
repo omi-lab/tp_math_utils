@@ -118,6 +118,14 @@ nlohmann::json Material::saveState() const
 }
 
 //##################################################################################################
+nlohmann::json Material::saveExtendedState() const
+{
+  auto j = saveState();
+  j["uvMatrix"] = tp_math_utils::mat3ToJSON(uvMatrix());
+  return j;
+}
+
+//##################################################################################################
 void Material::loadState(const nlohmann::json& j)
 {
   name = TPJSONString(j, "name");

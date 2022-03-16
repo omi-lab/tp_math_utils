@@ -163,6 +163,33 @@ inline const std::vector<glm::vec4> vec4VectorFromJSON(const nlohmann::json& j)
   return coords;
 }
 
+//-- mat3 ------------------------------------------------------------------------------------------
+
+//##################################################################################################
+inline nlohmann::json mat3ToJSON(const glm::mat3& mat)
+{
+  nlohmann::json j = nlohmann::json::array();
+  const float* v = glm::value_ptr(mat);
+  const float* vMax = v+9;
+  for(; v<vMax; v++)
+    j.push_back(*v);
+  return j;
+}
+
+//##################################################################################################
+inline glm::mat3 mat3FromJSON(const nlohmann::json& j)
+{
+  glm::mat3 mat{1};
+  if(j.is_array() && j.size() == 9)
+  {
+    float* v = glm::value_ptr(mat);
+    for(size_t i=0; i<9; i++, v++)
+      if(const auto& jj = j.at(i); jj.is_number())
+        (*v) = jj;
+  }
+  return mat;
+}
+
 //-- mat4 ------------------------------------------------------------------------------------------
 
 //##################################################################################################
