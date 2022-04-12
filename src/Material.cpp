@@ -31,6 +31,25 @@ glm::mat4 translate(const glm::mat4& m_, const glm::vec2& uv)
 }
 
 //##################################################################################################
+std::string sssMethodToString(SSSMethod sssMethod)
+{
+  switch(sssMethod)
+  {
+  case SSSMethod::ChristensenBurley: return "ChristensenBurley";
+  case SSSMethod::RandomWalk       : return "RandomWalk"       ;
+  }
+  return "ChristensenBurley";
+}
+
+//##################################################################################################
+SSSMethod sssMethodFromString(const std::string& sssMethod)
+{
+  if(sssMethod == "RandomWalk")
+    return SSSMethod::RandomWalk;
+  return SSSMethod::ChristensenBurley;
+}
+
+//##################################################################################################
 glm::mat3 Material::uvMatrix() const
 {
   glm::mat4 m{1.0f};
@@ -76,7 +95,10 @@ nlohmann::json Material::saveState() const
   j["iridescentOffset"]      = iridescentOffset;
   j["iridescentFrequency"]   = iridescentFrequency;
 
-  j["sssRadius"]             = tp_math_utils::vec3ToJSON(sssRadius);
+  j["sssRadius"]             = tp_math_utils::vec3ToJSON(sssRadius);  
+  j["sssMethod"]             = sssMethodToString(sssMethod);
+
+  j["normalStrength"]             = normalStrength;
 
   j["albedoBrightness"]      = albedoBrightness;
   j["albedoContrast"]        = albedoContrast;
@@ -158,6 +180,9 @@ void Material::loadState(const nlohmann::json& j)
   iridescentFrequency   = TPJSONFloat(j, "iridescentFrequency"  , iridescentFrequency  );
 
   sssRadius        = tp_math_utils::vec3FromJSON(TPJSON(j, "sssRadius"), sssRadius);
+  sssMethod        = sssMethodFromString(TPJSONString(j, "sssMethod"));
+
+  normalStrength   = TPJSONFloat(j, "normalStrength"  , normalStrength  );
 
   albedoBrightness = TPJSONFloat(j, "albedoBrightness", albedoBrightness);
   albedoContrast   = TPJSONFloat(j, "albedoContrast"  , albedoContrast  );

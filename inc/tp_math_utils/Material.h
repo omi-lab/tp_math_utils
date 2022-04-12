@@ -11,6 +11,19 @@ namespace tp_math_utils
 {
 
 //##################################################################################################
+enum class SSSMethod
+{
+  ChristensenBurley = 0,
+  RandomWalk        = 1
+};
+
+//##################################################################################################
+std::string sssMethodToString(SSSMethod sssMethod);
+
+//##################################################################################################
+SSSMethod sssMethodFromString(const std::string& sssMethod);
+
+//##################################################################################################
 struct TP_MATH_UTILS_SHARED_EXPORT Material
 {
   tp_utils::StringID name;
@@ -44,6 +57,10 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
   float iridescentFrequency{0.0f};
 
   glm::vec3 sssRadius{1.0f,0.2f,0.1f};  //!< Subsurface scattering radius per color.
+
+  SSSMethod sssMethod{SSSMethod::ChristensenBurley}; //!< Subsurface scattering method.
+
+  float normalStrength{1.0f};           //!< Used to scale normals.
 
   float albedoBrightness{0.0f};         //!< Modify the albedo texture brightness.
   float albedoContrast  {0.0f};         //!< Modify the albedo texture contrast.
