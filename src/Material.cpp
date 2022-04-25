@@ -50,6 +50,25 @@ SSSMethod sssMethodFromString(const std::string& sssMethod)
 }
 
 //##################################################################################################
+std::string shaderTypeToString(ShaderType shaderType)
+{
+  switch(shaderType)
+  {
+  case ShaderType::Principled: return "Principled";
+  case ShaderType::None      : return "None"      ;
+  }
+  return "Principled";
+}
+
+//##################################################################################################
+ShaderType shaderTypeFromString(const std::string& shaderType)
+{
+  if(shaderType == "None")
+    return ShaderType::None;
+  return ShaderType::Principled;
+}
+
+//##################################################################################################
 glm::mat3 Material::uvMatrix() const
 {
   glm::mat4 m{1.0f};
@@ -66,6 +85,8 @@ nlohmann::json Material::saveState() const
   nlohmann::json j;
 
   j["name"] = name.toString();
+
+  j["shaderType"]            = shaderTypeToString(shaderType);
 
   j["albedo"]                = tp_math_utils::vec3ToJSON(albedo);
   j["sss"]                   = tp_math_utils::vec3ToJSON(sss);
@@ -151,6 +172,8 @@ nlohmann::json Material::saveExtendedState() const
 void Material::loadState(const nlohmann::json& j)
 {
   name = TPJSONString(j, "name");
+
+  shaderType            = shaderTypeFromString(TPJSONString(j, "shaderType"));
 
   albedo                = tp_math_utils::vec3FromJSON(TPJSON(j, "albedo"  ), albedo  );
   sss                   = tp_math_utils::vec3FromJSON(TPJSON(j, "sss"     ), sss     );

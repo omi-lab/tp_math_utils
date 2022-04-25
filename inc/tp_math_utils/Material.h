@@ -24,9 +24,24 @@ std::string sssMethodToString(SSSMethod sssMethod);
 SSSMethod sssMethodFromString(const std::string& sssMethod);
 
 //##################################################################################################
+enum class ShaderType
+{
+  Principled = 0, //!< The default shaded material.
+  None       = 1  //!< Just use the albedo color/texture directly.
+};
+
+//##################################################################################################
+std::string shaderTypeToString(ShaderType shaderType);
+
+//##################################################################################################
+ShaderType shaderTypeFromString(const std::string& shaderType);
+
+//##################################################################################################
 struct TP_MATH_UTILS_SHARED_EXPORT Material
 {
   tp_utils::StringID name;
+
+  ShaderType shaderType{ShaderType::Principled}; //!< What shater should be used to draw the object.
 
   glm::vec3 albedo  {0.4f, 0.0f, 0.0f}; //!< mtl: Kd or Ka
   glm::vec3 sss     {1.0f, 1.0f, 1.0f}; //!< Subsurface scattering color.
