@@ -144,13 +144,13 @@ nlohmann::json Material::saveState() const
   j["translateUV"]           = tp_math_utils::vec2ToJSON(translateUV);
   j["rotateUV"]              = rotateUV;
 
-  j["rayVisibilitityCamera"]        = rayVisibilitityCamera;
-  j["rayVisibilitityDiffuse"]       = rayVisibilitityDiffuse;
-  j["rayVisibilitityGlossy"]        = rayVisibilitityGlossy;
-  j["rayVisibilitityTransmission"]  = rayVisibilitityTransmission;
-  j["rayVisibilitityScatter"]       = rayVisibilitityScatter;
-  j["rayVisibilitityShadow"]        = rayVisibilitityShadow;
-  j["rayVisibilitityShadowCatcher"] = rayVisibilitityShadowCatcher;
+  j["rayVisibilityCamera"]        = rayVisibilityCamera;
+  j["rayVisibilityDiffuse"]       = rayVisibilityDiffuse;
+  j["rayVisibilityGlossy"]        = rayVisibilityGlossy;
+  j["rayVisibilityTransmission"]  = rayVisibilityTransmission;
+  j["rayVisibilityScatter"]       = rayVisibilityScatter;
+  j["rayVisibilityShadow"]        = rayVisibilityShadow;
+  j["rayVisibilityShadowCatcher"] = rayVisibilityShadowCatcher;
 
   viewTypedTextures([&](const auto& type, const auto& value, const auto&)
   {
@@ -230,13 +230,13 @@ void Material::loadState(const nlohmann::json& j)
   translateUV = tp_math_utils::getJSONVec2(j, "translateUV", translateUV);
   rotateUV    = TPJSONFloat               (j,   "rotateUV" ,    rotateUV);
 
-  rayVisibilitityCamera        = TPJSONBool(j, "rayVisibilitityCamera"       , true );
-  rayVisibilitityDiffuse       = TPJSONBool(j, "rayVisibilitityDiffuse"      , true );
-  rayVisibilitityGlossy        = TPJSONBool(j, "rayVisibilitityGlossy"       , true );
-  rayVisibilitityTransmission  = TPJSONBool(j, "rayVisibilitityTransmission" , true );
-  rayVisibilitityScatter       = TPJSONBool(j, "rayVisibilitityScatter"      , true );
-  rayVisibilitityShadow        = TPJSONBool(j, "rayVisibilitityShadow"       , true );
-  rayVisibilitityShadowCatcher = TPJSONBool(j, "rayVisibilitityShadowCatcher", false);
+  rayVisibilityCamera        = TPJSONBool(j, "rayVisibilityCamera"       , true );
+  rayVisibilityDiffuse       = TPJSONBool(j, "rayVisibilityDiffuse"      , true );
+  rayVisibilityGlossy        = TPJSONBool(j, "rayVisibilityGlossy"       , true );
+  rayVisibilityTransmission  = TPJSONBool(j, "rayVisibilityTransmission" , true );
+  rayVisibilityScatter       = TPJSONBool(j, "rayVisibilityScatter"      , true );
+  rayVisibilityShadow        = TPJSONBool(j, "rayVisibilityShadow"       , true );
+  rayVisibilityShadowCatcher = TPJSONBool(j, "rayVisibilityShadowCatcher", false);
 
   updateTypedTextures([&](const auto& type, auto& value, const auto&)
   {

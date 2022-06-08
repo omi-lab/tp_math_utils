@@ -100,13 +100,13 @@ struct TP_MATH_UTILS_SHARED_EXPORT Material
   glm::vec2 translateUV{0.0f, 0.0f}; //!< Translate the texture coords.
   float        rotateUV{0.0f};       //!< Rotate the texture coords.
 
-  bool rayVisibilitityCamera       {true};  //!< Blender cycles ray visibility options.
-  bool rayVisibilitityDiffuse      {true};  //!< Blender cycles ray visibility options.
-  bool rayVisibilitityGlossy       {true};  //!< Blender cycles ray visibility options.
-  bool rayVisibilitityTransmission {true};  //!< Blender cycles ray visibility options.
-  bool rayVisibilitityScatter      {true};  //!< Blender cycles ray visibility options.
-  bool rayVisibilitityShadow       {true};  //!< Blender cycles ray visibility options.
-  bool rayVisibilitityShadowCatcher{false}; //!< Blender cycles ray visibility options.
+  bool rayVisibilityCamera        {true};  //!< Blender cycles ray visibility options.
+  bool rayVisibilityDiffuse       {true};  //!< Blender cycles ray visibility options.
+  bool rayVisibilityGlossy        {true};  //!< Blender cycles ray visibility options.
+  bool rayVisibilityTransmission  {true};  //!< Blender cycles ray visibility options.
+  bool rayVisibilityScatter       {true};  //!< Blender cycles ray visibility options.
+  bool rayVisibilityShadow        {true};  //!< Blender cycles ray visibility options.
+  bool rayVisibilityShadowCatcher {false};  //!< Blender cycles ray visibility options.
 
   tp_utils::StringID                albedoTexture; //!< Color,       mtl: map_Kd or map_Ka
   tp_utils::StringID                 alphaTexture; //!< Grey scale,  mtl: map_d
