@@ -48,6 +48,9 @@ HEADERS += inc/tp_math_utils/Polygon.h
 SOURCES += src/Material.cpp
 HEADERS += inc/tp_math_utils/Material.h
 
+SOURCES += src/MaterialSwapParameters.cpp
+HEADERS += inc/tp_math_utils/MaterialSwapParameters.h
+
 SOURCES += src/Light.cpp
 HEADERS += inc/tp_math_utils/Light.h
 
