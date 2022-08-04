@@ -44,21 +44,46 @@ struct TP_MATH_UTILS_SHARED_EXPORT Vertex3D
 
   //################################################################################################
   static Vertex3D interpolate(float u, float v, const Vertex3D& v0, const Vertex3D& v1, const Vertex3D& v2);
+
+  //################################################################################################
+  //! Needed to make the python interface work.
+  bool operator==(const Vertex3D& other) const
+  {
+    return
+        vert == other.vert &&
+        color == other.color &&
+        texture == other.texture &&
+        normal == other.normal;
+  };
 };
+
+typedef std::vector<int> Vertex3DIndexList;
 
 //##################################################################################################
 struct TP_MATH_UTILS_SHARED_EXPORT Indexes3D
 {
   int type{0};
-  std::vector<int> indexes;
+  Vertex3DIndexList indexes;
+
+  //################################################################################################
+  //! Needed to make the python interface work.
+  bool operator==(const Indexes3D& other) const
+  {
+    return
+        type == other.type &&
+        indexes == other.indexes;
+  };
 };
+
+typedef std::vector<Vertex3D> Vertex3DList;
+typedef std::vector<Indexes3D> Indexes3DList;
 
 //##################################################################################################
 struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
 {
   std::vector<std::string> comments;
-  std::vector<Vertex3D> verts;
-  std::vector<Indexes3D> indexes;
+  Vertex3DList verts;
+  Indexes3DList indexes;
 
   int triangleFan  {TP_TRIANGLE_FAN  };
   int triangleStrip{TP_TRIANGLE_STRIP};
@@ -103,7 +128,23 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
   //################################################################################################
   //! Estimate the memory usage of some geometry.
   static size_t sizeInBytes(const std::vector<Geometry3D>& geometry);
+
+  //################################################################################################
+  //! Needed to make the python interface work.
+  bool operator==(const Geometry3D& other) const
+  {
+    return
+        comments == other.comments &&
+        verts == other.verts &&
+        indexes == other.indexes &&
+        triangleFan == other.triangleFan &&
+        triangleStrip == other.triangleStrip &&
+        triangles == other.triangles;
+  };
 };
+
+//##################################################################################################
+typedef std::vector<Geometry3D> Geometry3DList;
 
 //##################################################################################################
 struct TP_MATH_UTILS_SHARED_EXPORT Geometry
