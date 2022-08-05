@@ -1,7 +1,7 @@
 #ifndef tp_math_utils_Globals_h
 #define tp_math_utils_Globals_h
 
-#include "tp_utils/StringID.h"
+#include "tp_utils/Globals.h"
 
 #include "lib_platform/RandomDevice.h"
 
@@ -11,7 +11,7 @@
 #  define TP_MATH_UTILS_SHARED_EXPORT TP_IMPORT
 #endif
 
-#include "glm/glm.hpp"
+#include "glm/glm.hpp" // IWYU pragma: keep
 
 #include <random>
 #include <ostream>

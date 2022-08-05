@@ -3,6 +3,8 @@
 
 #include "tp_math_utils/Globals.h"
 
+#include "tp_utils/StringID.h"
+
 #include "json.hpp"
 
 namespace tp_math_utils
