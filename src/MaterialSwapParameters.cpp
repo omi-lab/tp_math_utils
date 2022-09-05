@@ -15,7 +15,10 @@ tp_math_utils::Material MaterialSwapParameters::materialWithSwappedParameters( c
 
   auto swapValue = [](float existingValue, float newValue, float use, float scale, float bias )
   {
-    auto value = (existingValue*(1.0f-use)) + (((newValue*scale) + bias) * use);
+    auto value = (existingValue*(1.0f-use)) + ( ( (newValue*scale) + bias) * use);
+    if( value > 1.0f ) {
+      value = 1.0f;
+    }
     return value;
   };
 
