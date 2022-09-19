@@ -160,6 +160,13 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry
   void loadState(const nlohmann::json& j);
 };
 
+//##################################################################################################
+typedef std::function<void(const std::vector<tp_math_utils::Geometry3D>&)> GeometryCallback;
+typedef std::function<void(const GeometryCallback&)> ViewGeometry;
+typedef std::function<void(const tp_utils::StringID&, const GeometryCallback&)> FindGeometry;
+typedef std::function<void(const std::vector<tp_math_utils::Geometry3D>&, const std::vector<tp_math_utils::Material>&)> GeometryMaterialCallback;
+typedef std::unordered_map<tp_utils::StringID, tp_utils::StringID> AlternativeMaterials;
+
 }
 
 #endif
