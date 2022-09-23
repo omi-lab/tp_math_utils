@@ -3,6 +3,8 @@
 
 #include "tp_math_utils/Material.h"
 
+#include <unordered_map>
+
 namespace tp_math_utils
 {
 
