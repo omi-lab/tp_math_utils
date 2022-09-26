@@ -2,9 +2,6 @@
 #include "tp_math_utils/JSONUtils.h"
 
 #include "tp_utils/JSONUtils.h"
-#include "tp_utils/DebugUtils.h"
-
-#include "glm/gtc/matrix_transform.hpp"
 
 namespace tp_math_utils
 {
