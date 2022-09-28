@@ -2,26 +2,19 @@
 #include "tp_math_utils/JSONUtils.h"
 
 #include "tp_utils/JSONUtils.h"
-#include "tp_utils/DebugUtils.h"
-
-#include "glm/gtc/matrix_transform.hpp"
 
 namespace tp_math_utils
 {
 
+//################################################################################################
 tp_math_utils::Material MaterialSwapParameters::materialWithSwappedParameters( const tp_math_utils::Material& material, const glm::vec3& color ) const
 {
   tp_math_utils::Material swapped = material;
 
   auto swapValue = [](float existingValue, float newValue, float use, float scale, float bias )
   {
-    auto value = (existingValue*(1.0f-use)) + ( ( (newValue*scale) + bias) * use);
-    if( value > 1.0f ) {
-      value = 1.0f;
-    }
-    return value;
+    return std::clamp((existingValue*(1.0f-use)) + ( ( (newValue*scale) + bias) * use), 0.0f, 1.0f);
   };
-
 
   swapped.albedo.x = swapValue(swapped.albedo.x, color.x, albedoUse.x, albedoScale.x, albedoBias.x );
   swapped.albedo.y = swapValue(swapped.albedo.y, color.y, albedoUse.y, albedoScale.y, albedoBias.y );
@@ -67,6 +60,8 @@ nlohmann::json MaterialSwapParameters::saveState() const
 
   j["albedoHue"] = albedoHue;
 
+  j["initialColor"] = tp_math_utils::vec3ToJSON(initialColor);
+
   return j;
 }
 
@@ -89,7 +84,9 @@ void MaterialSwapParameters::loadState(const nlohmann::json& j)
   velvetScale      = tp_math_utils::vec3FromJSON(TPJSON(j, "velvetScale"),   velvetScale);
   velvetBias       = tp_math_utils::vec3FromJSON(TPJSON(j, "velvetBias" ),   velvetBias );
 
-  albedoHue        = TPJSONFloat(j, "albedoHueUse"   , albedoHue   );
+  albedoHue        = TPJSONFloat(j, "albedoHueUse", albedoHue);
+
+  initialColor     = TPJSONVec3(j, "initialColor", {0.1f, 0.7f, 0.2f});
 }
 
 }
