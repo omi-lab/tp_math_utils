@@ -68,21 +68,21 @@ nlohmann::json MaterialSwapParameters::saveState() const
 //##################################################################################################
 void MaterialSwapParameters::loadState(const nlohmann::json& j)
 {
-  albedoUse        = tp_math_utils::vec3FromJSON(TPJSON(j, "albedoUse"  ),   albedoUse  );
-  albedoScale      = tp_math_utils::vec3FromJSON(TPJSON(j, "albedoScale"),   albedoScale);
-  albedoBias       = tp_math_utils::vec3FromJSON(TPJSON(j, "albedoBias" ),   albedoBias );
+  albedoUse        = TPJSONVec3(j, "albedoUse"  ,   albedoUse  );
+  albedoScale      = TPJSONVec3(j, "albedoScale",   albedoScale);
+  albedoBias       = TPJSONVec3(j, "albedoBias" ,   albedoBias );
 
-  sssUse           = tp_math_utils::vec3FromJSON(TPJSON(j, "sssUse"  ),      sssUse     );
-  sssScale         = tp_math_utils::vec3FromJSON(TPJSON(j, "sssScale"),      sssScale   );
-  sssBias          = tp_math_utils::vec3FromJSON(TPJSON(j, "sssBias" ),      sssBias    );
+  sssUse           = TPJSONVec3(j, "sssUse"  ,      sssUse     );
+  sssScale         = TPJSONVec3(j, "sssScale",      sssScale   );
+  sssBias          = TPJSONVec3(j, "sssBias" ,      sssBias    );
 
-  emissionUse      = tp_math_utils::vec3FromJSON(TPJSON(j, "emissionUse"  ), emissionUse  );
-  emissionScale    = tp_math_utils::vec3FromJSON(TPJSON(j, "emissionScale"), emissionScale);
-  emissionBias     = tp_math_utils::vec3FromJSON(TPJSON(j, "emissionBias" ), emissionBias );
+  emissionUse      = TPJSONVec3(j, "emissionUse"  , emissionUse  );
+  emissionScale    = TPJSONVec3(j, "emissionScale", emissionScale);
+  emissionBias     = TPJSONVec3(j, "emissionBias" , emissionBias );
 
-  velvetUse        = tp_math_utils::vec3FromJSON(TPJSON(j, "velvetUse"  ),   velvetUse  );
-  velvetScale      = tp_math_utils::vec3FromJSON(TPJSON(j, "velvetScale"),   velvetScale);
-  velvetBias       = tp_math_utils::vec3FromJSON(TPJSON(j, "velvetBias" ),   velvetBias );
+  velvetUse        = TPJSONVec3(j, "velvetUse"  ,   velvetUse  );
+  velvetScale      = TPJSONVec3(j, "velvetScale",   velvetScale);
+  velvetBias       = TPJSONVec3(j, "velvetBias" ,   velvetBias );
 
   albedoHue        = TPJSONFloat(j, "albedoHueUse", albedoHue);
 
