@@ -11,7 +11,6 @@
 namespace tp_math_utils
 {
 
-
 //##################################################################################################
 struct TP_MATH_UTILS_SHARED_EXPORT MaterialSwapParameters
 {
@@ -33,9 +32,17 @@ struct TP_MATH_UTILS_SHARED_EXPORT MaterialSwapParameters
   glm::vec3 velvetScale   {1.0f, 1.0f, 1.0f};
   glm::vec3 velvetBias    {0.0f, 0.0f, 0.0f};
 
-  float albedoHue;
+  bool useAlbedoHue;
 
   glm::vec3 initialColor{0.1f, 0.7f, 0.2f};
+
+  float albedoSaturationUse{0.0f};
+  float albedoSaturationScale{1.0f};
+  float albedoSaturationBias{0.0f};
+
+  float albedoValueUse{0.0f};
+  float albedoValueScale{1.0f};
+  float albedoValueBias{0.0f};
 
   //################################################################################################
   tp_math_utils::Material materialWithSwappedParameters( const tp_math_utils::Material& material, const glm::vec3& color ) const;

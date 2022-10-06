@@ -32,7 +32,14 @@ tp_math_utils::Material MaterialSwapParameters::materialWithSwappedParameters( c
   swapped.velvet.y = swapValue(swapped.velvet.y, color.y, velvetUse.y, velvetScale.y, velvetBias.y );
   swapped.velvet.z = swapValue(swapped.velvet.z, color.z, velvetUse.z, velvetScale.z, velvetBias.z );
 
-  swapped.albedoHue = albedoHue;
+  glm::vec3 hsvColor = rgb2hsv( color );
+
+  if( useAlbedoHue ) {
+    swapped.albedoHue = hsvColor.x;
+  }
+
+  swapped.albedoSaturation  = swapValue(swapped.albedoSaturation, hsvColor.y, albedoSaturationUse,  albedoSaturationScale,  albedoSaturationBias);
+  swapped.albedoValue       = swapValue(swapped.albedoValue,      hsvColor.z, albedoValueUse,       albedoValueScale,       albedoValueBias );
 
   return swapped;
 }
@@ -58,9 +65,17 @@ nlohmann::json MaterialSwapParameters::saveState() const
   j["velvetScale"] = tp_math_utils::vec3ToJSON  (velvetScale );
   j["velvetBias"] = tp_math_utils::vec3ToJSON   (velvetBias  );
 
-  j["albedoHue"] = albedoHue;
+  j["useAlbedoHue"] = useAlbedoHue;
 
   j["initialColor"] = tp_math_utils::vec3ToJSON(initialColor);
+
+  j["albedoSaturationUse"]    = albedoSaturationUse;
+  j["albedoSaturationScale"]  = albedoSaturationScale;
+  j["albedoSaturationBias"]   = albedoSaturationBias;
+
+  j["albedoValueUse"]   = albedoValueUse;
+  j["albedoValueScale"] = albedoValueScale;
+  j["albedoValueBias"]  = albedoValueBias;
 
   return j;
 }
@@ -84,9 +99,15 @@ void MaterialSwapParameters::loadState(const nlohmann::json& j)
   velvetScale      = TPJSONVec3(j, "velvetScale",   velvetScale);
   velvetBias       = TPJSONVec3(j, "velvetBias" ,   velvetBias );
 
-  albedoHue        = TPJSONFloat(j, "albedoHueUse", albedoHue);
+  useAlbedoHue     = TPJSONBool(j, "useAlbedoHue", useAlbedoHue);
 
-  initialColor     = TPJSONVec3(j, "initialColor", {0.1f, 0.7f, 0.2f});
+  albedoSaturationUse   = TPJSONFloat(j, "albedoSaturationUse");
+  albedoSaturationScale = TPJSONFloat(j, "albedoSaturationScale");
+  albedoSaturationBias  = TPJSONFloat(j, "albedoSaturationBias");
+
+  albedoValueUse   = TPJSONFloat(j, "albedoValueUse");
+  albedoValueScale = TPJSONFloat(j, "albedoValueScale");
+  albedoValueBias  = TPJSONFloat(j, "albedoValueBias");
 }
 
 }
