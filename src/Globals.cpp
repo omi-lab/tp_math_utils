@@ -82,7 +82,7 @@ hsv rgbToHsv(rgb in)
         // if max is 0, then r = g = b = 0
         // s = 0, h is undefined
         out.s = 0.0;
-        out.h = NAN;                            // its now undefined
+        out.h = double(NAN);                            // its now undefined
         return out;
     }
     if( in.r >= max )                           // > is bogus, just keeps compilor happy
@@ -117,7 +117,7 @@ rgb hsvToRgb(hsv in)
     hh = in.h;
     if(hh >= 360.0) hh = 0.0;
     hh /= 60.0;
-    i = (long)hh;
+    i = long(hh);
     ff = hh - i;
     p = in.v * (1.0 - in.s);
     q = in.v * (1.0 - (in.s * ff));
@@ -164,10 +164,10 @@ rgb hsvToRgb(hsv in)
 //##################################################################################################
 glm::vec3 rgb2hsv(const glm::vec3& rgb)
 {
-  hsvConvert::rgb rgbIn{ rgb.x, rgb.y, rgb.z };
+  hsvConvert::rgb rgbIn{ double(rgb.x), double(rgb.y), double(rgb.z) };
   hsvConvert::hsv result;
   result = hsvConvert::rgbToHsv(rgbIn);
-  glm::vec3 hsv{result.h / 360.0f, result.s, result.v};
+  glm::vec3 hsv{result.h / 360.0, result.s, result.v};
 
   return hsv;
 }
@@ -175,7 +175,7 @@ glm::vec3 rgb2hsv(const glm::vec3& rgb)
 //##################################################################################################
 glm::vec3 hsv2rgb(const glm::vec3& hsv)
 {
-  hsvConvert::hsv hsvIn{ hsv.x * 360.0f, hsv.y, hsv.z };
+  hsvConvert::hsv hsvIn{ double(hsv.x * 360.0f), double(hsv.y), double(hsv.z) };
   hsvConvert::rgb result;
   result = hsvConvert::hsvToRgb(hsvIn);
   glm::vec3 rgb{result.r, result.g, result.b};
