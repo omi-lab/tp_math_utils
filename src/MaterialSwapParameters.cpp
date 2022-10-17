@@ -102,6 +102,8 @@ void MaterialSwapParameters::loadState(const nlohmann::json& j)
 
   useAlbedoHue     = TPJSONBool(j, "useAlbedoHue", useAlbedoHue);
 
+  initialColor     = TPJSONVec3(j, "initialColor", initialColor);
+
   albedoSaturationUse   = TPJSONFloat(j, "albedoSaturationUse");
   albedoSaturationScale = TPJSONFloat(j, "albedoSaturationScale");
   albedoSaturationBias  = TPJSONFloat(j, "albedoSaturationBias");
