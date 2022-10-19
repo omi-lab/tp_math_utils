@@ -36,7 +36,7 @@ tp_math_utils::Material MaterialSwapParameters::materialWithSwappedParameters( c
 
   if( useAlbedoHue )
   {
-      swapped.albedoHue = hsvColor.x + 0.5f;
+    swapped.albedoHue = hsvColor.x + 0.5f;
   }
 
   swapped.albedoSaturation  = swapValue(swapped.albedoSaturation, hsvColor.y, albedoSaturationUse,  albedoSaturationScale,  albedoSaturationBias);
