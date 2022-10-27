@@ -81,17 +81,16 @@ nlohmann::json serializeGeometry(const Polygon& polygon)
 
   nlohmann::json& jCoordinates = j["coordinates"];
   jCoordinates = nlohmann::json::array();
+  jCoordinates.get_ptr<nlohmann::json::array_t*>()->reserve(polygon.holes.size() + 1);
 
   auto addLoop = [&jCoordinates](const std::vector<glm::vec2>& loop)
   {
-    nlohmann::json jLoop = nlohmann::json::array();
+    jCoordinates.emplace_back();
+    nlohmann::json& jLoop = jCoordinates.back();
+    jLoop = nlohmann::json::array();
+    jLoop.get_ptr<nlohmann::json::array_t*>()->reserve(loop.size());
     for(const glm::vec2& coord : loop)
-    {
-      nlohmann::json jCoord = nlohmann::json::array();
-      jCoord.push_back(coord.x);
-      jCoord.push_back(coord.y);
-      jLoop.push_back(jCoord);
-    }
+      jLoop.emplace_back(nlohmann::json::array({coord.x, coord.y}));
     jCoordinates.push_back(jLoop);
   };
 
@@ -129,9 +128,10 @@ nlohmann::json serializePolygon(const Polygon& polygon)
 nlohmann::json serializePolygons(const std::vector<Polygon>& polygons)
 {
   nlohmann::json j = nlohmann::json::array();
+  j.get_ptr<nlohmann::json::array_t*>()->reserve(polygons.size());
 
   for(const Polygon& polygon : polygons)
-    j.push_back(serializePolygon(polygon));
+    j.emplace_back(serializePolygon(polygon));
 
   return j;
 }
@@ -140,9 +140,10 @@ nlohmann::json serializePolygons(const std::vector<Polygon>& polygons)
 nlohmann::json serializePolygonsVector(const std::vector<std::vector<Polygon>>& polygonsVector)
 {
   nlohmann::json j = nlohmann::json::array();
+  j.get_ptr<nlohmann::json::array_t*>()->reserve(polygonsVector.size());
 
   for(const std::vector<Polygon>& polygons : polygonsVector)
-    j.push_back(serializePolygons(polygons));
+    j.emplace_back(serializePolygons(polygons));
 
   return j;
 }

@@ -61,6 +61,7 @@ inline glm::vec2 getJSONVec2(const nlohmann::json& j, const std::string& key, co
 inline nlohmann::json vec2VectorToJSON(const std::vector<glm::vec2>& coords)
 {
   nlohmann::json j = nlohmann::json::array();
+  j.get_ptr<nlohmann::json::array_t*>()->reserve(coords.size());
   for(const auto& coord : coords)
     j.push_back(vec2ToJSON(coord));
   return j;
@@ -103,6 +104,7 @@ inline glm::vec3 getJSONVec3(const nlohmann::json& j, const std::string& key, co
 inline nlohmann::json vec3VectorToJSON(const std::vector<glm::vec3>& coords)
 {
   nlohmann::json j = nlohmann::json::array();
+  j.get_ptr<nlohmann::json::array_t*>()->reserve(coords.size());
   for(const auto& coord : coords)
     j.push_back(vec3ToJSON(coord));
   return j;
@@ -145,6 +147,7 @@ inline glm::vec4 getJSONVec4(const nlohmann::json& j, const std::string& key, co
 inline nlohmann::json vec4VectorToJSON(const std::vector<glm::vec4>& coords)
 {
   nlohmann::json j = nlohmann::json::array();
+  j.get_ptr<nlohmann::json::array_t*>()->reserve(coords.size());
   for(const auto& coord : coords)
     j.push_back(vec4ToJSON(coord));
   return j;
@@ -169,6 +172,7 @@ inline const std::vector<glm::vec4> vec4VectorFromJSON(const nlohmann::json& j)
 inline nlohmann::json mat3ToJSON(const glm::mat3& mat)
 {
   nlohmann::json j = nlohmann::json::array();
+  j.get_ptr<nlohmann::json::array_t*>()->reserve(9);
   const float* v = glm::value_ptr(mat);
   const float* vMax = v+9;
   for(; v<vMax; v++)
@@ -196,6 +200,7 @@ inline glm::mat3 mat3FromJSON(const nlohmann::json& j)
 inline nlohmann::json mat4ToJSON(const glm::mat4& mat)
 {
   nlohmann::json j = nlohmann::json::array();
+  j.get_ptr<nlohmann::json::array_t*>()->reserve(16);
   const float* v = glm::value_ptr(mat);
   const float* vMax = v+16;
   for(; v<vMax; v++)

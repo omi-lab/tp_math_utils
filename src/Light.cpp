@@ -131,6 +131,7 @@ void Light::loadState(const nlohmann::json& j)
 nlohmann::json Light::saveLights(const std::vector<Light>& lights)
 {
   nlohmann::json j = nlohmann::json::array();
+  j.get_ptr<nlohmann::json::array_t*>()->reserve(lights.size());
   for(const auto& light : lights)
     j.push_back(light.saveState());
   return j;
