@@ -32,7 +32,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT MaterialSwapParameters
   glm::vec3 velvetScale   {1.0f, 1.0f, 1.0f};
   glm::vec3 velvetBias    {0.0f, 0.0f, 0.0f};
 
-  bool useAlbedoHue;
+  bool useAlbedoHue{false};
 
   glm::vec3 initialColor{0.1f, 0.7f, 0.2f};
 
