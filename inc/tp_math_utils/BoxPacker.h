@@ -96,8 +96,6 @@ struct BoxPacker
         size_t tallest = 0;
         for(size_t currentY=0; currentY<outputSize; currentY+=tallest)
         {
-          tpDebug() << "currentY: " << currentY << " sortedBoxes: " << sortedBoxes.size();
-
           if(sortedBoxes.empty())
             break;
 
