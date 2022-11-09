@@ -1,15 +1,9 @@
 #include "tp_math_utils/Geometry3D.h"
-#include "tp_math_utils/Intersection.h"
-#include "tp_math_utils/Plane.h"
-#include "tp_math_utils/Ray.h"
 #include "tp_math_utils/JSONUtils.h"
-
-#include "tp_utils/DebugUtils.h"
 
 #include "nanoflann.hpp"
 
-#include "glm/gtx/norm.hpp"
-#include "glm/gtx/normal.hpp"
+#include "glm/gtx/normal.hpp" // IWYU pragma: keep
 
 #include <array>
 
@@ -100,8 +94,7 @@ std::vector<Face_lt> calculateFaces(const Geometry3D& geometry, bool calculateNo
 
   if(calculateNormals)
     for(auto& face : faces)
-      face.normal = glm::triangleNormal(
-            geometry.verts.at(size_t(face.indexes[0])).vert,
+      face.normal = glm::triangleNormal(geometry.verts.at(size_t(face.indexes[0])).vert,
           geometry.verts.at(size_t(face.indexes[1])).vert,
           geometry.verts.at(size_t(face.indexes[2])).vert);
 

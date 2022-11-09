@@ -43,7 +43,10 @@ struct BoxPacker
   static void pack(std::vector<InputBox>& inputBoxes,
                    std::vector<OutputBox>& outputBoxes,
                    size_t maxSize,
-                   bool padding)
+                   bool padding,
+                   float stepMultiplier=2.0f,
+                   size_t initialSideLength=16,
+                   bool forcePowerOf2=true)
   {
     for(auto& inputBox : inputBoxes)
     {
@@ -72,7 +75,8 @@ struct BoxPacker
         maxSize = inputBox.rotatedHeight;
     }
 
-    maxSize = powerOf2(maxSize);
+    if(forcePowerOf2)
+      maxSize = powerOf2(maxSize);
 
     std::vector<size_t> sortedBoxes;
     sortedBoxes.reserve(inputBoxes.size());
@@ -81,7 +85,7 @@ struct BoxPacker
 
     std::sort(sortedBoxes.begin(), sortedBoxes.end(), [&](size_t a, size_t b)
     {
-      return inputBoxes[a].rotatedHeight > inputBoxes[b].rotatedHeight;}
+      return inputBoxes[a].rotatedHeight < inputBoxes[b].rotatedHeight;}
     );
 
     while(!sortedBoxes.empty())
@@ -92,15 +96,18 @@ struct BoxPacker
         size_t tallest = 0;
         for(size_t currentY=0; currentY<outputSize; currentY+=tallest)
         {
+          tpDebug() << "currentY: " << currentY << " sortedBoxes: " << sortedBoxes.size();
+
           if(sortedBoxes.empty())
             break;
 
           tallest = 0;
 
+          size_t i=sortedBoxes.size()-1;
           for(size_t currentX=0; currentX<outputSize;)
           {
             bool doneX = true;
-            for(size_t i=0; i<sortedBoxes.size(); i++)
+            for(; i<sortedBoxes.size(); i--)
             {
               auto ii = sortedBoxes.at(i);
               auto& inputBox = inputBoxes.at(ii);
@@ -114,8 +121,12 @@ struct BoxPacker
               doneX = false;
               f(currentX, currentY, ii);
               currentX+=inputBox.rotatedWidth;
-              tallest = tpMax(tallest, inputBox.rotatedHeight);
+
+              if(inputBox.rotatedHeight>tallest)
+                tallest = inputBox.rotatedHeight;
+
               tpRemoveAt(sortedBoxes, i);
+              i--;
               break;
             }
 
@@ -131,6 +142,7 @@ struct BoxPacker
       //-- Calculate the size for the next texture -------------------------------------------------
       OutputBox outputBox;
       outputBox.padding = padding;
+      outputBox.size = initialSideLength;
       for(;;)
       {
         std::vector<size_t> sortedBoxesCopy = sortedBoxes;
@@ -140,10 +152,12 @@ struct BoxPacker
         if(sortedBoxesCopy.empty())
           break;
 
-        if((outputBox.size*2) > maxSize)
+        size_t nextSize = size_t(float(outputBox.size) * stepMultiplier + 0.5f);
+
+        if(nextSize > maxSize)
           break;
 
-        outputBox.size *= 2;
+        outputBox.size = nextSize;
       }
 
       //-- Calculate positions for each box in this texture ----------------------------------------

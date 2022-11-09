@@ -83,3 +83,6 @@ HEADERS += inc/tp_math_utils/Sphere.h
 
 SOURCES += src/Frustum.cpp
 HEADERS += inc/tp_math_utils/Frustum.h
+
+SOURCES += src/AreaOfTriangle.cpp
+HEADERS += inc/tp_math_utils/AreaOfTriangle.h
