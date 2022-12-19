@@ -86,3 +86,41 @@ HEADERS += inc/tp_math_utils/Frustum.h
 
 SOURCES += src/AreaOfTriangle.cpp
 HEADERS += inc/tp_math_utils/AreaOfTriangle.h
+
+SOURCES += src/UnwrapUVs.cpp
+HEADERS += inc/tp_math_utils/UnwrapUVs.h
+
+SOURCES += src/MarchingCubes.cpp
+HEADERS += inc/tp_math_utils/MarchingCubes.h
+
+#===================================================================================================
+
+# xatlas
+SOURCES += src/external/xatlas.cpp
+HEADERS += inc/tp_math_utils/external/xatlas.h
+
+
+# MC33
+HEADERS += inc/tp_math_utils/external/MC33/MC33_LookUpTable.h
+
+SOURCES += src/external/MC33/MC33.cpp
+HEADERS += inc/tp_math_utils/external/MC33/MC33.h
+
+SOURCES += src/external/MC33/grid3d.cpp
+
+SOURCES += src/external/MC33/surface.cpp
+
+SOURCES += src/external/MC33/Grid3DBase.cpp
+HEADERS += inc/tp_math_utils/external/MC33/Grid3DBase.h
+
+SOURCES += src/external/MC33/Grid3DBool.cpp
+HEADERS += inc/tp_math_utils/external/MC33/Grid3DBool.h
+
+SOURCES += src/external/MC33/Grid3DBits.cpp
+HEADERS += inc/tp_math_utils/external/MC33/Grid3DBits.h
+
+SOURCES += src/external/MC33/Grid3DFloat.cpp
+HEADERS += inc/tp_math_utils/external/MC33/Grid3DFloat.h
+
+SOURCES += src/external/MC33/Grid3DView.cpp
+HEADERS += inc/tp_math_utils/external/MC33/Grid3DView.h

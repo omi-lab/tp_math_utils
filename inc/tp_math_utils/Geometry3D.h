@@ -36,7 +36,6 @@ NormalCalculationMode normalCalculationModeFromString(const std::string& mode);
 struct TP_MATH_UTILS_SHARED_EXPORT Vertex3D
 {
   glm::vec3 vert{0,0,0};
-  glm::vec4 color{1,0,0,1};
   glm::vec2 texture{0,0};
   glm::vec3 normal{0,0,1};
 
@@ -53,7 +52,6 @@ struct TP_MATH_UTILS_SHARED_EXPORT Vertex3D
   {
     return
         vert == other.vert &&
-        color == other.color &&
         texture == other.texture &&
         normal == other.normal;
   };
@@ -97,10 +95,18 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
   void add(const Geometry3D& other);
 
   //################################################################################################
+  void clear();
+
+  //################################################################################################
   std::string stats() const;
 
   //################################################################################################
+  //! Convert strips and fans into triangles.
   void convertToTriangles();
+
+  //################################################################################################
+  //! Convert to triangles and duplicate verts. (nVerts = nFaces*3)
+  void breakApartTriangles();
 
   //################################################################################################
   void calculateNormals(NormalCalculationMode mode, float minDot=0.9f);

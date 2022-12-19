@@ -210,7 +210,6 @@ public:
               newVert.vert    = position(iPNew);
               const auto& v0 = vertex(iV0);
               const auto& v1 = vertex(iV1);
-              newVert.color   = (v0.color   + v1.color  ) / 2.0f;
               newVert.texture = (v0.texture + v1.texture) / 2.0f;
               newVert.normal  = glm::normalize(v0.normal  + v1.normal);
             }

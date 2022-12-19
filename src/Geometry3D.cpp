@@ -4,6 +4,7 @@
 #include "nanoflann.hpp"
 
 #include "glm/gtx/normal.hpp" // IWYU pragma: keep
+#include "glm/gtx/norm.hpp" // IWYU pragma: keep
 
 #include <array>
 
@@ -144,7 +145,6 @@ Vertex3D Vertex3D::interpolate(float u, const Vertex3D& v0, const Vertex3D& v1)
   tp_math_utils::Vertex3D result;
 
   result.vert    = (v*v0.vert   ) + (u*v1.vert   );
-  result.color   = (v*v0.color  ) + (u*v1.color  );
   result.texture = (v*v0.texture) + (u*v1.texture);
   result.normal  = (v*v0.normal ) + (u*v1.normal );
 
@@ -158,7 +158,6 @@ Vertex3D Vertex3D::interpolate(float u, float v, const Vertex3D& v0, const Verte
   tp_math_utils::Vertex3D result;
 
   result.vert    = (w*v0.vert   ) + (u*v1.vert   ) + (v*v2.vert   );
-  result.color   = (w*v0.color  ) + (u*v1.color  ) + (v*v2.color  );
   result.texture = (w*v0.texture) + (u*v1.texture) + (v*v2.texture);
   result.normal  = (w*v0.normal ) + (u*v1.normal ) + (v*v2.normal );
 
@@ -177,6 +176,14 @@ void Geometry3D::add(const Geometry3D& other)
   for(const auto& index : other.indexes)
     for(auto& i : indexes.emplace_back(index).indexes)
       i+=int(offset);
+}
+
+//##################################################################################################
+void Geometry3D::clear()
+{
+  comments.clear();
+  verts.clear();
+  indexes.clear();
 }
 
 //##################################################################################################
@@ -204,6 +211,21 @@ std::string Geometry3D::stats() const
 
 //##################################################################################################
 void Geometry3D::convertToTriangles()
+{
+  std::vector<Face_lt> faces = calculateFaces(*this, false);
+
+  indexes.clear();
+  Indexes3D& newIndexes = indexes.emplace_back();
+  newIndexes.type = triangles;
+  newIndexes.indexes.reserve(faces.size()*3);
+
+  for(const auto& face : faces)
+    for(const auto& i : face.indexes)
+      newIndexes.indexes.push_back(i);
+}
+
+//##################################################################################################
+void Geometry3D::breakApartTriangles()
 {
   std::vector<Face_lt> faces = calculateFaces(*this, false);
 
@@ -285,7 +307,7 @@ void Geometry3D::calculateVertexNormals()
     auto count = normalCounts.data();
     for(; vert<vertMax; vert++, count++)
     {
-      if(*count)
+      if(*count && glm::length2(vert->normal)>0.000001f)
         vert->normal = glm::normalize(vert->normal);
       else
         vert->normal = {0.0f, 0.0f, 1.0f};
@@ -333,10 +355,7 @@ struct VertCloud
     case 0: return pts[idx].vert.x;
     case 1: return pts[idx].vert.y;
     case 2: return pts[idx].vert.z;
-    case 3: return pts[idx].color.x;
-    case 4: return pts[idx].color.y;
-    case 5: return pts[idx].color.z;
-    case 6: return pts[idx].texture.x;
+    case 3: return pts[idx].texture.x;
     }
 
     return pts[idx].texture.y;
@@ -354,11 +373,11 @@ void Geometry3D::combineSimilarVerts()
   std::vector<size_t> idxLookup;
   idxLookup.resize(verts.size());
 
-  typedef nanoflann::KDTreeSingleIndexDynamicAdaptor<nanoflann::L2_Simple_Adaptor<float, VertCloud>, VertCloud, 8> KDTree;
+  typedef nanoflann::KDTreeSingleIndexDynamicAdaptor<nanoflann::L2_Simple_Adaptor<float, VertCloud>, VertCloud, 5> KDTree;
 
   VertCloud cloud;
   cloud.pts.reserve(verts.size());
-  KDTree tree(8, cloud, nanoflann::KDTreeSingleIndexAdaptorParams(10 /* max leaf */) );
+  KDTree tree(5, cloud, nanoflann::KDTreeSingleIndexAdaptorParams(10 /* max leaf */) );
 
   for(size_t i=0; i<verts.size(); i++)
   {
@@ -367,7 +386,7 @@ void Geometry3D::combineSimilarVerts()
     bool found=false;
 
     {
-      float query[8] = {vert.vert.x, vert.vert.y, vert.vert.z, vert.color.x, vert.color.y, vert.color.z, vert.texture.x, vert.texture.y};
+      float query[5] = {vert.vert.x, vert.vert.y, vert.vert.z, vert.texture.x, vert.texture.y};
 
       size_t index;
       float dist2;
@@ -395,8 +414,13 @@ void Geometry3D::combineSimilarVerts()
   verts.swap(cloud.pts);
 
   for(auto& ii : indexes)
+  {
     for(auto& i : ii.indexes)
-      i = int(idxLookup[size_t(i)]);
+    {
+      auto j = size_t(i);
+      i = int(idxLookup[j]);
+    }
+  }
 }
 
 //##################################################################################################
