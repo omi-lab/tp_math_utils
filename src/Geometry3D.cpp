@@ -187,10 +187,32 @@ void Geometry3D::clear()
 }
 
 //##################################################################################################
-std::string Geometry3D::stats() const
+std::string Geometry3D::stats(const std::vector<Geometry3D>& geometry)
 {
+  size_t vertCount{0};
   size_t indexCount{0};
   size_t triangleCount{0};
+
+  for(const auto& mesh : geometry)
+    mesh.stats(vertCount, indexCount, triangleCount);
+
+  return statsString(vertCount, indexCount, triangleCount);
+}
+
+//##################################################################################################
+std::string Geometry3D::statsString(size_t vertCount, size_t indexCount, size_t triangleCount)
+{
+  return
+      std::string("Verts: ") + std::to_string(vertCount) +
+      std::string(" indexes: ") + std::to_string(indexCount) +
+      std::string(" triangles: ") + std::to_string(triangleCount);
+}
+
+//##################################################################################################
+void Geometry3D::stats(size_t& vertCount, size_t& indexCount, size_t& triangleCount) const
+{
+  vertCount += verts.size();
+
   for(const auto& index : indexes)
   {
     indexCount += index.indexes.size();
@@ -202,11 +224,18 @@ std::string Geometry3D::stats() const
     else if(index.type == triangles)
       triangleCount+=index.indexes.size()/3;
   }
+}
 
-  return
-      std::string("Verts: ") + std::to_string(verts.size()) +
-      std::string(" indexes: ") + std::to_string(indexCount) +
-      std::string(" triangles: ") + std::to_string(triangleCount);
+//##################################################################################################
+std::string Geometry3D::stats() const
+{
+  size_t vertCount{0};
+  size_t indexCount{0};
+  size_t triangleCount{0};
+
+  stats(vertCount, indexCount, triangleCount);
+
+  return statsString(vertCount, indexCount, triangleCount);
 }
 
 //##################################################################################################

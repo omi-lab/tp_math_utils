@@ -98,6 +98,15 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
   void clear();
 
   //################################################################################################
+  static std::string stats(const std::vector<Geometry3D>& geometry);
+
+  //################################################################################################
+  static std::string statsString(size_t vertCount, size_t indexCount, size_t triangleCount);
+
+  //################################################################################################
+  void stats(size_t& vertCount, size_t& indexCount, size_t& triangleCount) const;
+
+  //################################################################################################
   std::string stats() const;
 
   //################################################################################################
