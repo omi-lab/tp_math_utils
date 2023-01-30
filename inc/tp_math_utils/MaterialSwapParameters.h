@@ -12,7 +12,7 @@ namespace tp_math_utils
 {
 
 //##################################################################################################
-struct TP_MATH_UTILS_SHARED_EXPORT MaterialSwapParameters
+struct TP_MATH_UTILS_EXPORT MaterialSwapParameters
 {
   tp_utils::StringID name;
 

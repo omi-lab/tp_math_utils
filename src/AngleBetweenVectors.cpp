@@ -21,7 +21,7 @@ float angleBetweenUnitVectors(const glm::vec3& v1, const glm::vec3& v2)
   if(std::isnan(dot))
     return 0.0f;
 
-  return std::acos(dot);
+  return std::acos(std::clamp(dot, -1.0f, 1.0f));
 }
 
 //##################################################################################################
@@ -35,7 +35,7 @@ double angleBetweenVectors(const glm::dvec3& a, const glm::dvec3& b)
   if(std::isnan(dot))
     return 0.0;
 
-  return std::acos(dot);
+  return std::acos(std::clamp(dot, -1.0, 1.0));
 }
 
 //##################################################################################################

@@ -28,7 +28,7 @@ LightType lightTypeFromString(const std::string& lightType);
 std::string lightTypeToString(LightType lightType);
 
 //##################################################################################################
-struct TP_MATH_UTILS_SHARED_EXPORT Light
+struct TP_MATH_UTILS_EXPORT Light
 {
   tp_utils::StringID name; //!< User visible for the light.
 

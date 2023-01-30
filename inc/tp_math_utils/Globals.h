@@ -6,9 +6,9 @@
 #include "lib_platform/RandomDevice.h"
 
 #if defined(TP_MATH_UTILS_LIBRARY)
-#  define TP_MATH_UTILS_SHARED_EXPORT TP_EXPORT
+#  define TP_MATH_UTILS_EXPORT TP_EXPORT
 #else
-#  define TP_MATH_UTILS_SHARED_EXPORT TP_IMPORT
+#  define TP_MATH_UTILS_EXPORT TP_IMPORT
 #endif
 
 #include "glm/glm.hpp" // IWYU pragma: keep
@@ -32,7 +32,7 @@ namespace tp_math_utils
 {
 
 //##################################################################################################
-struct TP_MATH_UTILS_SHARED_EXPORT RNG
+struct TP_MATH_UTILS_EXPORT RNG
 {
   lib_platform::RandomDevice rd;
   std::minstd_rand0 mt;

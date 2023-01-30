@@ -9,10 +9,10 @@ class Plane;
 struct Ray;
 
 //##################################################################################################
-bool TP_MATH_UTILS_SHARED_EXPORT rayPlaneIntersection(const Ray& ray, const Plane& plane, glm::vec3& intersection);
+bool TP_MATH_UTILS_EXPORT rayPlaneIntersection(const Ray& ray, const Plane& plane, glm::vec3& intersection);
 
 //##################################################################################################
-bool TP_MATH_UTILS_SHARED_EXPORT rayPlaneIntersection(const Ray& ray, const Plane& plane, glm::dvec3& intersection);
+bool TP_MATH_UTILS_EXPORT rayPlaneIntersection(const Ray& ray, const Plane& plane, glm::dvec3& intersection);
 
 }
 

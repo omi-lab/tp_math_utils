@@ -9,13 +9,13 @@ namespace tp_math_utils
 {
 
 //##################################################################################################
-double TP_MATH_UTILS_SHARED_EXPORT calculateSD(const std::vector<float>& data);
+double TP_MATH_UTILS_EXPORT calculateSD(const std::vector<float>& data);
 
 //##################################################################################################
-double TP_MATH_UTILS_SHARED_EXPORT calculateSD(const std::vector<float>& data, double& mean);
+double TP_MATH_UTILS_EXPORT calculateSD(const std::vector<float>& data, double& mean);
 
 //##################################################################################################
-void TP_MATH_UTILS_SHARED_EXPORT sortedDifferences(std::vector<float>& data);
+void TP_MATH_UTILS_EXPORT sortedDifferences(std::vector<float>& data);
 
 }
 

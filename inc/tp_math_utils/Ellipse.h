@@ -7,7 +7,7 @@ namespace tp_math_utils
 {
 
 //##################################################################################################
-struct TP_MATH_UTILS_SHARED_EXPORT Ellipse
+struct TP_MATH_UTILS_EXPORT Ellipse
 {
   float semiMajor;
   float semiMinor;

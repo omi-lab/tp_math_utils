@@ -7,7 +7,7 @@ namespace tp_math_utils
 {
 
 //##################################################################################################
-class TP_MATH_UTILS_SHARED_EXPORT Transformation
+class TP_MATH_UTILS_EXPORT Transformation
 {
 public:
   //################################################################################################

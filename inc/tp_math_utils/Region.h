@@ -7,7 +7,7 @@ namespace tp_math_utils
 {
 
 //##################################################################################################
-struct TP_MATH_UTILS_SHARED_EXPORT Region
+struct TP_MATH_UTILS_EXPORT Region
 {
   size_t classIndex;
   std::string className;

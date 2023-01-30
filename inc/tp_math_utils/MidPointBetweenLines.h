@@ -8,7 +8,7 @@ namespace tp_math_utils
 struct DRay;
 
 //##################################################################################################
-void TP_MATH_UTILS_SHARED_EXPORT midPointBetweenLines(const DRay& S1, const DRay& S2, glm::dvec3& midPoint);
+void TP_MATH_UTILS_EXPORT midPointBetweenLines(const DRay& S1, const DRay& S2, glm::dvec3& midPoint);
 
 }
 

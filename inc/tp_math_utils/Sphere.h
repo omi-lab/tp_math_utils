@@ -7,7 +7,7 @@ namespace tp_math_utils
 {
 
 //##################################################################################################
-struct TP_MATH_UTILS_SHARED_EXPORT Sphere
+struct TP_MATH_UTILS_EXPORT Sphere
 {
   //################################################################################################
   //static Geometry3D icosahedralClass1(float radius,

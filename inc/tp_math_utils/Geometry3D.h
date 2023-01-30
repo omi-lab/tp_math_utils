@@ -33,7 +33,7 @@ std::string normalCalculationModeToString(NormalCalculationMode mode);
 NormalCalculationMode normalCalculationModeFromString(const std::string& mode);
 
 //##################################################################################################
-struct TP_MATH_UTILS_SHARED_EXPORT Vertex3D
+struct TP_MATH_UTILS_EXPORT Vertex3D
 {
   glm::vec3 vert{0,0,0};
   glm::vec2 texture{0,0};
@@ -60,7 +60,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT Vertex3D
 typedef std::vector<int> Vertex3DIndexList;
 
 //##################################################################################################
-struct TP_MATH_UTILS_SHARED_EXPORT Indexes3D
+struct TP_MATH_UTILS_EXPORT Indexes3D
 {
   int type{0};
   Vertex3DIndexList indexes;
@@ -79,7 +79,7 @@ typedef std::vector<Vertex3D> Vertex3DList;
 typedef std::vector<Indexes3D> Indexes3DList;
 
 //##################################################################################################
-struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
+struct TP_MATH_UTILS_EXPORT Geometry3D
 {
   std::vector<std::string> comments;
   Vertex3DList verts;
@@ -164,7 +164,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT Geometry3D
 typedef std::vector<Geometry3D> Geometry3DList;
 
 //##################################################################################################
-struct TP_MATH_UTILS_SHARED_EXPORT Geometry
+struct TP_MATH_UTILS_EXPORT Geometry
 {
   std::vector<glm::vec2> geometry;
   glm::mat4 transform{1.0f};

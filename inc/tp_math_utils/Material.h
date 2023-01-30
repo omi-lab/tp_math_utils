@@ -39,7 +39,7 @@ std::string shaderTypeToString(ShaderType shaderType);
 ShaderType shaderTypeFromString(const std::string& shaderType);
 
 //##################################################################################################
-struct TP_MATH_UTILS_SHARED_EXPORT Material
+struct TP_MATH_UTILS_EXPORT Material
 {
   tp_utils::StringID name;
 

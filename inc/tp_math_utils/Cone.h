@@ -11,7 +11,7 @@ namespace tp_math_utils
 The cone is defined as a line segment with a radius at each end. Setting the radius to the same
 value at both ends defines a cylinder.
 */
-struct TP_MATH_UTILS_SHARED_EXPORT Cone
+struct TP_MATH_UTILS_EXPORT Cone
 {
   Cone(const glm::vec3& p0_={0.0f, 0.0f, 0.0f}, float r0_=0.0f, const glm::vec3& p1_={0.0f, 0.0f, 0.0f}, float r1_=0.0f):
     p0(p0_),
@@ -33,7 +33,7 @@ struct TP_MATH_UTILS_SHARED_EXPORT Cone
 The cone is defined as a line segment with a radius at each end. Setting the radius to the same
 value at both ends defines a cylinder.
 */
-struct TP_MATH_UTILS_SHARED_EXPORT DCone
+struct TP_MATH_UTILS_EXPORT DCone
 {
   DCone(const glm::dvec3& p0_={0.0, 0.0, 0.0}, double r0_=0.0, const glm::dvec3& p1_={0.0, 0.0, 0.0}, double r1_=0.0):
     p0(p0_),
