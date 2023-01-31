@@ -34,7 +34,7 @@ struct BoxPacker
 
   struct OutputBox
   {
-    bool padding{false};
+    //bool padding{false};
     size_t size{16};
     std::vector<size_t> inputBoxIndexes;
   };
@@ -43,7 +43,7 @@ struct BoxPacker
   static void pack(std::vector<InputBox>& inputBoxes,
                    std::vector<OutputBox>& outputBoxes,
                    size_t maxSize,
-                   bool padding,
+                   size_t padding,
                    float stepMultiplier=2.0f,
                    size_t initialSideLength=16,
                    bool forcePowerOf2=true)
@@ -62,11 +62,8 @@ struct BoxPacker
         inputBox.rotatedHeight = inputBox.height;
       }
 
-      if(padding)
-      {
-        inputBox.rotatedWidth  += 2;
-        inputBox.rotatedHeight += 2;
-      }
+      inputBox.rotatedWidth  += padding;
+      inputBox.rotatedHeight += padding;
 
       if(inputBox.rotatedWidth>maxSize)
         maxSize = inputBox.rotatedWidth;
@@ -139,7 +136,7 @@ struct BoxPacker
 
       //-- Calculate the size for the next texture -------------------------------------------------
       OutputBox outputBox;
-      outputBox.padding = padding;
+      //outputBox.padding = padding;
       outputBox.size = initialSideLength;
       for(;;)
       {
@@ -165,7 +162,7 @@ struct BoxPacker
         inputBox.outputBoxIndex = outputBoxes.size();
         inputBox.origin = {int(x), int(y)};
 
-        float p = padding?1.0f:0.0f;
+        float p = float(padding) * 0.5f;
         float w = float(inputBox.rotate?inputBox.height:inputBox.width );
         float h = float(inputBox.rotate?inputBox.width :inputBox.height);
 
