@@ -83,6 +83,27 @@ inline const std::vector<glm::vec2> vec2VectorFromJSON(const nlohmann::json& j)
 //-- vec3 ------------------------------------------------------------------------------------------
 
 //##################################################################################################
+inline nlohmann::json quatToJSON(const glm::quat& quat)
+{
+  return nlohmann::json::array({quat.w, quat.x, quat.y, quat.z});
+}
+
+//##################################################################################################
+inline glm::quat quatFromJSON(const nlohmann::json& j, const glm::quat& defaultValue=glm::quat())
+{
+  return (j.is_array() && j.size()==4 && j.at(0).is_number() && j.at(1).is_number()
+          && j.at(2).is_number() && j.at(3).is_number())?glm::quat(j.at(0), j.at(1), j.at(2), j.at(3)):defaultValue;
+}
+
+//##################################################################################################
+inline glm::quat getJSONQuat(const nlohmann::json& j, const std::string& key, const glm::quat& defaultValue)
+{
+  return quatFromJSON(TPJSON(j, key), defaultValue);
+}
+
+//-- vec3 ------------------------------------------------------------------------------------------
+
+//##################################################################################################
 inline nlohmann::json vec3ToJSON(const glm::vec3& vec)
 {
   return nlohmann::json::array({vec.x, vec.y, vec.z});
