@@ -65,7 +65,7 @@ private:
 public:
 //Get pointers to some class members:
 
-  const unsigned int* get_N();  // Grid dimensions Nx,Ny,Nz
+  const size_t* get_N();  // Grid dimensions Nx,Ny,Nz
   const float* get_L();
   const double* get_r0();
   const double* get_d();
@@ -85,8 +85,8 @@ public:
   set_grid_dimensions sets the new dimensions of a grid data. It overrides the effect of
   the other functions that modify the grid parameters. Nx, Ny and Nz are the number of
   grid points in each dimension. It returns 0 if memory allocation was successful.*/
-  int set_grid_dimensions(unsigned int Nx, unsigned int Ny, unsigned int Nz);
-  void set_grid_value(unsigned int i, unsigned int j, unsigned int k, float value); // set a grid point value
+  int set_grid_dimensions(size_t Nx, size_t Ny, size_t Nz);
+  void set_grid_value(size_t i, size_t j, size_t k, float value); // set a grid point value
   void set_ratio_aspect(double rx, double ry, double rz); // modifies d and L
   void set_r0(double x, double y, double z); // modifies r0
   void set_Ang(float angle_bc, float angle_ca, float angle_ab); // modifies Ang
@@ -96,7 +96,7 @@ public:
   must be stored with the nested inner loop running from i = 0 to Nx - 1 and the outer
   loop from k = 0 to Nz - 1. The data content cannot be modified using class functions.
   It returns 0 if memory allocation of internal pointers was successful.*/
-  int set_data_pointer(unsigned int Nx, unsigned int Ny, unsigned int Nz, float* data);
+  int set_data_pointer(size_t Nx, size_t Ny, size_t Nz, float* data);
 
 // Managing subgrids:
   /******************************************************************
@@ -106,13 +106,13 @@ public:
   indices of the origin grid point, the number of points in each dimension and the index
   step in each dimension. The function returns 0 if the subgrid was successfully added,
   -1 for wrong input parameters and -2 for error in memory allocation. */
-  int add_subgrid(unsigned int Oi, unsigned int Oj, unsigned int Ok,
-          unsigned int Ni, unsigned int Nj, unsigned int Nk,
-          unsigned int Si, unsigned int Sj, unsigned int Sk);
+  int add_subgrid(size_t Oi, size_t Oj, size_t Ok,
+          size_t Ni, size_t Nj, size_t Nk,
+          size_t Si, size_t Sj, size_t Sk);
   void clear_subgrid(); // erase all subgrids
-//  grid3d *get_subgrid(unsigned int i); // returns a pointer to the subgrid i
-  void del_subgrid(unsigned int i); // delete the subgrid i
-  unsigned int subgrid_size(); // returns the number of subgrids
+//  grid3d *get_subgrid(size_t i); // returns a pointer to the subgrid i
+  void del_subgrid(size_t i); // delete the subgrid i
+  size_t subgrid_size(); // returns the number of subgrids
 
 //Reading grid data from files:
   /******************************************************************
@@ -131,7 +131,7 @@ public:
   bytes of the unsigned short are exchanged). The filename must end with a number, and
   the function reads all files with end number greater or equal to filename.
   (Some datasets: http://www.graphics.stanford.edu/data/voldata/voldata.html)*/
-  int read_scanfiles(const char *filename, unsigned int res, int order);
+  int read_scanfiles(const char *filename, size_t res, int order);
 
   /******************************************************************
   read_raw_file reads a file that contains integer (8, 16 or 32 bits) or float (or double)
@@ -139,7 +139,7 @@ public:
   or 8). If the data is big endian, byte must be negative (only for integers). The vector
   n[3] contains the number of points in each dimension. The size of file must be
   abs(byte)*n[0]*n[1]*n[2].*/
-  int read_raw_file(const char *filename, unsigned int *n, int byte, int isfloat = 0);
+  int read_raw_file(const char *filename, size_t *n, int byte, int isfloat = 0);
 
   /******************************************************************
   read_dat_file reads a dat file. The function returns 0 when succeeds.
@@ -168,30 +168,30 @@ public:
 //color vector contains the color index of each point.*/
 //class surface {
 //private:
-//  unsigned int nV, nT;
-//  std::vector<MC33_v3<unsigned int>> T;
+//  size_t nV, nT;
+//  std::vector<MC33_v3<size_t>> T;
 //  std::vector<MC33_v3<float>> V;
 //  std::vector<MC33_v3<float>> N;
 //  std::vector<int> color;
 //  float iso;
 //public:
 //  union {
-//    long long unsigned int ul;
+//    long long size_t ul;
 //    int i[3];
 //    char c[12];
 //    float f[3];
 //    double df;
 //  } user; // user data
 //  float get_isovalue(); // returns the isovalue
-//  unsigned int get_num_vertices(); // gets the number of vertices
-//  unsigned int get_num_triangles(); // gets the number of triangles
-//  const unsigned int *getTriangle(unsigned int n); // gets a pointer to indices of triangle n
-//  const float *getVertex(unsigned int n); // gets a pointer to coordinates of vertex n
-//  const float *getNormal(unsigned int n); // gets a pointer to the normal vector n
+//  size_t get_num_vertices(); // gets the number of vertices
+//  size_t get_num_triangles(); // gets the number of triangles
+//  const size_t *getTriangle(size_t n); // gets a pointer to indices of triangle n
+//  const float *getVertex(size_t n); // gets a pointer to coordinates of vertex n
+//  const float *getNormal(size_t n); // gets a pointer to the normal vector n
 //  void flipNormals(); // reverses the direction of all normals
 //  void flipTriangles(); // toggle CW / CCW vertex order in triangles
-//  const unsigned char *getColor(unsigned int n); // gets a pointer to the color of vertex n
-//  void setColor(unsigned int n, unsigned char *pcolor);
+//  const unsigned char *getColor(size_t n); // gets a pointer to the color of vertex n
+//  void setColor(size_t n, unsigned char *pcolor);
 
 //  /******************************************************************
 //  Saves all the surface *S data (in binary format) to a "filename" file. The

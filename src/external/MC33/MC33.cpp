@@ -51,13 +51,13 @@ inline float invSqrt(float f) {
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif
 
-//inline uint32_t signbf(float x)
+//inline size_t signbf(float x)
 //{
-//  return (*(reinterpret_cast<uint32_t*>(&x))&0x80000000);
+//  return (*(reinterpret_cast<size_t*>(&x))&0x80000000);
 //}
 
-inline unsigned int signbf(float x) {
-  return (*(reinterpret_cast<unsigned int*>(&x))&0x80000000);
+inline size_t signbf(float x) {
+  return (*(reinterpret_cast<size_t*>(&x))&0x80000000);
 }
 
 #ifdef __GNUC__
@@ -66,7 +66,7 @@ inline unsigned int signbf(float x) {
 
 ////##################################################################################################
 //#define code_in_define_part01
-//  unsigned int nv = S->nV++;
+//  size_t nv = S->nV++;
 //  if (!(nv&0x0FFF)) {
 //  try {
 //  S->V.resize(nv + 0x1000);
@@ -98,7 +98,7 @@ namespace tp_math_utils
 
 //##################################################################################################
 // Triangle pattern look up table
-static const unsigned short int table[2310] =
+static const uint16_t table[2310] =
     #include "tp_math_utils/external/MC33/MC33_LookUpTable.h"
     ;
 
@@ -113,14 +113,14 @@ struct MC33::Private
 
   bool memoryFault{false};
 
-  unsigned int **Dx{nullptr};
-  unsigned int **Dy{nullptr};
-  unsigned int **Ux{nullptr};
-  unsigned int **Uy{nullptr};
-  unsigned int **Lz{nullptr};
+  size_t **Dx{nullptr};
+  size_t **Dy{nullptr};
+  size_t **Ux{nullptr};
+  size_t **Uy{nullptr};
+  size_t **Lz{nullptr};
 
   //Assign memory for the vertex r[3], normal (r + 3)[3]. The return value is the new vertex label.
-  std::function<unsigned int(float*)> storePoint;
+  std::function<size_t(float*)> storePoint;
 
   float iso{0.5f};
 
@@ -148,7 +148,7 @@ struct MC33::Private
   result value is 1 if the positive face vertices are joined, -1 if the negative
   vertices are joined, and 0 (unchanged) if the test should not be applied. The
   return value of this function is the the sum of all six results.*/
-  int face_tests(int *face, int i) const
+  int face_tests(int *face, size_t i) const
   {
     if (i&0x80) //vertex 0
     {
@@ -183,7 +183,7 @@ struct MC33::Private
   /*!
   This function is only used for the cases 3 and 6 of MC33.
   */
-  int face_test1(int face) const
+  int face_test1(size_t face) const
   {
     switch (face)
     {
@@ -212,7 +212,7 @@ struct MC33::Private
   13.5.2), returns 1 if one of the vertices 4, 5, 6 or 7 is joined to the
   center point of the cube (case 13.5.2 too), and it returns 0 if the vertices
   are not joined (case 13.5.1)*/
-  int interior_test(int i, int flag13) const
+  size_t interior_test(size_t i, size_t flag13) const
   {
     //Signs of cube vertices were changed to use signbit function in calc_isosurface
     //A0 = -v[0], B0 = -v[1], C0 = -v[2], D0 = -v[3]
@@ -253,7 +253,7 @@ struct MC33::Private
   */
   size_t surfint(size_t x, size_t y, size_t z, float *r)
   {
-    r[0] = x; r[1] = y; r[2] = z;
+    r[0] = float(x); r[1] = float(y); r[2] = float(z);
     if (x == 0)
       r[3] = F(z, y, 0) - F(z, y, 1);
     else if (x == nx) {
@@ -294,16 +294,16 @@ struct MC33::Private
 
   The temporary matrices: Dx, Dy, Ux, Uy, and Lz are filled
   and used here.*/
-  void find_case(std::vector<int>& indexes, unsigned int x, unsigned int y, unsigned int z, unsigned int i)
+  void find_case(std::vector<int>& indexes, size_t x, size_t y, size_t z, size_t i)
   {
-    unsigned int p[13] = {FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF};
-    unsigned int ti[3];//for vertex indices of a triangle
+    size_t p[13] = {FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF};
+    size_t ti[3];//for vertex indices of a triangle
     union { // memory saving
       int f[6];//for the face tests
       float r[6];//for intercept and normal coordinates
     };
-    const unsigned short int *pcase = table;
-    unsigned int k, c, m, n;
+    const uint16_t *pcase = table;
+    size_t k, c, m, n;
     float t;
     if (i&0x80) {
       c = pcase[i^0xFF];
@@ -320,16 +320,16 @@ struct MC33::Private
       pcase += k;
       break;
     case 1: // case 3
-      pcase += ((m? i: i^0xFF)&face_test1(k>>2)? 183 + (k<<1): 159 + k);
+      pcase += uint16_t((m? i: i^0xFF)&face_test1(k>>2)? 183 + (k<<1): 159 + k);
       break;
     case 2: // case 4
-      pcase += (interior_test(k,0)? 239 + 6*k: 231 + (k<<1));
+      pcase += uint16_t(interior_test(k,0)? 239 + 6*k: 231 + (k<<1));
       break;
     case 3: // case 6
       if ((m? i: i^0xFF)&face_test1(k%6))
         pcase += 575 + 5*k; //6.2
       else
-        pcase += (interior_test(k/6,0)? 407 + 7*k: 335 + 3*k); //6.1
+        pcase += uint16_t(interior_test(k/6,0)? 407 + 7*k: 335 + 3*k); //6.1
       break;
     case 4: // case 7
       switch (face_tests(f,(m? i: i^0xFF))) {
@@ -377,7 +377,7 @@ struct MC33::Private
       }
       break;
     default: // case 13
-      switch (abs(face_tests(f, 165))) {
+      switch (std::abs(face_tests(f, 165))) {
       case 0:
         k = ((f[1] < 0)<<1)|(f[5] < 0);
         if (f[0]*f[1] == f[5]) //13.4
@@ -474,7 +474,7 @@ struct MC33::Private
                   p[1] = (p[2] != FF? p[2]: surfint(0,y + 1,z + 1,r));
               } else {
                 t = v[1]/(v[1] - v[2]);
-                r[0] = 0; r[1] = y + 1;
+                r[0] = 0.0f; r[1] = float(y + 1);
                 r[2] = z + t;
                 r[3] = (v[5] - v[1])*(1 - t) + (v[6] - v[2])*t;
                 r[4] = (y + 1 < ny? 0.5f*((F(z, y, 0) - F(z, y + 2, 0))*(1 - t)
@@ -512,7 +512,7 @@ struct MC33::Private
                   p[2] = (p[1] != FF? p[1]: surfint(0,y + 1,z + 1,r));
               } else {
                 t = v[3]/(v[3] - v[2]);
-                r[0] = 0; r[2] = z + 1;
+                r[0] = 0.0f; r[2] = float(z + 1);
                 r[1] = y + t;
                 r[3] = (v[7] - v[3])*(1 - t) + (v[6] - v[2])*t;
                 r[4] = v[2] - v[3];
@@ -588,7 +588,7 @@ struct MC33::Private
                   p[4] = (p[9] != FF? p[9]: surfint(x + 1,y + 1,0,r));
               } else {
                 t = v[4]/(v[4] - v[5]);
-                r[0] = x + 1; r[2] = 0;
+                r[0] = float(x + 1); r[2] = 0.0f;
                 r[1] = y + t;
                 r[3] = (x + 1 < nx? 0.5f*((F(0, y, x) - F(0, y, x + 2))*(1 - t)
                                           + (F(0, y + 1, x) - F(0, y + 1, x + 2))*t):
@@ -622,7 +622,7 @@ struct MC33::Private
               p[5] = surfint(x + 1,y + 1,z + 1,r);
             } else {
               t = v[5]/(v[5] - v[6]);
-              r[0] = x + 1; r[1] = y + 1;
+              r[0] = float(x + 1); r[1] = float(y + 1);
               r[2] = z + t;
               c = x;
               r[3] = (x + 1 < nx? 0.5f*((F(z, y + 1, c) - F(z, y + 1, c + 2))*(1 - t)
@@ -662,8 +662,8 @@ struct MC33::Private
                 p[6] = (p[10] != FF? p[10]: surfint(x + 1,y + 1,z + 1,r));
             } else {
               t = v[7]/(v[7] - v[6]);
-              r[0] = x + 1;
-              r[1] = y + t; r[2] = z + 1;
+              r[0] = float(x + 1);
+              r[1] = float(y + t); r[2] = float(z + 1);
               c = x;
               r[3] = (x + 1 < nx? 0.5f*((F(z + 1, y, c) - F(z + 1, y, c + 2))*(1 - t)
                                         + (F(z + 1, y + 1, c) - F(z + 1, y + 1, c + 2))*t):
@@ -704,7 +704,7 @@ struct MC33::Private
                   p[7] = (p[11] != FF? p[11]: surfint(x + 1,0,z + 1,r));
               } else {
                 t = v[4]/(v[4] - v[7]);
-                r[0] = x + 1; r[1] = 0;
+                r[0] = float(x + 1); r[1] = 0;
                 r[2] = z + t;
                 r[3] = (x + 1 < nx? 0.5f*((F(z, 0, x) - F(z, 0, x + 2))*(1 - t)
                                           + (F(z + 1, 0, x) - F(z + 1, 0, x + 2))*t):
@@ -778,7 +778,7 @@ struct MC33::Private
                   p[9] = (p[4] != FF? p[4]: surfint(x + 1,y + 1,0,r));
               } else {
                 t = v[1]/(v[1] - v[5]);
-                r[1] = y + 1; r[2] = 0;
+                r[1] = float(y + 1); r[2] = 0;
                 r[0] = x + t;
                 r[3] = v[5] - v[1];
                 r[4] = (y + 1 < ny? 0.5f*((F(0, y, x) - F(0, y + 2, x))*(1 - t)
@@ -815,7 +815,7 @@ struct MC33::Private
             } else {
               t = v[2]/(v[2] - v[6]);
               r[0] = x + t;
-              r[1] = y + 1; r[2] = z + 1;
+              r[1] = float(y + 1); r[2] = float(z + 1);
               r[3] = v[6] - v[2];
               c = x;
               r[4] = (y + 1 < ny? 0.5f*((F(z + 1, y, c) - F(z + 1, y + 2, c))*(1 - t)
@@ -854,7 +854,7 @@ struct MC33::Private
                   p[11] = (p[7] != FF? p[7]: surfint(x + 1,0,z + 1,r));
               } else {
                 t = v[3]/(v[3] - v[7]);
-                r[1] = 0; r[2] = z + 1;
+                r[1] = 0; r[2] = float(z + 1);
                 r[0] = x + t;
                 r[3] = v[7] - v[3];
                 r[4] = (v[2] - v[3])*(1 - t) + (v[6] - v[7])*t;
@@ -893,11 +893,11 @@ struct MC33::Private
 //            return;
 //          }
 //        }
-//        unsigned int *vp = S->T[S->nT++].v;
+//        size_t *vp = S->T[S->nT++].v;
 
-        indexes.push_back(ti[n]);
-        indexes.push_back(ti[m]);
-        indexes.push_back(ti[2]);
+        indexes.push_back(int(ti[n]));
+        indexes.push_back(int(ti[m]));
+        indexes.push_back(int(ti[2]));
         if(ti[n]==3200171710 || ti[m]==3200171710 || ti[2]==3200171710)
         {
           tpWarning() << "ti[n] " << ti[n];
@@ -916,15 +916,15 @@ struct MC33::Private
   }
 
 //  //################################################################################################
-//  void case_count(unsigned int x, unsigned int y, unsigned int z, unsigned int i)
+//  void case_count(size_t x, size_t y, size_t z, size_t i)
 //  {
 //    int p[13] = {FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF};
 //    union {
 //      int f[6];
-//      unsigned int ti[3];
+//      size_t ti[3];
 //    };
-//    const unsigned short int *pcase = table;
-//    unsigned int c, k, m = i>>7;
+//    const uint16_t *pcase = table;
+//    size_t c, k, m = i>>7;
 //    c = pcase[m? i^0xFF: i];
 //    m = (m^((c&0xFFF)>>11));
 //    k = c&0x7FF;
@@ -1390,7 +1390,7 @@ struct MC33::Private
   {
     if(Dx)
     {
-      for (unsigned int y = 0; y != ny; ++y) {
+      for (size_t y = 0; y != ny; ++y) {
         delete[] Dx[y];
         delete[] Ux[y];
         delete[] Dy[y];
@@ -1488,11 +1488,11 @@ int MC33::setGrid3D(Grid3DBase* grid)
 //    MC_D[j] = G.d[j];
 //  }
 
-  d->Lz = new (std::nothrow) unsigned int*[d->ny + 1]; //edges 1, 3, 5 (only write) and 7
-  d->Dy = new (std::nothrow) unsigned int*[d->ny]; //edges 0 and 4
-  d->Uy = new (std::nothrow) unsigned int*[d->ny]; //edges 2 and 6 (only write)
-  d->Dx = new (std::nothrow) unsigned int*[d->ny + 1]; //edges 8 and 9
-  d->Ux = new (std::nothrow) unsigned int*[d->ny + 1]; //edges 10 (only write) and 11
+  d->Lz = new (std::nothrow) size_t*[d->ny + 1]; //edges 1, 3, 5 (only write) and 7
+  d->Dy = new (std::nothrow) size_t*[d->ny]; //edges 0 and 4
+  d->Uy = new (std::nothrow) size_t*[d->ny]; //edges 2 and 6 (only write)
+  d->Dx = new (std::nothrow) size_t*[d->ny + 1]; //edges 8 and 9
+  d->Ux = new (std::nothrow) size_t*[d->ny + 1]; //edges 10 (only write) and 11
 
   if (!d->Ux)
   {
@@ -1500,20 +1500,20 @@ int MC33::setGrid3D(Grid3DBase* grid)
     return -1;
   }
 
-  for (unsigned int j = 0; j != d->ny; ++j)
+  for (size_t j = 0; j != d->ny; ++j)
   {
-    d->Dx[j] = new (std::nothrow) unsigned int[d->nx];
-    d->Ux[j] = new (std::nothrow) unsigned int[d->nx];
-    d->Lz[j] = new (std::nothrow) unsigned int[d->nx + 1];
-    d->Dy[j] = new (std::nothrow) unsigned int[d->nx + 1];
-    d->Uy[j] = new (std::nothrow) unsigned int[d->nx + 1];
+    d->Dx[j] = new (std::nothrow) size_t[d->nx];
+    d->Ux[j] = new (std::nothrow) size_t[d->nx];
+    d->Lz[j] = new (std::nothrow) size_t[d->nx + 1];
+    d->Dy[j] = new (std::nothrow) size_t[d->nx + 1];
+    d->Uy[j] = new (std::nothrow) size_t[d->nx + 1];
   }
 
   if (d->Uy[d->ny - 1])
   {
-    d->Dx[d->ny] = new (std::nothrow) unsigned int[d->nx];
-    d->Ux[d->ny] = new (std::nothrow) unsigned int[d->nx];
-    d->Lz[d->ny] = new (std::nothrow) unsigned int[d->nx + 1];
+    d->Dx[d->ny] = new (std::nothrow) size_t[d->nx];
+    d->Ux[d->ny] = new (std::nothrow) size_t[d->nx];
+    d->Lz[d->ny] = new (std::nothrow) size_t[d->nx + 1];
 
     if(d->Lz[d->ny])
       return 0;
@@ -1537,7 +1537,7 @@ bool MC33::calculateIsosurface(Geometry3D& geometry, float iso)
 
   d->storePoint = [&geometry] (float* r)
   {
-    unsigned int i = geometry.verts.size();
+    size_t i = geometry.verts.size();
     auto& vert = geometry.verts.emplace_back();
 
     vert.vert.x = (*(r++)) - 1.0f;
@@ -1581,7 +1581,7 @@ bool MC33::calculateIsosurface(Geometry3D& geometry, float iso)
 
       //the eight least significant bits of i correspond to vertex indices. (x...x01234567)
       //If the bit is 1 then the vertex value is greater than zero.
-      unsigned int i = signbf(v2[3]) != 0;
+      size_t i = signbf(v2[3]) != 0;
       if(signbf(v2[0])) i |= 8;
       if(signbf(v2[1])) i |= 4;
       if(signbf(v2[2])) i |= 2;
@@ -1624,7 +1624,7 @@ bool MC33::calculateIsosurface(Geometry3D& geometry, float iso)
   return true;
 }
 
-//size_t MC33::size_of_isosurface(float iso, unsigned int &nV, unsigned int &nT) {
+//size_t MC33::size_of_isosurface(float iso, size_t &nV, size_t &nT) {
 //  const float ***FG = F;
 //  if (!FG)//The set_grid3d function was not executed
 //    return -2;
@@ -1632,14 +1632,14 @@ bool MC33::calculateIsosurface(Geometry3D& geometry, float iso)
 //  S = &Sf;
 //  Sf.iso = iso;
 //  memoryFault = 0;
-//  unsigned int d = di, Nx = nx;
+//  size_t d = di, Nx = nx;
 //  float Vt[12];
 //  float *v2 = Vt;
 //  v = Vt + 4;
-//  for (unsigned int z = 0; z != nz; ++z) {
+//  for (size_t z = 0; z != nz; ++z) {
 //    const float **F0 = *FG;
 //    const float **F1 = *(++FG);
-//    for (unsigned int y = 0; y != ny; ++y) {
+//    for (size_t y = 0; y != ny; ++y) {
 //      const float *V00 = *F0;
 //      const float *V01 = *(++F0);
 //      const float *V10 = *F1;
@@ -1648,11 +1648,11 @@ bool MC33::calculateIsosurface(Geometry3D& geometry, float iso)
 //      v2[1] = iso - *V01;
 //      v2[2] = iso - *V11;
 //      v2[3] = iso - *V10;
-//      unsigned int i = signbf(v2[3]) != 0;
+//      size_t i = signbf(v2[3]) != 0;
 //      if (signbf(v2[2])) i |= 2;
 //      if (signbf(v2[1])) i |= 4;
 //      if (signbf(v2[0])) i |= 8;
-//      for (unsigned int x = 0; x != Nx; ++x) {
+//      for (size_t x = 0; x != Nx; ++x) {
 //        swap(v, v2);
 //        V00 += d;
 //        v2[0] = iso - *V00;//*(++V00);
@@ -1682,7 +1682,7 @@ bool MC33::calculateIsosurface(Geometry3D& geometry, float iso)
 //}
 
 //size_t MC33::size_of_isosurface(float iso) {
-//  unsigned int nV, nT;
+//  size_t nV, nT;
 //  return size_of_isosurface(iso, nV, nT);
 //}
 
@@ -1720,18 +1720,18 @@ bool MC33::calculateIsosurface(Geometry3D& geometry, float iso)
 
 //  //Other auxiliary variables
 //  int memoryFault;
-//  unsigned int di; // for subgrids, index step for inner loop
+//  size_t di; // for subgrids, index step for inner loop
 //  // temporary structures that store the indexes of triangle vertices:
-//  unsigned int **Dx, **Dy, **Ux, **Uy, **Lz;
+//  size_t **Dx, **Dy, **Ux, **Uy, **Lz;
 //
 //
 //  //Procedures
 //  int face_tests(int *, int) const;
 //  int face_test1(int) const;
 //  int interior_test(int, int) const;
-//  unsigned int surfint(unsigned int, unsigned int, unsigned int, float *);
-//  void find_case(unsigned int, unsigned int, unsigned int, unsigned int);
-//  void case_count(unsigned int, unsigned int, unsigned int, unsigned int);
+//  size_t surfint(size_t, size_t, size_t, float *);
+//  void find_case(size_t, size_t, size_t, size_t);
+//  void case_count(size_t, size_t, size_t, size_t);
 //  int init_temp_isosurface();
 //  void free_temp_D_U();
 //  void clear_temp_isosurface();
