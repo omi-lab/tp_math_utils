@@ -57,7 +57,7 @@ inline float invSqrt(float f) {
 //}
 
 inline size_t signbf(float x) {
-  return (*(reinterpret_cast<size_t*>(&x))&0x80000000);
+  return size_t(*(reinterpret_cast<uint32_t*>(&x))&0x80000000);
 }
 
 #ifdef __GNUC__
