@@ -1,7 +1,7 @@
 #ifndef tp_math_utils_JSONUtils_h
 #define tp_math_utils_JSONUtils_h
 
-#include "tp_math_utils/Globals.h"
+#include "tp_math_utils/Globals.h" // IWYU pragma: keep
 
 #include "tp_utils/JSONUtils.h"
 
