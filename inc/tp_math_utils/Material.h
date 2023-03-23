@@ -39,6 +39,30 @@ std::string shaderTypeToString(ShaderType shaderType);
 ShaderType shaderTypeFromString(const std::string& shaderType);
 
 //##################################################################################################
+struct UVTransformation
+{
+  glm::vec2      skewUV{0.0f, 0.0f}; //!< Skew the texture coords. m[1][0] = glm::tan(glm::radians(skewUV.x)); m[0][1] = glm::tan(glm::radians(skewUV.y));
+  glm::vec2     scaleUV{1.0f, 1.0f}; //!< Scale the texture coords.
+  glm::vec2 translateUV{0.0f, 0.0f}; //!< Translate the texture coords.
+  float        rotateUV{0.0f};       //!< Rotate the texture coords.
+
+  //################################################################################################
+  glm::mat3 uvMatrix() const;
+
+  //################################################################################################
+  bool isIdentity() const;
+
+  //################################################################################################
+  nlohmann::json saveState() const;
+
+  //################################################################################################
+  void saveState(nlohmann::json& j) const;
+
+  //################################################################################################
+  void loadState(const nlohmann::json& j);
+};
+
+//##################################################################################################
 struct TP_MATH_UTILS_EXPORT Material
 {
   tp_utils::StringID name;
@@ -97,10 +121,7 @@ struct TP_MATH_UTILS_EXPORT Material
 
   bool tileTextures{false};             //!< True to GL_REPEAT textures else GL_CLAMP_TO_EDGE
 
-  glm::vec2      skewUV{0.0f, 0.0f}; //!< Skew the texture coords. m[1][0] = glm::tan(glm::radians(skewUV.x)); m[0][1] = glm::tan(glm::radians(skewUV.y));
-  glm::vec2     scaleUV{1.0f, 1.0f}; //!< Scale the texture coords.
-  glm::vec2 translateUV{0.0f, 0.0f}; //!< Translate the texture coords.
-  float        rotateUV{0.0f};       //!< Rotate the texture coords.
+  UVTransformation uvTransformation;    //! Modify UV coords.
 
   bool rayVisibilityCamera        {true};  //!< Blender cycles ray visibility options.
   bool rayVisibilityDiffuse       {true};  //!< Blender cycles ray visibility options.
@@ -188,9 +209,6 @@ struct TP_MATH_UTILS_EXPORT Material
     viewTextures([&](const tp_utils::StringID& value){if(value.isValid())allTextures.insert(value);});
     return allTextures;
   }
-
-  //################################################################################################
-  glm::mat3 uvMatrix() const;
 
   //################################################################################################
   nlohmann::json saveState() const;

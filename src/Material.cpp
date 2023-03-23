@@ -66,7 +66,7 @@ ShaderType shaderTypeFromString(const std::string& shaderType)
 }
 
 //##################################################################################################
-glm::mat3 Material::uvMatrix() const
+glm::mat3 UVTransformation::uvMatrix() const
 {
   glm::mat4 m{1.0f};
   m = glm::scale(m, glm::vec3(scaleUV.x, scaleUV.y, 0.0f));
@@ -74,6 +74,52 @@ glm::mat3 Material::uvMatrix() const
   m = glm::rotate(m, glm::radians(rotateUV), {0.0f, 0.0f, 1.0f});
   m = translate(m, translateUV);
   return m;
+}
+
+//##################################################################################################
+bool UVTransformation::isIdentity() const
+{
+  if((std::fabs(skewUV.x) + std::fabs(skewUV.y)) > 0.0001f)
+    return false;
+
+  if((std::fabs(scaleUV.x-1.0f) + std::fabs(scaleUV.y-1.0f)) > 0.0001f)
+    return false;
+
+  if((std::fabs(translateUV.x) + std::fabs(translateUV.y)) > 0.0001f)
+    return false;
+
+  if(std::fabs(rotateUV) > 0.0001f)
+    return false;
+
+  return true;
+}
+
+//##################################################################################################
+nlohmann::json UVTransformation::saveState() const
+{
+  nlohmann::json j;
+  saveState(j);
+  return j;
+}
+
+//##################################################################################################
+void UVTransformation::saveState(nlohmann::json& j) const
+{
+  j["skewUV"]                = tp_math_utils::vec2ToJSON(skewUV);
+  j["scaleUV"]               = tp_math_utils::vec2ToJSON(scaleUV);
+  j["translateUV"]           = tp_math_utils::vec2ToJSON(translateUV);
+  j["rotateUV"]              = rotateUV;
+}
+
+//##################################################################################################
+void UVTransformation::loadState(const nlohmann::json& j)
+{
+  (*this) = UVTransformation();
+
+  skewUV      = tp_math_utils::getJSONVec2(j,      "skewUV",      skewUV);
+  scaleUV     = tp_math_utils::getJSONVec2(j,     "scaleUV",     scaleUV);
+  translateUV = tp_math_utils::getJSONVec2(j, "translateUV", translateUV);
+  rotateUV    = TPJSONFloat               (j,   "rotateUV" ,    rotateUV);
 }
 
 //##################################################################################################
@@ -113,7 +159,7 @@ nlohmann::json Material::saveState() const
   j["iridescentOffset"]      = iridescentOffset;
   j["iridescentFrequency"]   = iridescentFrequency;
 
-  j["sssRadius"]             = tp_math_utils::vec3ToJSON(sssRadius);  
+  j["sssRadius"]             = tp_math_utils::vec3ToJSON(sssRadius);
   j["sssMethod"]             = sssMethodToString(sssMethod);
 
   j["normalStrength"]             = normalStrength;
@@ -136,10 +182,7 @@ nlohmann::json Material::saveState() const
 
   j["tileTextures"]          = tileTextures;
 
-  j["skewUV"]                = tp_math_utils::vec2ToJSON(skewUV);
-  j["scaleUV"]               = tp_math_utils::vec2ToJSON(scaleUV);
-  j["translateUV"]           = tp_math_utils::vec2ToJSON(translateUV);
-  j["rotateUV"]              = rotateUV;
+  uvTransformation.saveState(j);
 
   j["rayVisibilityCamera"]        = rayVisibilityCamera;
   j["rayVisibilityDiffuse"]       = rayVisibilityDiffuse;
@@ -161,13 +204,15 @@ nlohmann::json Material::saveState() const
 nlohmann::json Material::saveExtendedState() const
 {
   auto j = saveState();
-  j["uvMatrix"] = tp_math_utils::mat3ToJSON(uvMatrix());
+  j["uvMatrix"] = tp_math_utils::mat3ToJSON(uvTransformation.uvMatrix());
+  j["isIdentity"] = uvTransformation.isIdentity();
   return j;
 }
 
 //##################################################################################################
 void Material::loadState(const nlohmann::json& j)
 {
+
   name = TPJSONString(j, "name");
 
   shaderType            = shaderTypeFromString(TPJSONString(j, "shaderType"));
@@ -222,10 +267,7 @@ void Material::loadState(const nlohmann::json& j)
 
   tileTextures     = TPJSONBool(j, "tileTextures", false);
 
-  skewUV      = tp_math_utils::getJSONVec2(j,      "skewUV",      skewUV);
-  scaleUV     = tp_math_utils::getJSONVec2(j,     "scaleUV",     scaleUV);
-  translateUV = tp_math_utils::getJSONVec2(j, "translateUV", translateUV);
-  rotateUV    = TPJSONFloat               (j,   "rotateUV" ,    rotateUV);
+  uvTransformation.loadState(j);
 
   rayVisibilityCamera        = TPJSONBool(j, "rayVisibilityCamera"       , true );
   rayVisibilityDiffuse       = TPJSONBool(j, "rayVisibilityDiffuse"      , true );
