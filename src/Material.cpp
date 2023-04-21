@@ -3,26 +3,19 @@
 
 #include "tp_utils/JSONUtils.h"
 
+#include "glm/gtx/matrix_transform_2d.hpp" // IWYU pragma: keep
+
 namespace tp_math_utils
 {
 
 namespace
 {
 //##################################################################################################
-glm::mat4 skew(const glm::mat4& m_, const glm::vec2& uv)
+glm::mat3 skew(const glm::mat3& m_, const glm::vec2& uv)
 {
-  glm::mat4 m{1.0f};
+  glm::mat3 m{1.0f};
   m[1][0] = glm::tan(glm::radians(uv.x));
   m[0][1] = glm::tan(glm::radians(uv.y));
-  return m_ * m;
-}
-
-//##################################################################################################
-glm::mat4 translate(const glm::mat4& m_, const glm::vec2& uv)
-{
-  glm::mat4 m{1.0f};
-  m[2][0] = uv.x;
-  m[2][1] = uv.y;
   return m_ * m;
 }
 }
@@ -68,11 +61,11 @@ ShaderType shaderTypeFromString(const std::string& shaderType)
 //##################################################################################################
 glm::mat3 UVTransformation::uvMatrix() const
 {
-  glm::mat4 m{1.0f};
-  m = glm::scale(m, glm::vec3(scaleUV.x, scaleUV.y, 0.0f));
+  glm::mat3 m{1.0f};
+  m = glm::scale(m, scaleUV);
   m = skew(m, skewUV);
-  m = glm::rotate(m, glm::radians(rotateUV), {0.0f, 0.0f, 1.0f});
-  m = translate(m, translateUV);
+  m = glm::rotate(m, glm::radians(rotateUV));
+  m = glm::translate(m, translateUV);
   return m;
 }
 
