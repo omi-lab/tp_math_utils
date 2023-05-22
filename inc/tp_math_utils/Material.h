@@ -67,7 +67,7 @@ struct TP_MATH_UTILS_EXPORT Material
 {
   tp_utils::StringID name;
 
-  ShaderType shaderType{ShaderType::Principled}; //!< What shater should be used to draw the object.
+  ShaderType shaderType{ShaderType::Principled}; //!< What shader should be used to draw the object.
 
   glm::vec3 albedo  {0.4f, 0.0f, 0.0f}; //!< mtl: Kd or Ka
   glm::vec3 sss     {1.0f, 1.0f, 1.0f}; //!< Subsurface scattering color.
