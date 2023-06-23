@@ -12,6 +12,51 @@ namespace tp_math_utils
 Return false if ray is parallel to the plane (including ray belongs to the plane),
 true otherwise with intersection parameter filled.
 */
+
+#ifndef ALEX_BLINOV_DEBUG_OFF // some new imlementation (old one is left below for reference) remove it later!
+
+template<typename FLOAT_TYPE>
+bool rayPlaneIntersectionImpl(const Ray& ray, const Plane& plane, glm::vec<3,FLOAT_TYPE>& intersection)
+{
+  const auto& Po = plane.pointAndNormal()[0];
+  const auto& Pn = plane.pointAndNormal()[1];
+  const auto& Ro = ray.p0;
+  const auto  Rd = ray.p1-ray.p0;
+
+  auto denom = glm::dot(Po-Ro,Pn);
+  if(std::fabs(denom) < 1e-10){
+    intersection  = Po;
+    return true;
+  }
+  auto Pp = Ro + (denom/glm::dot(Pn,Pn))*Pn;
+
+  auto nom = glm::dot(Pp-Ro,Pp-Ro);
+  if( std::fabs(denom) < 1e-10){
+    intersection = Pp;
+    return true;
+  }
+
+  denom = glm::dot(Rd,Pp-Ro);
+  if(std::fabs(denom) < 1e-10)
+    return false;
+
+  intersection = Ro + (nom/denom)*Rd;
+  return true;
+}
+
+
+bool rayPlaneIntersection(const Ray& ray, const Plane& plane, glm::vec3& intersection)
+{
+  return rayPlaneIntersectionImpl(ray, plane, intersection);
+}
+
+bool rayPlaneIntersection(const Ray& ray, const Plane& plane, glm::dvec3& intersection)
+{
+  return rayPlaneIntersectionImpl(ray, plane, intersection);
+}
+
+#else //here is old implementation
+
 bool rayPlaneIntersection(const Ray& ray, const Plane& plane, glm::vec3& intersection)
 {
   const glm::vec3* p = plane.threePoints();
@@ -82,7 +127,7 @@ bool rayPlaneIntersection(const Ray& ray, const Plane& plane, glm::dvec3& inters
   return true;
 }
 
-
+#endif
 }
 
 #endif
