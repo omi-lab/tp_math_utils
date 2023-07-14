@@ -95,6 +95,8 @@ nlohmann::json Light::saveState() const
 
   j["offsetScale"] = tp_math_utils::vec3ToJSON(offsetScale);
 
+  j["castShadows"] = castShadows;
+
   return j;
 }
 
@@ -125,6 +127,8 @@ void Light::loadState(const nlohmann::json& j)
   orthoRadius = TPJSONFloat(j, "orthoRadius", orthoRadius);
 
   offsetScale = tp_math_utils::vec3FromJSON(TPJSON(j, "offsetScale", tp_math_utils::vec3ToJSON(glm::vec3(0.1f,0.1f,0.1f))));
+
+  castShadows = TPJSONBool(j, "castShadows", true);
 }
 
 //##################################################################################################

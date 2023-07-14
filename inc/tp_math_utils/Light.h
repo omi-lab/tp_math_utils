@@ -56,6 +56,8 @@ struct TP_MATH_UTILS_EXPORT Light
 
   glm::vec3 offsetScale{0.0f, 0.0f, 0.0f};
 
+  bool castShadows{true};
+
   //################################################################################################
   void setPosition(const glm::vec3& position);
 
