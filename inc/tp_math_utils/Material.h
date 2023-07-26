@@ -44,7 +44,7 @@ struct UVTransformation
   glm::vec2      skewUV{0.0f, 0.0f}; //!< Skew the texture coords. m[1][0] = glm::tan(glm::radians(skewUV.x)); m[0][1] = glm::tan(glm::radians(skewUV.y));
   glm::vec2     scaleUV{1.0f, 1.0f}; //!< Scale the texture coords.
   glm::vec2 translateUV{0.0f, 0.0f}; //!< Translate the texture coords.
-  float        rotateUV{0.0f};       //!< Rotate the texture coords.
+  float        rotateUV{0.0f};       //!< Rotate the texture coords. Degrees.
 
   //################################################################################################
   glm::mat3 uvMatrix() const;
