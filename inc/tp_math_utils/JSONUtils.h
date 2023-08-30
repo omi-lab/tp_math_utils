@@ -263,7 +263,8 @@ inline glm::mat4 getJSONMat4(const nlohmann::json& j, const std::string& key, co
 
 namespace tp_utils {
 
-template<typename T> struct type_is_glm_vector_container { static const bool value = false; };
+//#################################################################################################
+template<typename T> struct type_is_glm_vector_container      { static const bool value = false; };
 template<> struct type_is_glm_vector_container<glm::vec2>     { static const bool value = true;  };
 template<> struct type_is_glm_vector_container<glm::vec3>     { static const bool value = true;  };
 template<> struct type_is_glm_vector_container<glm::vec4>     { static const bool value = true;  };
@@ -284,7 +285,8 @@ struct saveValueToJSON<T, typename std::enable_if<type_is_glm_vector_container<T
     {
       nlohmann::json arr=nlohmann::json::array();
       arr.get_ptr<nlohmann::json::array_t*>()->reserve(d.length());
-      for(int i = 0; i < d.length(); ++i){
+      for(int i = 0; i < d.length(); ++i)
+      {
         nlohmann::json object;
         saveValueToJSON<typename T::value_type>(d[i]).saveState(object);
         arr.emplace_back(object);
@@ -310,9 +312,8 @@ struct loadValueFromJSON<T, typename std::enable_if<type_is_glm_vector_container
     try
     {
       int index = 0;
-      for(auto i = j.begin(); i != j.end() && index < d.length(); ++i, ++index){
-        loadValueFromJSON<typename T::value_type>(d[index]).loadState(i.value());
-      }
+      for(auto i = j.begin(); i != j.end() && index < d.length(); ++i, ++index)
+        loadValueFromJSON<typename T::value_type>(d[index]).loadState(i.value());      
     }
     catch(...)
     {
@@ -323,6 +324,7 @@ struct loadValueFromJSON<T, typename std::enable_if<type_is_glm_vector_container
 
 //! serialization of non square matrix as list of arrays. Please, note that squared matrix
 //! serialized as pure array for backward compatiblity (see code below)
+//#####################################################################################################
 template<typename T> struct type_is_glm_matrix_container { static const bool value = false; };
 //template<> struct type_is_glm_matrix_container<glm::mat2x2>     { static const bool value = true;  };
 template<> struct type_is_glm_matrix_container<glm::mat2x3>     { static const bool value = true;  };
@@ -372,9 +374,8 @@ struct loadValueFromJSON<T, typename std::enable_if<type_is_glm_matrix_container
     try
     {
       int index = 0;
-      for(auto i = j.begin(); i != j.end() && index < d.length(); ++i, ++index){
-        loadValueFromJSON<typename T::col_type>(d[index]).loadState(i.value());
-      }
+      for(auto i = j.begin(); i != j.end() && index < d.length(); ++i, ++index)
+        loadValueFromJSON<typename T::col_type>(d[index]).loadState(i.value());      
     }
     catch(...)
     {
@@ -409,7 +410,8 @@ struct saveValueToJSON<T, typename std::enable_if<type_is_glm_matrix_as_vector_c
       arr.get_ptr<nlohmann::json::array_t*>()->reserve(d.length());
       auto v = glm::value_ptr(d);
       auto length = d.length()*d[0].length();
-      for(int i = 0; i < length; ++i){
+      for(int i = 0; i < length; ++i)
+      {
         nlohmann::json object;
         saveValueToJSON<typename T::value_type>(v[i]).saveState(object);
         arr.emplace_back(object);
@@ -437,9 +439,8 @@ struct loadValueFromJSON<T, typename std::enable_if<type_is_glm_matrix_as_vector
       int index = 0;
       auto length = d.length()*d[0].length();
       auto v = glm::value_ptr(d);
-      for(auto i = j.begin(); i != j.end() && index < length; ++i, ++index){
-        loadValueFromJSON<typename T::value_type>(v[index]).loadState(i.value());
-      }
+      for(auto i = j.begin(); i != j.end() && index < length; ++i, ++index)
+        loadValueFromJSON<typename T::value_type>(v[index]).loadState(i.value());      
     }
     catch(...)
     {
