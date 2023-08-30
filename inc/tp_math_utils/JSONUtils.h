@@ -267,9 +267,10 @@ template<typename T> struct type_is_glm_vector_container { static const bool val
 template<> struct type_is_glm_vector_container<glm::vec2>     { static const bool value = true;  };
 template<> struct type_is_glm_vector_container<glm::vec3>     { static const bool value = true;  };
 template<> struct type_is_glm_vector_container<glm::vec4>     { static const bool value = true;  };
-template<> struct type_is_glm_vector_container<glm::ivec2>     { static const bool value = true;  };
-template<> struct type_is_glm_vector_container<glm::ivec3>     { static const bool value = true;  };
-template<> struct type_is_glm_vector_container<glm::ivec4>     { static const bool value = true;  };
+template<> struct type_is_glm_vector_container<glm::ivec2>    { static const bool value = true;  };
+template<> struct type_is_glm_vector_container<glm::ivec3>    { static const bool value = true;  };
+template<> struct type_is_glm_vector_container<glm::ivec4>    { static const bool value = true;  };
+template<> struct type_is_glm_vector_container<glm::quat>     { static const bool value = true;  };
 
 template<typename T>
 struct saveValueToJSON<T, typename std::enable_if<type_is_glm_vector_container<T>::value>::type>
@@ -320,6 +321,8 @@ struct loadValueFromJSON<T, typename std::enable_if<type_is_glm_vector_container
   }
 };
 
+//! serialization of non square matrix as list of arrays. Please, note that squared matrix
+//! serialized as pure array for backward compatiblity (see code below)
 template<typename T> struct type_is_glm_matrix_container { static const bool value = false; };
 //template<> struct type_is_glm_matrix_container<glm::mat2x2>     { static const bool value = true;  };
 template<> struct type_is_glm_matrix_container<glm::mat2x3>     { static const bool value = true;  };
@@ -380,7 +383,8 @@ struct loadValueFromJSON<T, typename std::enable_if<type_is_glm_matrix_container
   }
 };
 
-
+//! Serialization of squared matrix can be done same way as non squared (list of vectors). However for
+//! backward compatibilty it is done as flat array
 template<typename T> struct type_is_glm_matrix_as_vector_container { static const bool value = false; };
 template<> struct type_is_glm_matrix_as_vector_container<glm::mat2x2>     { static const bool value = true;  };
 //template<> struct type_is_glm_matrix_container<glm::mat2x3>     { static const bool value = true;  };
