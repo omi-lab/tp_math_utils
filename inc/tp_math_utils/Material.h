@@ -72,12 +72,12 @@ struct TP_MATH_UTILS_EXPORT Material
   glm::vec3 albedo  {0.4f, 0.0f, 0.0f}; //!< mtl: Kd or Ka
   glm::vec3 sss     {1.0f, 1.0f, 1.0f}; //!< Subsurface scattering color.
   glm::vec3 emission{0.0f, 0.0f, 0.0f}; //!< Emission color.
-  glm::vec3 velvet  {0.0f, 0.0f, 0.0f}; //!< Velvet color.
+  glm::vec3 velvet  {0.0f, 0.0f, 0.0f}; //!< Velvet color. OBSOLETE
 
   float albedoScale{1.0f};              //!< Multiplied by the albedo
   float sssScale{0.0f};                 //!< Subsurface scattering factor.
   float emissionScale{0.0f};            //!< Emission factor.
-  float velvetScale{0.0f};              //!< Velvet factor.
+  float velvetScale{0.0f};              //!< Velvet factor. OBSOLETE
   float heightScale{0.01f};             //!< Used to scale subdivision height maps.
   float heightMidlevel{0.5f};           //!< Used to offset subdivision height maps.
 
@@ -93,9 +93,9 @@ struct TP_MATH_UTILS_EXPORT Material
   float clearCoat{0.0f};                //!<
   float clearCoatRoughness{0.0f};       //!<
 
-  float    iridescentFactor{0.0f};
-  float    iridescentOffset{0.0f};
-  float iridescentFrequency{0.0f};
+  float    iridescentFactor{0.0f}; // OBSOLETE
+  float    iridescentOffset{0.0f}; // OBSOLETE
+  float iridescentFrequency{0.0f}; // OBSOLETE
 
   glm::vec3 sssRadius{1.0f,0.2f,0.1f};  //!< Subsurface scattering radius per color.
 
@@ -147,11 +147,11 @@ struct TP_MATH_UTILS_EXPORT Material
   tp_utils::StringID             sheenTintTexture; //!< Grey scale
   tp_utils::StringID             clearCoatTexture; //!< Grey scale
   tp_utils::StringID    clearCoatRoughnessTexture; //!< Grey scale
-  tp_utils::StringID                velvetTexture; //!< Color
-  tp_utils::StringID          velvetFactorTexture; //!< Grey scale, Mix 1=Velvet, 0=Principled
-  tp_utils::StringID      iridescentFactorTexture; //!< Grey scale, Mix 1=Iridescent color, 0=Base color.
-  tp_utils::StringID      iridescentOffsetTexture; //!< Grey scale, rotate the hue of the iridescent color.
-  tp_utils::StringID   iridescentFrequencyTexture; //!< Grey scale, multiplied with the hue angle to alter the frequency of color change.
+  tp_utils::StringID                velvetTexture; //!< OBSOLETE Color
+  tp_utils::StringID          velvetFactorTexture; //!< OBSOLETE Grey scale, Mix 1=Velvet, 0=Principled
+  tp_utils::StringID      iridescentFactorTexture; //!< OBSOLETE Grey scale, Mix 1=Iridescent color, 0=Base color.
+  tp_utils::StringID      iridescentOffsetTexture; //!< OBSOLETE Grey scale, rotate the hue of the iridescent color.
+  tp_utils::StringID   iridescentFrequencyTexture; //!< OBSOLETE Grey scale, multiplied with the hue angle to alter the frequency of color change.
 
 
   //################################################################################################
