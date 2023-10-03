@@ -71,16 +71,10 @@ struct TP_MATH_UTILS_EXPORT Light
   glm::vec3 direction() const;
 
   //################################################################################################
-  nlohmann::json saveState() const;
+  void saveState(nlohmann::json& j) const;
 
   //################################################################################################
   void loadState(const nlohmann::json& j);
-
-  //################################################################################################
-  static nlohmann::json saveLights(const std::vector<Light>& lights);
-
-  //################################################################################################
-  static std::vector<Light> loadLights(const nlohmann::json& j);
 
   //################################################################################################
   static const std::vector<glm::vec2>& lightLevelOffsets();

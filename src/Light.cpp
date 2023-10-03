@@ -66,10 +66,8 @@ glm::vec3 Light::direction() const
 }
 
 //##################################################################################################
-nlohmann::json Light::saveState() const
+void Light::saveState(nlohmann::json& j) const
 {
-  nlohmann::json j;
-
   j["name"] = name.toString();
 
   j["type"] = lightTypeToString(type);
@@ -96,8 +94,6 @@ nlohmann::json Light::saveState() const
   j["offsetScale"] = tp_math_utils::vec3ToJSON(offsetScale);
 
   j["castShadows"] = castShadows;
-
-  return j;
 }
 
 //##################################################################################################
@@ -129,26 +125,6 @@ void Light::loadState(const nlohmann::json& j)
   offsetScale = tp_math_utils::vec3FromJSON(TPJSON(j, "offsetScale", tp_math_utils::vec3ToJSON(glm::vec3(0.1f,0.1f,0.1f))));
 
   castShadows = TPJSONBool(j, "castShadows", true);
-}
-
-//##################################################################################################
-nlohmann::json Light::saveLights(const std::vector<Light>& lights)
-{
-  nlohmann::json j = nlohmann::json::array();
-  j.get_ptr<nlohmann::json::array_t*>()->reserve(lights.size());
-  for(const auto& light : lights)
-    j.push_back(light.saveState());
-  return j;
-}
-
-//##################################################################################################
-std::vector<Light> Light::loadLights(const nlohmann::json& j)
-{
-  std::vector<Light> lights;
-  if(j.is_array())
-    for(const nlohmann::json& i : j)
-      lights.emplace_back().loadState(i);
-  return lights;
 }
 
 //##################################################################################################
