@@ -9,7 +9,7 @@ namespace tp_math_utils
 double calculateSD(const std::vector<float>& data)
 {
   if(data.empty())
-    return 0.0f;
+    return 0.0;
 
   double sum=0.0;
   for(float f : data)
@@ -29,8 +29,8 @@ double calculateSD(const std::vector<float>& data, double& mean)
 {
   if(data.empty())
   {
-    mean=0.0f;
-    return 0.0f;
+    mean=0.0;
+    return 0.0;
   }
 
   double sum=0.0;
