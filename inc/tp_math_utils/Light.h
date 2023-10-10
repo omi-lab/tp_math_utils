@@ -32,7 +32,7 @@ struct TP_MATH_UTILS_EXPORT Light
 {
   tp_utils::StringID name; //!< User visible for the light.
 
-  LightType type{LightType::Directional};
+  LightType type{LightType::Spot};
 
   glm::mat4 viewMatrix{1.0}; //!< World to light
 
