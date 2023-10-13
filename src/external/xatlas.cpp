@@ -4265,7 +4265,7 @@ static void nlSparseMatrixConstruct(NLSparseMatrix* M, uint32_t m, uint32_t n)
 static NLMatrix nlCRSMatrixNewFromSparseMatrix(NLSparseMatrix* M)
 {
 	uint32_t nnz = nlSparseMatrixNNZ(M);
-	uint32_t nslices = 8; /* TODO: get number of cores */
+  uint32_t nslices = 8;
 	uint32_t slice, cur_bound, cur_NNZ, cur_row;
 	uint32_t k;
 	uint32_t slice_size = nnz / nslices;
