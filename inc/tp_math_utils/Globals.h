@@ -180,7 +180,7 @@ namespace std
 template <>
 struct hash<glm::ivec2>
 {
-  std::size_t operator()(const glm::ivec2& k) const
+  size_t operator()(const glm::ivec2& k) const
   {
     return hash<int>()(k.x) ^ hash<int>()(k.y);
   }
