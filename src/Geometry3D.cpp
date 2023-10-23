@@ -617,6 +617,9 @@ bool Geometry3D::printDataToFile(const std::vector<Geometry3D>& geometry, std::s
 
     for(auto const& mesh : geometry)
     {
+      for(auto const& c: mesh.comments)
+        ss << "Comment: " << c << "\n";
+
       ss << "Geometry\n";
       for(const auto& indexes : mesh.indexes)
       {
@@ -635,6 +638,9 @@ bool Geometry3D::printDataToFile(const std::vector<Geometry3D>& geometry, std::s
         ss << "    texture: " << v.texture[0] << " " << v.texture[1] << "\n";
         ss << "    normal: " << v.normal[0] << " " << v.normal[1] << " " << v.normal[2] << "\n";
       }
+
+      ss << "Material\n";
+      ss << mesh.material.saveState().dump(2);
     }
 
     return tp_utils::writeTextFile(filename, ss.str());
