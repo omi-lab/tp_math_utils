@@ -158,6 +158,9 @@ struct TP_MATH_UTILS_EXPORT Geometry3D
         triangleStrip == other.triangleStrip &&
         triangles == other.triangles;
   };
+
+  //################################################################################################
+  static bool printDataToFile(const std::vector<Geometry3D>& geometry, std::string const& filename);
 };
 
 //##################################################################################################

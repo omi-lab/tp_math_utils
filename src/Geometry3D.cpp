@@ -1,12 +1,15 @@
 #include "tp_math_utils/Geometry3D.h"
 #include "tp_math_utils/JSONUtils.h"
 
+#include "tp_utils/FileUtils.h"
+
 #include "nanoflann.hpp"
 
 #include "glm/gtx/normal.hpp" // IWYU pragma: keep
 #include "glm/gtx/norm.hpp" // IWYU pragma: keep
 
 #include <array>
+#include <sstream>
 
 namespace tp_math_utils
 {
@@ -603,6 +606,42 @@ size_t Geometry3D::sizeInBytes(const std::vector<Geometry3D>& geometry)
       size += comment.size();
   }
   return size;
+}
+
+//################################################################################################
+bool Geometry3D::printDataToFile(const std::vector<Geometry3D>& geometry, std::string const& filename)
+{
+  try
+  {
+    std::stringstream ss;
+
+    for(auto const& mesh : geometry)
+    {
+      ss << "Geometry\n";
+      for(const auto& indexes : mesh.indexes)
+      {
+        ss << "Index:";
+        for(const auto i : indexes.indexes)
+          ss << " " << i;
+
+        ss << "\n";
+      }
+
+      for(const auto& v : mesh.verts)
+      {
+        ss << "  Vertex:\n";
+        ss << "    vert: " << v.vert[0] << " " << v.vert[1] << " " << v.vert[2] << "\n";
+        ss << "    texture: " << v.texture[0] << " " << v.texture[1] << "\n";
+        ss << "    normal: " << v.normal[0] << " " << v.normal[1] << " " << v.normal[2] << "\n";
+      }
+    }
+
+    return tp_utils::writeTextFile(filename, ss.str());
+  }
+  catch(...)
+  {
+    return false;
+  }
 }
 
 //##################################################################################################
