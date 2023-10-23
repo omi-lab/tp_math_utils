@@ -627,6 +627,7 @@ bool Geometry3D::printDataToFile(const std::vector<Geometry3D>& geometry, std::s
         ss << "\n";
       }
 
+      ss << "Vertex count " << mesh.verts.size() << "\n";
       for(const auto& v : mesh.verts)
       {
         ss << "  Vertex:\n";
