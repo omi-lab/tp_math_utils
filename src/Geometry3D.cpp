@@ -588,7 +588,10 @@ void Geometry3D::addBackFaces()
 //##################################################################################################
 tp_utils::StringID Geometry3D::getName() const
 {
-  return (!comments.empty())?tp_utils::StringID(comments.front()):material.name;
+  if(!comments.empty() && comments[0] == "MESH_NAME")
+    return comments[1];
+  else
+    return material.name;
 }
 
 //##################################################################################################
