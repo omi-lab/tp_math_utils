@@ -7,6 +7,11 @@
 
 #include "json.hpp"
 
+#ifdef far
+#undef far
+#undef near
+#endif
+
 namespace tp_math_utils
 {
 
