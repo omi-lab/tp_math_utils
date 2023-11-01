@@ -131,22 +131,25 @@ struct TP_MATH_UTILS_EXPORT Material
   bool rayVisibilityShadow        {true};  //!< Blender cycles ray visibility options.
   bool rayVisibilityShadowCatcher {false};  //!< Blender cycles ray visibility options.
 
-  tp_utils::StringID                albedoTexture; //!< Color,       mtl: map_Kd or map_Ka
-  tp_utils::StringID                 alphaTexture; //!< Grey scale,  mtl: map_d
-  tp_utils::StringID               normalsTexture; //!< Unit vector, mtl: map_Bump
-  tp_utils::StringID             roughnessTexture; //!< Grey scale
-  tp_utils::StringID             metalnessTexture; //!< Grey scale
-  tp_utils::StringID              specularTexture; //!< Grey scale
-  tp_utils::StringID              emissionTexture; //!< Color
-  tp_utils::StringID                   sssTexture; //!< Color
-  tp_utils::StringID              sssScaleTexture; //!< Grey scale
+  tp_utils::StringID                  rgbaTexture; //!< RGBA, combined albedo and alpha.
+  tp_utils::StringID                 rmttrTexture; //!< RGBA, combined roughness, metalness, transmission, transmission roughness.
+
+  tp_utils::StringID                albedoTexture; //!< RGB,                   mtl: map_Kd or map_Ka
+  tp_utils::StringID                 alphaTexture; //!< Grey scale,            mtl: map_d
+  tp_utils::StringID               normalsTexture; //!< RGB (XYZ) Unit vector, mtl: map_Bump
+  tp_utils::StringID             roughnessTexture; //!< Grey scale.
+  tp_utils::StringID             metalnessTexture; //!< Grey scale.
+  tp_utils::StringID              specularTexture; //!< Grey scale.
+  tp_utils::StringID              emissionTexture; //!< RGB.
+  tp_utils::StringID                   sssTexture; //!< RGB.
+  tp_utils::StringID              sssScaleTexture; //!< Grey scale.
   tp_utils::StringID                heightTexture; //!< Grey scale, Subdivision height.
-  tp_utils::StringID          transmissionTexture; //!< Grey scale
-  tp_utils::StringID transmissionRoughnessTexture; //!< Grey scale
-  tp_utils::StringID                 sheenTexture; //!< Grey scale
-  tp_utils::StringID             sheenTintTexture; //!< Grey scale
-  tp_utils::StringID             clearCoatTexture; //!< Grey scale
-  tp_utils::StringID    clearCoatRoughnessTexture; //!< Grey scale
+  tp_utils::StringID          transmissionTexture; //!< Grey scale.
+  tp_utils::StringID transmissionRoughnessTexture; //!< Grey scale.
+  tp_utils::StringID                 sheenTexture; //!< Grey scale.
+  tp_utils::StringID             sheenTintTexture; //!< Grey scale.
+  tp_utils::StringID             clearCoatTexture; //!< Grey scale.
+  tp_utils::StringID    clearCoatRoughnessTexture; //!< Grey scale.
   tp_utils::StringID                velvetTexture; //!< OBSOLETE Color
   tp_utils::StringID          velvetFactorTexture; //!< OBSOLETE Grey scale, Mix 1=Velvet, 0=Principled
   tp_utils::StringID      iridescentFactorTexture; //!< OBSOLETE Grey scale, Mix 1=Iridescent color, 0=Base color.
