@@ -161,6 +161,9 @@ struct TP_MATH_UTILS_EXPORT Material
   template<typename T>
   void updateTypedTextures(const T& closure)
   {
+    closure(                 "rgbaTexture",                  rgbaTexture, "RGBA"                  );
+    closure(                "rmttrTexture",                 rmttrTexture, "RMTTR"                 );
+
     closure(               "albedoTexture",                albedoTexture, "Albedo"                );
     closure(                "alphaTexture",                 alphaTexture, "Alpha"                 );
     closure(              "normalsTexture",               normalsTexture, "Normals"               );
