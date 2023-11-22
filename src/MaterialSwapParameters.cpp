@@ -46,10 +46,8 @@ tp_math_utils::Material MaterialSwapParameters::materialWithSwappedParameters( c
 }
 
 //##################################################################################################
-nlohmann::json MaterialSwapParameters::saveState() const
+void MaterialSwapParameters::saveState(nlohmann::json& j) const
 {
-  nlohmann::json j;
-
   j["albedoUse"] = tp_math_utils::vec3ToJSON    (albedoUse  );
   j["albedoScale"] = tp_math_utils::vec3ToJSON  (albedoScale);
   j["albedoBias"] = tp_math_utils::vec3ToJSON   (albedoBias );
@@ -77,8 +75,6 @@ nlohmann::json MaterialSwapParameters::saveState() const
   j["albedoValueUse"]   = albedoValueUse;
   j["albedoValueScale"] = albedoValueScale;
   j["albedoValueBias"]  = albedoValueBias;
-
-  return j;
 }
 
 //##################################################################################################

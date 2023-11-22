@@ -123,10 +123,10 @@ std::string normalCalculationModeToString(NormalCalculationMode mode)
 {
   switch(mode)
   {
-  case NormalCalculationMode::None:                           return "None";
-  case NormalCalculationMode::CalculateFaceNormals:           return "CalculateFaceNormals";
-  case NormalCalculationMode::CalculateVertexNormals:         return "CalculateVertexNormals";
-  case NormalCalculationMode::CalculateAdaptiveNormals:       return "CalculateAdaptiveNormals";
+    case NormalCalculationMode::None:                           return "None";
+    case NormalCalculationMode::CalculateFaceNormals:           return "CalculateFaceNormals";
+    case NormalCalculationMode::CalculateVertexNormals:         return "CalculateVertexNormals";
+    case NormalCalculationMode::CalculateAdaptiveNormals:       return "CalculateAdaptiveNormals";
   }
   return "None";
 }
@@ -287,18 +287,18 @@ void Geometry3D::calculateNormals(NormalCalculationMode mode, float minDot)
 {
   switch(mode)
   {
-  case NormalCalculationMode::None:
+    case NormalCalculationMode::None:
     break;
 
-  case NormalCalculationMode::CalculateFaceNormals:
+    case NormalCalculationMode::CalculateFaceNormals:
     calculateFaceNormals();
     break;
 
-  case NormalCalculationMode::CalculateVertexNormals:
+    case NormalCalculationMode::CalculateVertexNormals:
     calculateVertexNormals();
     break;
 
-  case NormalCalculationMode::CalculateAdaptiveNormals:
+    case NormalCalculationMode::CalculateAdaptiveNormals:
     calculateAdaptiveNormals(minDot);
     break;
   }
@@ -384,10 +384,10 @@ struct VertCloud
   {
     switch(dim)
     {
-    case 0: return pts[idx].vert.x;
-    case 1: return pts[idx].vert.y;
-    case 2: return pts[idx].vert.z;
-    case 3: return pts[idx].texture.x;
+      case 0: return pts[idx].vert.x;
+      case 1: return pts[idx].vert.y;
+      case 2: return pts[idx].vert.z;
+      case 3: return pts[idx].texture.x;
     }
 
     return pts[idx].texture.y;
@@ -643,7 +643,12 @@ bool Geometry3D::printDataToFile(const std::vector<Geometry3D>& geometry, std::s
       }
 
       ss << "Material\n";
-      ss << mesh.material.saveState().dump(2);
+
+      {
+        nlohmann::json j;
+        mesh.material.saveState(j);
+        ss << j.dump(2);
+      }
     }
 
     return tp_utils::writeTextFile(filename, ss.str());
@@ -660,7 +665,7 @@ nlohmann::json Geometry::saveState() const
   nlohmann::json j;
   j["geometry"] = vec2VectorToJSON(geometry);
   j["transform"] = mat4ToJSON(transform);
-  j["material"] = material.saveState();
+  material.saveState(j["material"]);
   return j;
 }
 
