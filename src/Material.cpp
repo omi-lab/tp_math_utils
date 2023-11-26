@@ -21,6 +21,25 @@ glm::mat3 skew(const glm::mat3& m_, const glm::vec2& uv)
 }
 
 //##################################################################################################
+std::string colorspaceToString(Colorspace colorspace)
+{
+  switch(colorspace)
+  {
+    case Colorspace::sRGB: return "sRGB";
+    case Colorspace::FilmicSRGB: return "Filmic sRGB";
+  }
+  return "sRGB";
+}
+
+//##################################################################################################
+Colorspace colorspaceFromString(const std::string& colorspace)
+{
+  if(colorspace == "Filmic sRGB")
+    return Colorspace::FilmicSRGB;
+  return Colorspace::sRGB;
+}
+
+//##################################################################################################
 std::string sssMethodToString(SSSMethod sssMethod)
 {
   switch(sssMethod)
@@ -124,6 +143,7 @@ nlohmann::json Material::saveState() const
 
   j["shaderType"]            = shaderTypeToString(shaderType);
 
+  j["albedoColorspace"]      = colorspaceToString(albedoColorspace);
   j["albedo"]                = tp_math_utils::vec3ToJSON(albedo);
   j["sss"]                   = tp_math_utils::vec3ToJSON(sss);
   j["emission"]              = tp_math_utils::vec3ToJSON(emission);
@@ -210,6 +230,7 @@ void Material::loadState(const nlohmann::json& j)
 
   shaderType            = shaderTypeFromString(TPJSONString(j, "shaderType"));
 
+  albedoColorspace      = colorspaceFromString(TPJSONString(j, "albedoColorspace"));
   albedo                = tp_math_utils::vec3FromJSON(TPJSON(j, "albedo"  ), albedo  );
   sss                   = tp_math_utils::vec3FromJSON(TPJSON(j, "sss"     ), sss     );
   emission              = tp_math_utils::vec3FromJSON(TPJSON(j, "emission"), emission);

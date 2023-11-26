@@ -13,6 +13,19 @@ namespace tp_math_utils
 {
 
 //##################################################################################################
+enum class Colorspace
+{
+  sRGB = 0, //!< The default colorspace
+  FilmicSRGB = 1  //!< Newer colorspace
+};
+
+//##################################################################################################
+std::string colorspaceToString(Colorspace colorspace);
+
+//##################################################################################################
+Colorspace colorspaceFromString(const std::string& colorspace);
+
+//##################################################################################################
 enum class SSSMethod
 {
   ChristensenBurley = 0,
@@ -68,6 +81,8 @@ struct TP_MATH_UTILS_EXPORT Material
   tp_utils::StringID name;
 
   ShaderType shaderType{ShaderType::Principled}; //!< What shader should be used to draw the object.
+
+  Colorspace albedoColorspace{Colorspace::sRGB};
 
   glm::vec3 albedo  {0.4f, 0.0f, 0.0f}; //!< mtl: Kd or Ka
   glm::vec3 sss     {1.0f, 1.0f, 1.0f}; //!< Subsurface scattering color.
