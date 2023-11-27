@@ -107,14 +107,6 @@ bool UVTransformation::isIdentity() const
 }
 
 //##################################################################################################
-nlohmann::json UVTransformation::saveState() const
-{
-  nlohmann::json j;
-  saveState(j);
-  return j;
-}
-
-//##################################################################################################
 void UVTransformation::saveState(nlohmann::json& j) const
 {
   j["skewUV"]                = tp_math_utils::vec2ToJSON(skewUV);
@@ -135,10 +127,8 @@ void UVTransformation::loadState(const nlohmann::json& j)
 }
 
 //##################################################################################################
-nlohmann::json Material::saveState() const
+void Material::saveState(nlohmann::json& j) const
 {
-  nlohmann::json j;
-
   j["name"] = name.toString();
 
   j["shaderType"]            = shaderTypeToString(shaderType);
@@ -209,17 +199,14 @@ nlohmann::json Material::saveState() const
   {
     j[type] = value.toString();
   });
-
-  return j;
 }
 
 //##################################################################################################
-nlohmann::json Material::saveExtendedState() const
+void Material::saveExtendedState(nlohmann::json& j) const
 {
-  auto j = saveState();
+  saveState(j);
   j["uvMatrix"] = tp_math_utils::mat3ToJSON(uvTransformation.uvMatrix());
   j["isIdentity"] = uvTransformation.isIdentity();
-  return j;
 }
 
 //##################################################################################################

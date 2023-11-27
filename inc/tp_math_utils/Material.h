@@ -66,9 +66,6 @@ struct UVTransformation
   bool isIdentity() const;
 
   //################################################################################################
-  nlohmann::json saveState() const;
-
-  //################################################################################################
   void saveState(nlohmann::json& j) const;
 
   //################################################################################################
@@ -232,10 +229,10 @@ struct TP_MATH_UTILS_EXPORT Material
   }
 
   //################################################################################################
-  nlohmann::json saveState() const;
+  void saveState(nlohmann::json& j) const;
 
   //################################################################################################
-  nlohmann::json saveExtendedState() const;
+  void saveExtendedState(nlohmann::json& j) const;
 
   //################################################################################################
   void loadState(const nlohmann::json& j);

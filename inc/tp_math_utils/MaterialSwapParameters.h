@@ -48,7 +48,7 @@ struct TP_MATH_UTILS_EXPORT MaterialSwapParameters
   tp_math_utils::Material materialWithSwappedParameters( const tp_math_utils::Material& material, const glm::vec3& color ) const;
 
   //################################################################################################
-  nlohmann::json saveState() const;
+  void saveState(nlohmann::json& j) const;
 
   //################################################################################################
   void loadState(const nlohmann::json& j);
