@@ -104,8 +104,66 @@ std::vector<Face_lt> calculateFaces(const Geometry3D& geometry, bool calculateNo
 
   return faces;
 }
-}
 
+//################################################################################################
+void accumulateTangentForTriangle(Vertex3DList const& verts, Indexes3D const& part, size_t i1, size_t i2, size_t i3, std::vector<glm::vec3>& tangent)
+{
+  auto idx1 = part.indexes.at(i1);
+  auto idx2 = part.indexes.at(i2);
+  auto idx3 = part.indexes.at(i3);
+  if(size_t(idx1)<verts.size() && size_t(idx2)<verts.size() && size_t(idx3)<verts.size())
+  {
+    const auto& v1 = verts.at(size_t(idx1));
+    const auto& v2 = verts.at(size_t(idx2));
+    const auto& v3 = verts.at(size_t(idx3));
+    auto posdiff21 = v2.vert-v1.vert;
+    auto texdiff21 = v2.texture-v1.texture;
+    auto posdiff31 = v3.vert-v1.vert;
+    auto texdiff31 = v3.texture-v1.texture;
+    glm::vec3 t;
+    const float smallVal = 1.e-6f;
+    if(smallVal > glm::abs(texdiff21.y))
+    {
+      // use the 1st pair
+      if(smallVal > glm::abs(texdiff21.x))
+        return;
+
+      t = (texdiff31.x < 0.f) ? -posdiff21 : posdiff21;
+    }
+    else if(smallVal > glm::abs(texdiff31.y))
+    {
+      if(smallVal > glm::abs(texdiff31.x))
+        return;
+
+      t = (texdiff31.x < 0.f) ? -posdiff31 : posdiff31;
+    }
+    else if(smallVal < glm::abs(texdiff31.y-texdiff21.y))
+    {
+      // interpolate
+      float alpha = texdiff31.y/(texdiff31.y-texdiff21.y);
+      float ud = alpha*texdiff21.x + (1.f-alpha)*texdiff31.x;
+      if(smallVal > glm::abs(ud))
+        return;
+
+      t = alpha*posdiff21 + (1.f-alpha)*posdiff31;
+      if (ud < 0.f) t = -t;
+    }
+
+    if(glm::length2(t) > 1.e-10f)
+    {
+      t = glm::normalize(t);
+      tangent[idx1] += t;
+      tangent[idx2] += t;
+      tangent[idx3] += t;
+    }
+    else
+    {
+      int y=1;
+    }
+  }
+}
+}
+    
 //##################################################################################################
 std::vector<std::string> normalCalculationModes()
 {
@@ -583,6 +641,25 @@ void Geometry3D::addBackFaces()
     newTriangles.indexes.push_back(face.indexes[1] + int(size));
     newTriangles.indexes.push_back(face.indexes[0] + int(size));
   }
+}
+
+//################################################################################################
+void Geometry3D::buildTangentVectors(Indexes3D const& part, std::vector<glm::vec3>& tangent) const
+{
+  tangent.assign(part.indexes.size(), {1.e-6f,0,0}); // non-zero in case no valid tangents are found - there will still be a valid result
+  if(part.type == triangleFan)
+    for(size_t n=2; n<part.indexes.size(); ++n)
+      accumulateTangentForTriangle(verts, part, 0, n-1, n, tangent);
+  else if(part.type == triangleStrip)
+    for(size_t n=2; n<part.indexes.size(); ++n)
+      accumulateTangentForTriangle(verts, part, n-2, n-1, n, tangent);
+  else if(part.type == triangles)
+    // process each triplet of consecutive vertices
+    for(size_t n=0; n<part.indexes.size(); n+=3)
+      accumulateTangentForTriangle(verts, part, n, n+1, n+2, tangent);
+
+  for(auto& t : tangent)
+    t = glm::normalize(t);
 }
 
 //##################################################################################################
