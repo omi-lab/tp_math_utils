@@ -227,6 +227,24 @@ void accumulateTangentForTriangle(Vertex3DList const& verts, Indexes3D const& pa
 #endif
   }
 }
+
+//################################################################################################
+void accumulateTangents(const Geometry3D& geometry,
+                        Indexes3D const& part,
+                        std::vector<glm::vec3>& tangent)
+{
+  if(part.type == geometry.triangleFan)
+    for(size_t n=2; n<part.indexes.size(); ++n)
+      accumulateTangentForTriangle(geometry.verts, part, 0, n-1, n, tangent);
+  else if(part.type == geometry.triangleStrip)
+    for(size_t n=2; n<part.indexes.size(); ++n)
+      accumulateTangentForTriangle(geometry.verts, part, n-2, n-1, n, tangent);
+  else if(part.type == geometry.triangles)
+    // process each triplet of consecutive vertices
+    for(size_t n=0; n<part.indexes.size(); n+=3)
+      accumulateTangentForTriangle(geometry.verts, part, n, n+1, n+2, tangent);
+}
+
 }
     
 //##################################################################################################
@@ -709,35 +727,26 @@ void Geometry3D::addBackFaces()
 }
 
 //################################################################################################
-void Geometry3D::buildTangentVectors(Indexes3D const& part, std::vector<glm::vec3>& tangent) const
+void Geometry3D::buildTangentVectors(std::vector<glm::vec3>& tangent) const
 {
-  tangent.assign(part.indexes.size(), {1.e-6f,0,0}); // non-zero in case no valid tangents are found - there will still be a valid result
-  if(part.type == triangleFan)
-    for(size_t n=2; n<part.indexes.size(); ++n)
-      accumulateTangentForTriangle(verts, part, 0, n-1, n, tangent);
-  else if(part.type == triangleStrip)
-    for(size_t n=2; n<part.indexes.size(); ++n)
-      accumulateTangentForTriangle(verts, part, n-2, n-1, n, tangent);
-  else if(part.type == triangles)
-    // process each triplet of consecutive vertices
-    for(size_t n=0; n<part.indexes.size(); n+=3)
-      accumulateTangentForTriangle(verts, part, n, n+1, n+2, tangent);
-
+  // start with non-zero in case no valid tangents are found - there will still be a valid result
+  tangent.assign(verts.size(), {1.e-6f,0,0});
+  for(const auto& part : indexes)
+    accumulateTangents(*this, part, tangent);
+    
   // normalize each tangent vector to unit length
   for(auto& t : tangent)
     t = glm::normalize(t);
-
+#if 0
   // when tangent and normal are nearly parallel we have to select a different tangent
-  for(size_t i=0; i<part.indexes.size(); ++i)
-  {
-    auto idx = size_t(part.indexes.at(i));
+  for(size_t idx=0; idx<tangent.size(); ++idx)
     if(glm::abs(glm::dot(verts.at(idx).normal, tangent.at(idx))) > 0.999f)
     {
       glm::vec3 t1 = glm::cross(glm::vec3(1,0,0), verts.at(idx).normal);
       glm::vec3 t2 = glm::cross(glm::vec3(0,1,0), verts.at(idx).normal);
       tangent[idx] = glm::normalize((glm::dot(t1, t1)>glm::dot(t2,t2))?t1:t2);
     }
-  }
+#endif
 }
 
 //##################################################################################################
