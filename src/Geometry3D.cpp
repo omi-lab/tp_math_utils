@@ -737,7 +737,7 @@ void Geometry3D::buildTangentVectors(std::vector<glm::vec3>& tangent) const
   // normalize each tangent vector to unit length
   for(auto& t : tangent)
     t = glm::normalize(t);
-#if 0
+
   // when tangent and normal are nearly parallel we have to select a different tangent
   for(size_t idx=0; idx<tangent.size(); ++idx)
     if(glm::abs(glm::dot(verts.at(idx).normal, tangent.at(idx))) > 0.999f)
@@ -746,7 +746,6 @@ void Geometry3D::buildTangentVectors(std::vector<glm::vec3>& tangent) const
       glm::vec3 t2 = glm::cross(glm::vec3(0,1,0), verts.at(idx).normal);
       tangent[idx] = glm::normalize((glm::dot(t1, t1)>glm::dot(t2,t2))?t1:t2);
     }
-#endif
 }
 
 //##################################################################################################
