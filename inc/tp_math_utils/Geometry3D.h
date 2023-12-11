@@ -136,6 +136,9 @@ struct TP_MATH_UTILS_EXPORT Geometry3D
   void transform(const glm::mat4& m);
 
   //################################################################################################
+  void buildTangentVectors(std::vector<glm::vec3>& tangent) const;
+
+  //################################################################################################
   //! Duplicate and reverse geometry to render back faces.
   void addBackFaces();
 

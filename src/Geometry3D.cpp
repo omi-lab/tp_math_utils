@@ -2,6 +2,7 @@
 #include "tp_math_utils/JSONUtils.h"
 
 #include "tp_utils/FileUtils.h"
+#include "tp_utils/DebugUtils.h"
 
 #include "nanoflann.hpp"
 
@@ -104,8 +105,148 @@ std::vector<Face_lt> calculateFaces(const Geometry3D& geometry, bool calculateNo
 
   return faces;
 }
+
+//################################################################################################
+void accumulateTangentForTriangle(Vertex3DList const& verts, Indexes3D const& part, size_t i1, size_t i2, size_t i3, std::vector<glm::vec3>& tangent)
+{
+  auto idx1 = size_t(part.indexes.at(i1));
+  auto idx2 = size_t(part.indexes.at(i2));
+  auto idx3 = size_t(part.indexes.at(i3));
+  if(idx1<verts.size() && idx2<verts.size() && idx3<verts.size())
+  {
+    const auto& v1 = verts.at(idx1);
+    const auto& v2 = verts.at(idx2);
+    const auto& v3 = verts.at(idx3);
+    auto posdiff21 = v2.vert-v1.vert;
+    auto posdiff31 = v3.vert-v1.vert;
+    auto posdiff32 = v3.vert-v2.vert;
+    auto texdiff21 = v2.texture-v1.texture;
+    auto texdiff31 = v3.texture-v1.texture;
+    auto texdiff32 = v3.texture-v2.texture;
+    glm::vec3 t = {0,0,0};
+    const float smallVal = 1.e-4f;
+    const float verySmallVal = 1.e-6f;
+    if(verySmallVal > glm::abs(texdiff21.y) && smallVal < glm::abs(texdiff21.x))
+      // use points 1 and 2
+      t = (texdiff31.x < 0.f) ? -posdiff21 : posdiff21;
+    else if(verySmallVal > glm::abs(texdiff31.y) && smallVal < glm::abs(texdiff31.x))
+      // use points 1 and 3
+      t = (texdiff31.x < 0.f) ? -posdiff31 : posdiff31;
+    else if(verySmallVal > glm::abs(texdiff32.y) && smallVal < glm::abs(texdiff32.x))
+      // use points 2 and 3
+      t = (texdiff32.x < 0.f) ? -posdiff32 : posdiff32;
+    else if(smallVal < glm::abs(texdiff32.y) || smallVal < glm::abs(texdiff31.y) || smallVal < glm::abs(texdiff21.y))
+    {
+      if(glm::abs(texdiff32.y) > glm::abs(texdiff31.y) && glm::abs(texdiff32.y) > glm::abs(texdiff21.y))
+      {
+        // interpolate relative to point 1
+        float alpha = texdiff31.y/texdiff32.y;
+        float ud = alpha*texdiff21.x + (1.f-alpha)*texdiff31.x;
+        if(smallVal < glm::abs(ud))
+        {
+          t = alpha*posdiff21 + (1.f-alpha)*posdiff31;
+          if (ud < 0.f) t = -t;
+        }
+      }
+      else if(glm::abs(texdiff31.y) > glm::abs(texdiff21.y))
+      {
+        // interpolate relative to point 2
+        float alpha = texdiff21.y/texdiff31.y;
+        float ud = alpha*texdiff32.x - (1.f-alpha)*texdiff21.x;
+        if(smallVal < glm::abs(ud))
+        {
+          t = alpha*posdiff32 - (1.f-alpha)*posdiff21;
+          if (ud < 0.f) t = -t;
+        }
+      }
+      else
+      {
+        // interpolate relative to point 3
+        float alpha = -texdiff32.y/texdiff21.y;
+        float ud = -alpha*texdiff31.x - (1.f-alpha)*texdiff32.x;
+        if(smallVal < glm::abs(ud))
+        {
+          t = -alpha*posdiff31 - (1.f-alpha)*posdiff32;
+          if (ud < 0.f) t = -t;
+        }
+      }
+#if 0
+      // check results are the same
+      glm::vec3 t21, t31, t32;
+      {
+        // 1
+        float alpha = texdiff31.y/texdiff32.y;
+        float ud = alpha*texdiff21.x + (1.f-alpha)*texdiff31.x;
+        t32 = alpha*posdiff21 + (1.f-alpha)*posdiff31;
+        if (ud < 0.f) t32 = -t32;
+      }
+      {
+        // 2
+        float alpha = texdiff21.y/texdiff31.y;
+        float ud = alpha*texdiff32.x - (1.f-alpha)*texdiff21.x;
+        t21 = alpha*posdiff32 - (1.f-alpha)*posdiff21;
+        if (ud < 0.f) t21 = -t21;
+      }
+      {
+        // 3
+        float alpha = -texdiff32.y/texdiff21.y;
+        float ud = -alpha*texdiff31.x - (1.f-alpha)*texdiff32.x;
+        t31 = -alpha*posdiff31 - (1.f-alpha)*posdiff32;
+        if (ud < 0.f) t31 = -t31;
+      }
+
+      t32 = glm::normalize(t32);
+      t21 = glm::normalize(t21);
+      t31 = glm::normalize(t31);
+      tpDebug() << "t32= (" << t32.x << " " << t32.y << " " << t32.z << ")";
+      tpDebug() << "t21= (" << t21.x << " " << t21.y << " " << t21.z << ")";
+      tpDebug() << "t31= (" << t31.x << " " << t31.y << " " << t31.z << ")";
+#endif
+    }
+
+    if(glm::length2(t) > 1.e-10f)
+    {
+      t = glm::normalize(t);
+      tangent[idx1] += t;
+      tangent[idx2] += t;
+      tangent[idx3] += t;
+#if 0
+      if(glm::abs(glm::dot(verts.at(idx1).normal, t)) > 0.99f)
+         tpDebug() << "Here1";
+      if(glm::abs(glm::dot(verts.at(idx2).normal, t)) > 0.99f)
+         tpDebug() << "Here2";
+      if(glm::abs(glm::dot(verts.at(idx3).normal, t)) > 0.99f)
+         tpDebug() << "Here3";
+#endif
+    }
+#if 0
+    else
+    {
+      int y=1;
+    }
+#endif
+  }
 }
 
+//################################################################################################
+void accumulateTangents(const Geometry3D& geometry,
+                        Indexes3D const& part,
+                        std::vector<glm::vec3>& tangent)
+{
+  if(part.type == geometry.triangleFan)
+    for(size_t n=2; n<part.indexes.size(); ++n)
+      accumulateTangentForTriangle(geometry.verts, part, 0, n-1, n, tangent);
+  else if(part.type == geometry.triangleStrip)
+    for(size_t n=2; n<part.indexes.size(); ++n)
+      accumulateTangentForTriangle(geometry.verts, part, n-2, n-1, n, tangent);
+  else if(part.type == geometry.triangles)
+    // process each triplet of consecutive vertices
+    for(size_t n=0; n<part.indexes.size(); n+=3)
+      accumulateTangentForTriangle(geometry.verts, part, n, n+1, n+2, tangent);
+}
+
+}
+    
 //##################################################################################################
 std::vector<std::string> normalCalculationModes()
 {
@@ -583,6 +724,28 @@ void Geometry3D::addBackFaces()
     newTriangles.indexes.push_back(face.indexes[1] + int(size));
     newTriangles.indexes.push_back(face.indexes[0] + int(size));
   }
+}
+
+//################################################################################################
+void Geometry3D::buildTangentVectors(std::vector<glm::vec3>& tangent) const
+{
+  // start with non-zero in case no valid tangents are found - there will still be a valid result
+  tangent.assign(verts.size(), {1.e-6f,0,0});
+  for(const auto& part : indexes)
+    accumulateTangents(*this, part, tangent);
+    
+  // normalize each tangent vector to unit length
+  for(auto& t : tangent)
+    t = glm::normalize(t);
+
+  // when tangent and normal are nearly parallel we have to select a different tangent
+  for(size_t idx=0; idx<tangent.size(); ++idx)
+    if(glm::abs(glm::dot(verts.at(idx).normal, tangent.at(idx))) > 0.999f)
+    {
+      glm::vec3 t1 = glm::cross(glm::vec3(1,0,0), verts.at(idx).normal);
+      glm::vec3 t2 = glm::cross(glm::vec3(0,1,0), verts.at(idx).normal);
+      tangent[idx] = glm::normalize((glm::dot(t1, t1)>glm::dot(t2,t2))?t1:t2);
+    }
 }
 
 //##################################################################################################
