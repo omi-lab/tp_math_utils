@@ -73,6 +73,43 @@ struct UVTransformation
 };
 
 //##################################################################################################
+class TP_MATH_UTILS_EXPORT ExtendedMaterial
+{
+  const tp_utils::StringID type;
+
+  //################################################################################################
+  ExtendedMaterial(const tp_utils::StringID& type_);
+
+  //################################################################################################
+  virtual ~ExtendedMaterial();
+
+  //################################################################################################
+  virtual void serialize(std::string& data);
+
+  //################################################################################################
+  virtual void deserialize(const std::string& data);
+};
+
+//##################################################################################################
+class TP_MATH_UTILS_EXPORT ExtendedMaterialFactory
+{
+  const tp_utils::StringID type;
+
+  //################################################################################################
+  ExtendedMaterialFactory(const tp_utils::StringID& type_);
+
+  //################################################################################################
+  virtual ~ExtendedMaterialFactory();
+
+  //################################################################################################
+  virtual void serialize(std::string& data, const ExtendedMaterial& extendedMaterial);
+
+  //################################################################################################
+  virtual ExtendedMaterial* deserialize(const std::string& data);
+};
+
+
+//##################################################################################################
 struct TP_MATH_UTILS_EXPORT Material
 {
   tp_utils::StringID name;
