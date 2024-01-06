@@ -80,9 +80,6 @@ struct TP_MATH_UTILS_EXPORT Light
 
   //################################################################################################
   void loadState(const nlohmann::json& j);
-
-  //################################################################################################
-  static const std::vector<glm::vec2>& lightLevelOffsets();
 };
 
 }
