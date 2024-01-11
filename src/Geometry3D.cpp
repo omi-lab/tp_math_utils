@@ -170,38 +170,6 @@ void accumulateTangentForTriangle(Vertex3DList const& verts, Indexes3D const& pa
           if (ud < 0.f) t = -t;
         }
       }
-#if 0
-      // check results are the same
-      glm::vec3 t21, t31, t32;
-      {
-        // 1
-        float alpha = texdiff31.y/texdiff32.y;
-        float ud = alpha*texdiff21.x + (1.f-alpha)*texdiff31.x;
-        t32 = alpha*posdiff21 + (1.f-alpha)*posdiff31;
-        if (ud < 0.f) t32 = -t32;
-      }
-      {
-        // 2
-        float alpha = texdiff21.y/texdiff31.y;
-        float ud = alpha*texdiff32.x - (1.f-alpha)*texdiff21.x;
-        t21 = alpha*posdiff32 - (1.f-alpha)*posdiff21;
-        if (ud < 0.f) t21 = -t21;
-      }
-      {
-        // 3
-        float alpha = -texdiff32.y/texdiff21.y;
-        float ud = -alpha*texdiff31.x - (1.f-alpha)*texdiff32.x;
-        t31 = -alpha*posdiff31 - (1.f-alpha)*posdiff32;
-        if (ud < 0.f) t31 = -t31;
-      }
-
-      t32 = glm::normalize(t32);
-      t21 = glm::normalize(t21);
-      t31 = glm::normalize(t31);
-      tpDebug() << "t32= (" << t32.x << " " << t32.y << " " << t32.z << ")";
-      tpDebug() << "t21= (" << t21.x << " " << t21.y << " " << t21.z << ")";
-      tpDebug() << "t31= (" << t31.x << " " << t31.y << " " << t31.z << ")";
-#endif
     }
 
     if(glm::length2(t) > 1.e-10f)
@@ -210,21 +178,7 @@ void accumulateTangentForTriangle(Vertex3DList const& verts, Indexes3D const& pa
       tangent[idx1] += t;
       tangent[idx2] += t;
       tangent[idx3] += t;
-#if 0
-      if(glm::abs(glm::dot(verts.at(idx1).normal, t)) > 0.99f)
-         tpDebug() << "Here1";
-      if(glm::abs(glm::dot(verts.at(idx2).normal, t)) > 0.99f)
-         tpDebug() << "Here2";
-      if(glm::abs(glm::dot(verts.at(idx3).normal, t)) > 0.99f)
-         tpDebug() << "Here3";
-#endif
     }
-#if 0
-    else
-    {
-      int y=1;
-    }
-#endif
   }
 }
 
