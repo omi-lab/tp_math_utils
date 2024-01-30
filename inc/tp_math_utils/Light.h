@@ -2,6 +2,7 @@
 #define tp_math_utils_Light_h
 
 #include "tp_math_utils/Globals.h"
+#include "tp_math_utils/LightAnimation.h"
 
 #include "tp_utils/StringID.h"
 
@@ -62,6 +63,10 @@ struct TP_MATH_UTILS_EXPORT Light
   glm::vec3 offsetScale{0.0f, 0.0f, 0.0f};
 
   bool castShadows{true};
+
+  LightAnimation animation;
+
+  void applyAnimation(int frame, int frameMax);
 
   //################################################################################################
   void setPosition(const glm::vec3& position);

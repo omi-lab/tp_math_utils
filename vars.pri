@@ -54,6 +54,9 @@ HEADERS += inc/tp_math_utils/MaterialSwapParameters.h
 SOURCES += src/Light.cpp
 HEADERS += inc/tp_math_utils/Light.h
 
+SOURCES += src/LightAnimation.cpp
+HEADERS += inc/tp_math_utils/LightAnimation.h
+
 SOURCES += src/Geometry3D.cpp
 HEADERS += inc/tp_math_utils/Geometry3D.h
 
