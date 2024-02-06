@@ -68,20 +68,20 @@ namespace tp_math_utils
 void LightAnimation::saveState(nlohmann::json& j) const
 {
   j = nlohmann::json::object();
-  saveObjectToJSON(j, "location",   timeToLocation);
-  saveObjectToJSON(j, "rotation",   timeToRotation);
-  saveObjectToJSON(j, "scale",      timeToScale);
-  saveObjectToJSON(j, "energy",     timeToEnergy);
-  saveObjectToJSON(j, "spot_size",  timeToSpotSize);
+  saveObjectToJSON(j, "location",         timeToLocation);
+  saveObjectToJSON(j, "rotation_euler",   timeToRotation);
+  saveObjectToJSON(j, "scale",            timeToScale);
+  saveObjectToJSON(j, "energy",           timeToEnergy);
+  saveObjectToJSON(j, "spot_size",        timeToSpotSize);
 }
 
 void LightAnimation::loadState(const nlohmann::json& j)
 {
-  loadObjectFromJSON(j, "location",  timeToLocation);
-  loadObjectFromJSON(j, "rotation",  timeToRotation);
-  loadObjectFromJSON(j, "scale",     timeToScale);
-  loadObjectFromJSON(j, "energy",    timeToEnergy);
-  loadObjectFromJSON(j, "spot_size", timeToSpotSize);
+  loadObjectFromJSON(j, "location",       timeToLocation);
+  loadObjectFromJSON(j, "rotation_euler", timeToRotation);
+  loadObjectFromJSON(j, "scale",          timeToScale);
+  loadObjectFromJSON(j, "energy",         timeToEnergy);
+  loadObjectFromJSON(j, "spot_size",      timeToSpotSize);
 }
 
 }
