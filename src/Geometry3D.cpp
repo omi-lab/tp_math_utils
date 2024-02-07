@@ -107,7 +107,7 @@ std::vector<Face_lt> calculateFaces(const Geometry3D& geometry, bool calculateNo
 }
 
 //################################################################################################
-void accumulateTangentForTriangle(Vertex3DList const& verts, Indexes3D const& part, size_t i1, size_t i2, size_t i3, std::vector<glm::vec3>& tangent)
+void accumulateTangentForTriangle(const Vertex3DList& verts, const Indexes3D& part, size_t i1, size_t i2, size_t i3, std::vector<glm::vec3>& tangent)
 {
   auto idx1 = size_t(part.indexes.at(i1));
   auto idx2 = size_t(part.indexes.at(i2));
@@ -184,7 +184,7 @@ void accumulateTangentForTriangle(Vertex3DList const& verts, Indexes3D const& pa
 
 //################################################################################################
 void accumulateTangents(const Geometry3D& geometry,
-                        Indexes3D const& part,
+                        const Indexes3D& part,
                         std::vector<glm::vec3>& tangent)
 {
   if(part.type == geometry.triangleFan)
@@ -728,16 +728,16 @@ size_t Geometry3D::sizeInBytes(const std::vector<Geometry3D>& geometry)
   return size;
 }
 
-//################################################################################################
-bool Geometry3D::printDataToFile(const std::vector<Geometry3D>& geometry, std::string const& filename)
+//##################################################################################################
+bool Geometry3D::printDataToFile(const std::vector<Geometry3D>& geometry, const std::string& filename)
 {
   try
   {
     std::stringstream ss;
 
-    for(auto const& mesh : geometry)
+    for(const auto& mesh : geometry)
     {
-      for(auto const& c: mesh.comments)
+      for(const auto& c: mesh.comments)
         ss << "Comment: " << c << "\n";
 
       ss << "Geometry\n";
