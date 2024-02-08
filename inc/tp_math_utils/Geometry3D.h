@@ -165,7 +165,7 @@ struct TP_MATH_UTILS_EXPORT Geometry3D
   //################################################################################################
   //! This can be used to compare the results of creating a Geometry3D array from different inputs,
   //! for instance OBJ and JSON formats
-  static bool printDataToFile(const std::vector<Geometry3D>& geometry, std::string const& filename);
+  static bool printDataToFile(const std::vector<Geometry3D>& geometry, const std::string& filename);
 };
 
 //##################################################################################################
