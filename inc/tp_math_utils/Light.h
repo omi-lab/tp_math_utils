@@ -66,7 +66,13 @@ struct TP_MATH_UTILS_EXPORT Light
 
   LightAnimation animation;
 
-  void applyAnimation(int frame, int frameMax);
+private:
+  //################################################################################################
+  void applyAnimation(double lightSetF, const std::pair<float, float> &animationRange);
+
+public:
+  //################################################################################################
+  static void applyAnimation(std::vector<tp_math_utils::Light>& lights, double lightSetF);
 
   //################################################################################################
   void setPosition(const glm::vec3& position);

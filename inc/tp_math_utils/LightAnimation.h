@@ -14,11 +14,21 @@ namespace tp_math_utils
 
 struct TP_MATH_UTILS_EXPORT LightAnimation
 {
-  std::map<float, glm::vec3> timeToLocation;
-  std::map<float, glm::vec3> timeToRotation;
-  std::map<float, glm::vec3> timeToScale;
-  std::map<float, float> timeToSpotSize;
-  std::map<float, float> timeToEnergy;
+  // note that all parameters has same name as set in blender python
+  std::map<float, glm::vec3> location;
+  std::map<float, glm::vec3> rotation_euler;
+  std::map<float, glm::vec3> scale;
+                                               //relation between blender parameters
+                                               //and Light class members:
+
+  std::map<float, float>     spot_size;        // math.radians(fov)
+  std::map<float, float>     energy;           // diffuseScale * 830.0
+  std::map<float, glm::vec3> color;            // diffuse
+  std::map<float, float>     shadow_soft_size; // offsetScale[0]
+  std::map<float, float>     spot_blend;       // spotLightBlend
+
+  // calculate max and min key frame over all animated parameters
+  void updateMaxRange(std::pair<float, float> &range);
 
   void saveState(nlohmann::json& j) const;
   void loadState(const nlohmann::json& j);

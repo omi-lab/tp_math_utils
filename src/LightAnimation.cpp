@@ -17,14 +17,6 @@ float valueFromJSON(const nlohmann::json& j){
 }
 
 template<>
-int valueFromJSON(const nlohmann::json& j){
-  if (j.is_string())
-    return std::stoi(j.get<std::string>());
-  else
-    return j.get<int>();
-}
-
-template<>
 glm::vec3 valueFromJSON(const nlohmann::json& j){
   return tp_math_utils::vec3FromJSON(j);
 }
@@ -60,28 +52,57 @@ void saveObjectToJSON(nlohmann::json& j, const char* key , const std::map<K, T>&
   }  
 }
 
+template<typename T, typename K>
+void updateMaxRange(std::pair<float,float> &range, std::map<K,T> map){
+  if(!map.empty()){
+    range.first = std::min(range.first, map.begin()->first);
+    range.second = std::max(range.second, map.rbegin()->first);
+  }
+}
+
 }
 
 namespace tp_math_utils
 {
 
+void LightAnimation::updateMaxRange(std::pair<float,float>& range) // min, max value over all animation data
+{  
+  ::updateMaxRange(range, location);
+  ::updateMaxRange(range, rotation_euler);
+  ::updateMaxRange(range, scale);
+  ::updateMaxRange(range, spot_size);
+  ::updateMaxRange(range, energy);
+  ::updateMaxRange(range, color);
+  ::updateMaxRange(range, shadow_soft_size);
+  ::updateMaxRange(range, spot_blend);
+}
+
+
+
 void LightAnimation::saveState(nlohmann::json& j) const
 {
   j = nlohmann::json::object();
-  saveObjectToJSON(j, "location",         timeToLocation);
-  saveObjectToJSON(j, "rotation_euler",   timeToRotation);
-  saveObjectToJSON(j, "scale",            timeToScale);
-  saveObjectToJSON(j, "energy",           timeToEnergy);
-  saveObjectToJSON(j, "spot_size",        timeToSpotSize);
+  saveObjectToJSON(j, "location"        , location);
+  saveObjectToJSON(j, "rotation_euler"  , rotation_euler);
+  saveObjectToJSON(j, "scale"           , scale);
+  saveObjectToJSON(j, "spot_size"       , spot_size);
+  saveObjectToJSON(j, "energy"          , energy);
+  saveObjectToJSON(j, "color"           , color);
+  saveObjectToJSON(j, "shadow_soft_size", shadow_soft_size);
+  saveObjectToJSON(j, "spot_blend"      , spot_blend);
 }
 
 void LightAnimation::loadState(const nlohmann::json& j)
 {
-  loadObjectFromJSON(j, "location",       timeToLocation);
-  loadObjectFromJSON(j, "rotation_euler", timeToRotation);
-  loadObjectFromJSON(j, "scale",          timeToScale);
-  loadObjectFromJSON(j, "energy",         timeToEnergy);
-  loadObjectFromJSON(j, "spot_size",      timeToSpotSize);
+
+  loadObjectFromJSON(j, "location"        , location);
+  loadObjectFromJSON(j, "rotation_euler"  , rotation_euler);
+  loadObjectFromJSON(j, "scale"           , scale);
+  loadObjectFromJSON(j, "spot_size"       , spot_size);
+  loadObjectFromJSON(j, "energy"          , energy);
+  loadObjectFromJSON(j, "color"           , color);
+  loadObjectFromJSON(j, "shadow_soft_size", shadow_soft_size);
+  loadObjectFromJSON(j, "spot_blend"      , spot_blend);
 }
 
 }
