@@ -34,21 +34,24 @@ std::string lightTypeToString(LightType lightType)
 {
   switch(lightType)
   {
-  case LightType::Directional: return "Directional";
-  case LightType::Global:      return "Global";
-  case LightType::Spot:        return "Spot";
+    case LightType::Directional: return "Directional";
+    case LightType::Global:      return "Global";
+    case LightType::Spot:        return "Spot";
   }
   return "Directional";
 }
 
+//##################################################################################################
 template<typename V>
-void updateFromKeys(std::map<float,V> const& data, std::pair<float,float> const&  totalRange,
-              double lightSetF, const std::function<void(const V&)>& setValue)
+void updateFromKeys(const std::map<float,V>& data,
+                    const std::pair<float,float>& totalRange,
+                    double lightSetF,
+                    const std::function<void(const V&)>& setValue)
 {
   if(data.empty()) return;
 
   // map SB frame interval to blender frame interval
-  auto blenderFrameNumber = totalRange.first + (totalRange.second-totalRange.first) * lightSetF;
+  auto blenderFrameNumber = totalRange.first + (totalRange.second-totalRange.first) * float(lightSetF);
   // clamp value to the range of this key data
   blenderFrameNumber = std::clamp<double>(blenderFrameNumber, data.begin()->first, data.rbegin()->first);
   auto right = data.upper_bound(float(blenderFrameNumber)); // strictly greater than value
@@ -56,7 +59,8 @@ void updateFromKeys(std::map<float,V> const& data, std::pair<float,float> const&
   auto left = right; --left;
   if(right == data.end())
     setValue(left->second);
-  else {
+  else
+  {
     auto alpha = (right->first - blenderFrameNumber)/(right->first - left->first);
     setValue(V(alpha * left->second + (1.0f-alpha) * right->second));
   }
@@ -66,14 +70,16 @@ void updateFromKeys(std::map<float,V> const& data, std::pair<float,float> const&
 void Light::applyAnimation(double lightSetF, std::pair<float,float> const& animationRange)
 {
   glm::vec3 pos = position();
-  updateFromKeys<glm::vec3>(animation.location, animationRange, lightSetF, [&pos](const auto& v){
+  updateFromKeys<glm::vec3>(animation.location, animationRange, lightSetF, [&pos](const auto& v)
+  {
     pos = v;
   });
 
   glm::vec3 rot;
   glm::extractEulerAngleXYZ(viewMatrix, rot.x, rot.y, rot.z);
   rot *= -1;
-  updateFromKeys<glm::vec3>(animation.rotation_euler, animationRange, lightSetF, [&rot](const auto& v){
+  updateFromKeys<glm::vec3>(animation.rotation_euler, animationRange, lightSetF, [&rot](const auto& v)
+  {
     rot = v;
   });
 
@@ -100,23 +106,28 @@ void Light::applyAnimation(double lightSetF, std::pair<float,float> const& anima
   // shadow_soft_size = offsetScale[0,..,2]
   // spot_blend       = spotLightBlend
 
-  updateFromKeys<float>(animation.spot_size, animationRange, lightSetF, [this](const auto& v){
+  updateFromKeys<float>(animation.spot_size, animationRange, lightSetF, [this](const auto& v)
+  {
     fov = glm::degrees(v);
   });
 
-  updateFromKeys<float>(animation.energy, animationRange, lightSetF, [this](const auto& v){
+  updateFromKeys<float>(animation.energy, animationRange, lightSetF, [this](const auto& v)
+  {
     diffuseScale = v/830.0f;
   });
 
-  updateFromKeys<glm::vec3>(animation.color, animationRange, lightSetF, [this](const auto& v){
+  updateFromKeys<glm::vec3>(animation.color, animationRange, lightSetF, [this](const auto& v)
+  {
     diffuse = v;
   });
 
-  updateFromKeys<float>(animation.shadow_soft_size, animationRange, lightSetF, [this](const auto& v){
+  updateFromKeys<float>(animation.shadow_soft_size, animationRange, lightSetF, [this](const auto& v)
+  {
     offsetScale = glm::vec3{v};
   });
 
-  updateFromKeys<float>(animation.shadow_soft_size, animationRange, lightSetF, [this](const auto& v){
+  updateFromKeys<float>(animation.shadow_soft_size, animationRange, lightSetF, [this](const auto& v)
+  {
     spotLightBlend = v;
   });
 }
@@ -124,7 +135,7 @@ void Light::applyAnimation(double lightSetF, std::pair<float,float> const& anima
 void Light::applyAnimation(std::vector<tp_math_utils::Light>& lights, double lightSetF)
 {
   // find out total animation range over all lights
-  std::pair<float,float> totalAnimationRange{0,0};
+  std::pair<float,float> totalAnimationRange{0.0f,0.0f};
   for(auto& i: lights)
     i.animation.updateMaxRange(totalAnimationRange);
 
