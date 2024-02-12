@@ -68,7 +68,7 @@ struct TP_MATH_UTILS_EXPORT Light
 
 private:
   //################################################################################################
-  void applyAnimation(double lightSetF, const std::pair<float, float> &animationRange);
+  void applyAnimation(double lightSetF, const std::pair<float, float>& animationRange);
 
 public:
   //################################################################################################
