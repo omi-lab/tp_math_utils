@@ -78,7 +78,7 @@ void Light::applyAnimation(double lightSetF, std::pair<float,float> const& anima
   glm::vec3 rot;
   glm::extractEulerAngleXYZ(viewMatrix, rot.x, rot.y, rot.z);
   rot *= -1;
-  updateFromKeys<glm::vec3>(animation.rotation_euler, animationRange, lightSetF, [&rot](const auto& v)
+  updateFromKeys<glm::vec3>(animation.rotationEuler, animationRange, lightSetF, [&rot](const auto& v)
   {
     rot = v;
   });
@@ -100,33 +100,27 @@ void Light::applyAnimation(double lightSetF, std::pair<float,float> const& anima
   // please note that we have relation between "blender variables names" and
   // SB Light class properties variables:
 
-  // spot_size        = math.radians(fov)
-  // energy           = diffuseScale * 830.0
-  // color            = diffuse
-  // shadow_soft_size = offsetScale[0,..,2]
-  // spot_blend       = spotLightBlend
-
-  updateFromKeys<float>(animation.spot_size, animationRange, lightSetF, [this](const auto& v)
+  updateFromKeys<float>(animation.fov, animationRange, lightSetF, [this](const auto& v)
   {
-    fov = glm::degrees(v);
+    fov = v;
   });
 
-  updateFromKeys<float>(animation.energy, animationRange, lightSetF, [this](const auto& v)
+  updateFromKeys<float>(animation.diffuseScale, animationRange, lightSetF, [this](const auto& v)
   {
-    diffuseScale = v/830.0f;
+    diffuseScale = v;
   });
 
-  updateFromKeys<glm::vec3>(animation.color, animationRange, lightSetF, [this](const auto& v)
+  updateFromKeys<glm::vec3>(animation.diffuse, animationRange, lightSetF, [this](const auto& v)
   {
     diffuse = v;
   });
 
-  updateFromKeys<float>(animation.shadow_soft_size, animationRange, lightSetF, [this](const auto& v)
+  updateFromKeys<float>(animation.offsetScale, animationRange, lightSetF, [this](const auto& v)
   {
     offsetScale = glm::vec3{v};
   });
 
-  updateFromKeys<float>(animation.shadow_soft_size, animationRange, lightSetF, [this](const auto& v)
+  updateFromKeys<float>(animation.offsetScale, animationRange, lightSetF, [this](const auto& v)
   {
     spotLightBlend = v;
   });
