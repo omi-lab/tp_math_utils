@@ -135,7 +135,7 @@ void Light::applyAnimation(double lightSetF, std::pair<float,float> const& anima
 void Light::applyAnimation(std::vector<tp_math_utils::Light>& lights, double lightSetF)
 {
   // find out total animation range over all lights
-  std::pair<float,float> totalAnimationRange{0,0};
+  std::pair<float,float> totalAnimationRange{0.0f,0.0f};
   for(auto& i: lights)
     i.animation.updateMaxRange(totalAnimationRange);
 
