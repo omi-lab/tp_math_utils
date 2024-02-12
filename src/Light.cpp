@@ -1,10 +1,7 @@
 #include "tp_math_utils/Light.h"
 #include "tp_math_utils/JSONUtils.h"
 
-#include "tp_utils/DebugUtils.h"
 #include "tp_utils/JSONUtils.h"
-
-#include "lib_platform/Format.h"
 
 #include <glm/ext.hpp>
 
@@ -53,15 +50,15 @@ void updateFromKeys(std::map<float,V> const& data, std::pair<float,float> const&
   // map SB frame interval to blender frame interval
   auto blenderFrameNumber = totalRange.first + (totalRange.second-totalRange.first) * lightSetF;
   // clamp value to the range of this key data
-  blenderFrameNumber = std::clamp<float>(blenderFrameNumber, data.begin()->first, data.rbegin()->first);
-  auto right = data.upper_bound(blenderFrameNumber); // strictly greater than value
+  blenderFrameNumber = std::clamp<double>(blenderFrameNumber, data.begin()->first, data.rbegin()->first);
+  auto right = data.upper_bound(float(blenderFrameNumber)); // strictly greater than value
   assert(right!=data.begin()); //this should not happen - we are clamping value within the [min,max] range!
   auto left = right; --left;
   if(right == data.end())
     setValue(left->second);
   else {
-    float alpha = (right->first - blenderFrameNumber)/(right->first - left->first);
-    setValue(alpha * left->second + (1.0f-alpha) * right->second);
+    auto alpha = (right->first - blenderFrameNumber)/(right->first - left->first);
+    setValue(V(alpha * left->second + (1.0f-alpha) * right->second));
   }
 }
 
