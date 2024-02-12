@@ -4,12 +4,14 @@
 namespace {
 
 template<typename T>
-T valueFromJSON(const nlohmann::json& j){
+T valueFromJSON(const nlohmann::json& j)
+{
   return j.get<T>();
 }
 
 template<>
-float valueFromJSON(const nlohmann::json& j){
+float valueFromJSON(const nlohmann::json& j)
+{
   if (j.is_string())
     return std::stof(j.get<std::string>());
   else
@@ -17,7 +19,8 @@ float valueFromJSON(const nlohmann::json& j){
 }
 
 template<>
-glm::vec3 valueFromJSON(const nlohmann::json& j){
+glm::vec3 valueFromJSON(const nlohmann::json& j)
+{
   return tp_math_utils::vec3FromJSON(j);
 }
 
@@ -36,7 +39,8 @@ nlohmann::json valueToJSON(const glm::vec3& vec){
   return tp_math_utils::vec3ToJSON(vec);
 }
 
-nlohmann::json valueToJSON(const float& val){
+nlohmann::json valueToJSON(const float& val)
+{
   return nlohmann::json(val);
 }
 
@@ -53,7 +57,8 @@ void saveObjectToJSON(nlohmann::json& j, const char* key , const std::map<K, T>&
 }
 
 template<typename T, typename K>
-void updateMaxRange(std::pair<float,float> &range, std::map<K,T> map){
+void updateMaxRange(std::pair<float,float> &range, std::map<K,T> map)
+{
   if(!map.empty()){
     range.first = std::min(range.first, map.begin()->first);
     range.second = std::max(range.second, map.rbegin()->first);

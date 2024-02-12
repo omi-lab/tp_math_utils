@@ -14,8 +14,7 @@ namespace tp_math_utils
 
 //################################################################################################
 struct TP_MATH_UTILS_EXPORT LightAnimation
-{
-  // note that all parameters has same name as set in blender python
+{  
   std::map<float, glm::vec3> location;
   std::map<float, glm::vec3> rotationEuler;
   std::map<float, glm::vec3> scale;
