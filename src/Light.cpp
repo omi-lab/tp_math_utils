@@ -53,7 +53,7 @@ void updateFromKeys(const std::map<float,V>& data,
   // map SB frame interval to blender frame interval
   auto blenderFrameNumber = totalRange.first + (totalRange.second-totalRange.first) * float(lightSetF);
   // clamp value to the range of this key data
-  blenderFrameNumber = std::clamp<double>(blenderFrameNumber, data.begin()->first, data.rbegin()->first);
+  blenderFrameNumber = std::clamp<float>(blenderFrameNumber, data.begin()->first, data.rbegin()->first);
   auto right = data.upper_bound(float(blenderFrameNumber)); // strictly greater than value
   assert(right!=data.begin()); //this should not happen - we are clamping value within the [min,max] range!
   auto left = right; --left;
@@ -120,7 +120,7 @@ void Light::applyAnimation(double lightSetF, std::pair<float,float> const& anima
     offsetScale = glm::vec3{v};
   });
 
-  updateFromKeys<float>(animation.offsetScale, animationRange, lightSetF, [this](const auto& v)
+  updateFromKeys<float>(animation.spotLightBlend, animationRange, lightSetF, [this](const auto& v)
   {
     spotLightBlend = v;
   });
