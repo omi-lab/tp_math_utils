@@ -77,10 +77,9 @@ void Light::applyAnimation(double lightSetF, std::pair<float,float> const& anima
 
   glm::vec3 rot;
   glm::extractEulerAngleXYZ(viewMatrix, rot.x, rot.y, rot.z);
-  rot *= -1;
   updateFromKeys<glm::vec3>(animation.rotationEuler, animationRange, lightSetF, [&rot](const auto& v)
   {
-    rot = v;
+    rot = -v;
   });
 
   // for blender output we have (strange I expect to use here eulerXYZ but only eulerZYX working correctly
@@ -91,9 +90,9 @@ void Light::applyAnimation(double lightSetF, std::pair<float,float> const& anima
   // where inv(R) = inv(Rx)*inv(Ry)*inv(Rz) = eulerXYZ(-angleX,-angleY,-angleZ)
   // note that eulerXYZ(-angleX,-angleY,-angleZ) equvalent to
   // fixedZYX(-angleZ,-angleY,-angleX) = inv(Rx)*inv(Ry)*inv(Rz).
-  // Finally, to avoid inverse operation we do reverse angles and position:
+  // Finally, to avoid inverse operation we do reverse angles and position
 
-  auto mRot = glm::eulerAngleXYZ(-rot.x, -rot.y, -rot.z);
+  auto mRot = glm::eulerAngleXYZ(rot.x, rot.y, rot.z);
   glm::mat4 mPos {1.0};  mPos[3] = glm::vec4(-pos, 1.0);
   viewMatrix = mRot*mPos;
 
