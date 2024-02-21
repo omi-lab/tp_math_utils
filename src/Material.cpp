@@ -123,7 +123,7 @@ void UVTransformation::loadState(const nlohmann::json& j)
   skewUV      = tp_math_utils::getJSONVec2(j,      "skewUV",      skewUV);
   scaleUV     = tp_math_utils::getJSONVec2(j,     "scaleUV",     scaleUV);
   translateUV = tp_math_utils::getJSONVec2(j, "translateUV", translateUV);
-  rotateUV    = TPJSONFloat               (j,   "rotateUV" ,    rotateUV);
+  rotateUV    = TPJSONFloat               (j,    "rotateUV",    rotateUV);
 }
 
 //##################################################################################################
