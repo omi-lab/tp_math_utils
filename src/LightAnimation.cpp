@@ -104,7 +104,7 @@ void LightAnimation::loadState(const nlohmann::json& j)
 {
 
   // for blender export is define then we use blender naming for parameters
-  if(tp_utils::getJSONBool(j, "BlenderExport", false))
+  if(tp_utils::getJSONBool(j, "blenderExport", false))
   {
     // load from from blender export
     //relation between blender parameters

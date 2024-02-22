@@ -1,5 +1,5 @@
-#ifndef LIGHTANIMATION_H
-#define LIGHTANIMATION_H
+#ifndef tp_math_utils_LightAnimation_h
+#define tp_math_utils_LightAnimation_h
 
 #include "tp_math_utils/Globals.h"
 
