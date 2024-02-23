@@ -71,7 +71,7 @@ namespace tp_math_utils
 {
 
 //################################################################################################
-void LightAnimation::updateMaxRange(std::pair<float,float>& range) // min, max value over all animation data
+void LightAnimation::updateMaxRange(std::pair<float,float>& range) const // min, max value over all animation data
 {  
   ::updateMaxRange(range, location);
   ::updateMaxRange(range, rotationEuler);
@@ -83,7 +83,18 @@ void LightAnimation::updateMaxRange(std::pair<float,float>& range) // min, max v
   ::updateMaxRange(range, spotLightBlend);
 }
 
-
+//################################################################################################
+bool LightAnimation::empty() const
+{
+  return    location       .size() > 1 ||
+            rotationEuler  .size() > 1 ||
+            scale          .size() > 1 ||
+            fov            .size() > 1 ||
+            diffuseScale   .size() > 1 ||
+            diffuse        .size() > 1 ||
+            offsetScale    .size() > 1 ||
+            spotLightBlend .size() > 1 ;
+}
 
 //################################################################################################
 void LightAnimation::saveState(nlohmann::json& j) const

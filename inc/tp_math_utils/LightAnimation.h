@@ -27,7 +27,11 @@ struct TP_MATH_UTILS_EXPORT LightAnimation
 
   //################################################################################################
   //!calculate max and min key frame over all animated parameters
-  void updateMaxRange(std::pair<float, float> &range);
+  void updateMaxRange(std::pair<float, float> &range) const;
+
+  //################################################################################################
+  //!return true if has more then two keyframes
+  bool empty() const;
 
   //################################################################################################
   void saveState(nlohmann::json& j) const;
