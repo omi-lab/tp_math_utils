@@ -43,4 +43,4 @@ struct TP_MATH_UTILS_EXPORT LightAnimation
 
 }
 
-#endif // LIGHTANIMATION_H
+#endif
