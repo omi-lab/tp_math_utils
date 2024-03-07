@@ -86,14 +86,14 @@ void LightAnimation::updateMaxRange(std::pair<float,float>& range) const // min,
 //################################################################################################
 bool LightAnimation::empty() const
 {
-  return    location       .size() > 1 ||
-            rotationEuler  .size() > 1 ||
-            scale          .size() > 1 ||
-            fov            .size() > 1 ||
-            diffuseScale   .size() > 1 ||
-            diffuse        .size() > 1 ||
-            offsetScale    .size() > 1 ||
-            spotLightBlend .size() > 1 ;
+  return    location       .size() <= 1 &&
+            rotationEuler  .size() <= 1 &&
+            scale          .size() <= 1 &&
+            fov            .size() <= 1 &&
+            diffuseScale   .size() <= 1 &&
+            diffuse        .size() <= 1 &&
+            offsetScale    .size() <= 1 &&
+            spotLightBlend .size() <= 1;
 }
 
 //################################################################################################
