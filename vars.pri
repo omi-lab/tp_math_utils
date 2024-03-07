@@ -96,7 +96,20 @@ HEADERS += inc/tp_math_utils/UnwrapUVs.h
 SOURCES += src/MarchingCubes.cpp
 HEADERS += inc/tp_math_utils/MarchingCubes.h
 
-#===================================================================================================
+
+#= Materials =======================================================================================
+
+SOURCES += src/materials/ExternalMaterial.cpp
+HEADERS += inc/tp_math_utils/materials/ExternalMaterial.h
+
+SOURCES += src/materials/LegacyMaterial.cpp
+HEADERS += inc/tp_math_utils/materials/LegacyMaterial.h
+
+SOURCES += src/materials/OpenGLMaterial.cpp
+HEADERS += inc/tp_math_utils/materials/OpenGLMaterial.h
+
+
+#= External ========================================================================================
 
 # xatlas
 SOURCES += src/external/xatlas.cpp

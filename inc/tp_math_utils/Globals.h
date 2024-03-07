@@ -1,7 +1,7 @@
 #ifndef tp_math_utils_Globals_h
 #define tp_math_utils_Globals_h
 
-#include "tp_utils/Globals.h"
+#include "tp_utils/StringID.h"
 
 #include "lib_platform/RandomDevice.h"
 

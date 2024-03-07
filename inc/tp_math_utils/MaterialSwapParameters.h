@@ -45,7 +45,8 @@ struct TP_MATH_UTILS_EXPORT MaterialSwapParameters
   float albedoValueBias{0.0f};
 
   //################################################################################################
-  tp_math_utils::Material materialWithSwappedParameters( const tp_math_utils::Material& material, const glm::vec3& color ) const;
+  tp_math_utils::Material materialWithSwappedParameters(const tp_math_utils::Material& material,
+                                                        const glm::vec3& color) const;
 
   //################################################################################################
   void saveState(nlohmann::json& j) const;

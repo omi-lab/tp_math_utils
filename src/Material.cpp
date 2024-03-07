@@ -1,5 +1,8 @@
 #include "tp_math_utils/Material.h"
 #include "tp_math_utils/JSONUtils.h"
+#include "tp_math_utils/materials/OpenGLMaterial.h"
+#include "tp_math_utils/materials/LegacyMaterial.h"
+#include "tp_math_utils/materials/ExternalMaterial.h"
 
 #include "tp_utils/JSONUtils.h"
 
@@ -18,63 +21,42 @@ glm::mat3 skew(const glm::mat3& m_, const glm::vec2& uv)
   m[0][1] = glm::tan(glm::radians(uv.y));
   return m_ * m;
 }
-}
 
 //##################################################################################################
-std::string colorspaceToString(Colorspace colorspace)
+void cloneExtendedMaterials(const std::vector<ExtendedMaterial*>& from, std::vector<ExtendedMaterial*>& to)
 {
-  switch(colorspace)
+  for(const auto& extendedMaterial : from)
   {
-    case Colorspace::sRGB: return "sRGB";
-    case Colorspace::FilmicSRGB: return "Filmic sRGB";
+    if(auto m=dynamic_cast<const OpenGLMaterial*>(extendedMaterial); m)
+      to.push_back(new OpenGLMaterial(*m));
+
+    else if(auto m=dynamic_cast<const LegacyMaterial*>(extendedMaterial); m)
+      to.push_back(new LegacyMaterial(*m));
+
+    else if(auto m=dynamic_cast<const ExternalMaterial*>(extendedMaterial); m)
+      to.push_back(new ExternalMaterial(*m));
   }
-  return "sRGB";
+}
 }
 
 //##################################################################################################
-Colorspace colorspaceFromString(const std::string& colorspace)
+ExtendedMaterial::~ExtendedMaterial()
 {
-  if(colorspace == "Filmic sRGB")
-    return Colorspace::FilmicSRGB;
-  return Colorspace::sRGB;
+
 }
 
 //##################################################################################################
-std::string sssMethodToString(SSSMethod sssMethod)
+void ExtendedMaterial::allTextureIDs(std::unordered_set<tp_utils::StringID>& textureIDs) const
 {
-  switch(sssMethod)
-  {
-  case SSSMethod::ChristensenBurley: return "ChristensenBurley";
-  case SSSMethod::RandomWalk       : return "RandomWalk"       ;
-  }
-  return "ChristensenBurley";
+  TP_UNUSED(textureIDs);
 }
 
 //##################################################################################################
-SSSMethod sssMethodFromString(const std::string& sssMethod)
+std::unordered_set<tp_utils::StringID> ExtendedMaterial::allTextures() const
 {
-  if(sssMethod == "RandomWalk")
-    return SSSMethod::RandomWalk;
-  return SSSMethod::ChristensenBurley;
-}
-
-//##################################################################################################
-std::string shaderTypeToString(ShaderType shaderType)
-{
-  switch(shaderType)
-  {
-  case ShaderType::Principled: return "Principled";
-  case ShaderType::None      : return "None"      ;
-  }
-  return "Principled";
-}
-
-//##################################################################################################
-ShaderType shaderTypeFromString(const std::string& shaderType)
-{
-  if(shaderType == "None")
-    return ShaderType::None;
-  return ShaderType::Principled;
+  std::unordered_set<tp_utils::StringID> textureIDs;
+  allTextureIDs(textureIDs);
+  return textureIDs;
 }
 
 //##################################################################################################
@@ -127,84 +109,196 @@ void UVTransformation::loadState(const nlohmann::json& j)
 }
 
 //##################################################################################################
-void Material::saveState(nlohmann::json& j) const
+Material::Material()
 {
-  j["name"] = name.toString();
 
-  j["shaderType"]            = shaderTypeToString(shaderType);
-
-  j["albedoColorspace"]      = colorspaceToString(albedoColorspace);
-  j["albedo"]                = tp_math_utils::vec3ToJSON(albedo);
-  j["sss"]                   = tp_math_utils::vec3ToJSON(sss);
-  j["emission"]              = tp_math_utils::vec3ToJSON(emission);
-  j["velvet"]                = tp_math_utils::vec3ToJSON(velvet);
-
-  j["albedoScale"]           = albedoScale;
-  j["sssScale"]              = sssScale;
-  j["emissionScale"]         = emissionScale;
-  j["velvetScale"]           = velvetScale;
-  j["heightScale"]           = heightScale;
-  j["heightMidlevel"]        = heightMidlevel;
-
-  j["alpha"]                 = alpha;
-  j["roughness"]             = roughness;
-  j["metalness"]             = metalness;
-  j["specular"]              = specular;
-  j["transmission"]          = transmission;
-  j["transmissionRoughness"] = transmissionRoughness;
-  j["ior"]                   = ior;
-  j["sheen"]                 = sheen;
-  j["sheenTint"]             = sheenTint;
-  j["clearCoat"]             = clearCoat;
-  j["clearCoatRoughness"]    = clearCoatRoughness;
-
-  j["iridescentFactor"]      = iridescentFactor;
-  j["iridescentOffset"]      = iridescentOffset;
-  j["iridescentFrequency"]   = iridescentFrequency;
-
-  j["sssRadius"]             = tp_math_utils::vec3ToJSON(sssRadius);
-  j["sssMethod"]             = sssMethodToString(sssMethod);
-
-  j["normalStrength"]             = normalStrength;
-
-  j["albedoBrightness"]      = albedoBrightness;
-  j["albedoContrast"]        = albedoContrast;
-  j["albedoGamma"]           = albedoGamma;
-  j["albedoHue"]             = albedoHue;
-  j["albedoSaturation"]      = albedoSaturation;
-  j["albedoValue"]           = albedoValue;
-  j["albedoFactor"]          = albedoFactor;
-
-  j["useAmbient"]            = useAmbient;
-  j["useDiffuse"]            = useDiffuse;
-  j["useNdotL"]              = useNdotL;
-  j["useAttenuation"]        = useAttenuation;
-  j["useShadow"]             = useShadow;
-  j["useLightMask"]          = useLightMask;
-  j["useReflection"]         = useReflection;
-
-  j["tileTextures"]          = tileTextures;
-
-  uvTransformation.saveState(j);
-
-  j["rayVisibilityCamera"]        = rayVisibilityCamera;
-  j["rayVisibilityDiffuse"]       = rayVisibilityDiffuse;
-  j["rayVisibilityGlossy"]        = rayVisibilityGlossy;
-  j["rayVisibilityTransmission"]  = rayVisibilityTransmission;
-  j["rayVisibilityScatter"]       = rayVisibilityScatter;
-  j["rayVisibilityShadow"]        = rayVisibilityShadow;
-  j["rayVisibilityShadowCatcher"] = rayVisibilityShadowCatcher;
-
-  viewTypedTextures([&](const auto& type, const auto& value, const auto&)
-  {
-    j[type] = value.toString();
-  });
 }
 
 //##################################################################################################
-void Material::saveExtendedState(nlohmann::json& j) const
+Material::Material(const tp_utils::StringID& name_):
+  name(name_)
 {
-  saveState(j);
+
+}
+
+//##################################################################################################
+Material::Material(const Material& other):
+  name(std::move(other.name)),
+  uvTransformation(other.uvTransformation)
+{
+  cloneExtendedMaterials(other.extendedMaterials, extendedMaterials);
+}
+
+//##################################################################################################
+Material::Material(Material&& other) noexcept:
+  name(std::move(other.name)),
+  uvTransformation(std::move(other.uvTransformation))
+{
+  std::swap(extendedMaterials, other.extendedMaterials);
+}
+
+//##################################################################################################
+Material& Material::operator=(const Material& other)
+{
+  if(this != &other)
+  {
+    name = other.name;
+    uvTransformation = other.uvTransformation;
+    cloneExtendedMaterials(other.extendedMaterials, extendedMaterials);
+  }
+
+  return *this;
+}
+
+//##################################################################################################
+Material& Material::operator=(Material&& other) noexcept
+{
+  if(this != &other)
+  {
+    name = std::move(other.name);
+    uvTransformation = std::move(other.uvTransformation);
+    std::swap(extendedMaterials, other.extendedMaterials);
+  }
+
+  return *this;
+}
+
+//##################################################################################################
+Material::~Material()
+{
+  tpDeleteAll(extendedMaterials);
+}
+
+//##################################################################################################
+OpenGLMaterial* Material::findOrAddOpenGL()
+{
+  for(auto material : extendedMaterials)
+    if(auto m=dynamic_cast<OpenGLMaterial*>(material); m)
+      return m;
+
+  auto m = new OpenGLMaterial();
+  extendedMaterials.push_back(m);
+  return m;
+}
+
+//##################################################################################################
+LegacyMaterial* Material::findOrAddLegacy()
+{
+  for(auto material : extendedMaterials)
+    if(auto m=dynamic_cast<LegacyMaterial*>(material); m)
+      return m;
+
+  auto m = new LegacyMaterial();
+  extendedMaterials.push_back(m);
+  return m;
+}
+
+//##################################################################################################
+ExternalMaterial* Material::findOrAddExternal(const tp_utils::StringID& assetType)
+{
+  for(auto material : extendedMaterials)
+    if(auto m=dynamic_cast<ExternalMaterial*>(material); m)
+      if(m->assetType == assetType)
+        return m;
+
+  auto m = new ExternalMaterial();
+  m->assetType = assetType;
+  extendedMaterials.push_back(m);
+  return m;
+}
+
+//##################################################################################################
+void Material::updateOpenGL(const std::function<void(OpenGLMaterial&)>& closure) const
+{
+  for(auto material : extendedMaterials)
+    if(auto m=dynamic_cast<OpenGLMaterial*>(material); m)
+      return closure(*m);
+}
+
+//##################################################################################################
+void Material::updateLegacy(const std::function<void(LegacyMaterial&)>& closure) const
+{
+  for(auto material : extendedMaterials)
+    if(auto m=dynamic_cast<LegacyMaterial*>(material); m)
+      return closure(*m);
+}
+
+//##################################################################################################
+void Material::updateExternal(const tp_utils::StringID& assetType,
+                              const std::function<void(ExternalMaterial&)>& closure) const
+{
+  for(auto material : extendedMaterials)
+    if(auto m=dynamic_cast<ExternalMaterial*>(material); m)
+      if(m->assetType == assetType)
+        return closure(*m);
+}
+
+//##################################################################################################
+void Material::viewOpenGL(const std::function<void(const OpenGLMaterial&)>& closure) const
+{
+  OpenGLMaterial::view(*this, closure);
+}
+
+//##################################################################################################
+void Material::viewLegacy(const std::function<void(const LegacyMaterial&)>& closure) const
+{
+  LegacyMaterial::view(*this, closure);
+}
+
+//##################################################################################################
+void Material::viewExternal(const tp_utils::StringID& assetType,
+                            const std::function<void(const ExternalMaterial&)>& closure) const
+{
+  ExternalMaterial::view(*this, assetType, closure);
+}
+
+//##################################################################################################
+void Material::allTextureIDs(std::unordered_set<tp_utils::StringID>& textureIDs) const
+{
+  for(const auto& extendedMaterial : extendedMaterials)
+    extendedMaterial->allTextureIDs(textureIDs);
+}
+
+//##################################################################################################
+std::unordered_set<tp_utils::StringID> Material::allTextures() const
+{
+  std::unordered_set<tp_utils::StringID> textureIDs;
+  allTextureIDs(textureIDs);
+  return textureIDs;
+}
+
+//##################################################################################################
+void Material::saveState(nlohmann::json& j) const
+{
+  j["name"] = name.toString();
+  j["version"] = "2.0";
+  uvTransformation.saveState(j);
+
+  auto& extendedMaterialsJ = j["extendedMaterials"];
+  extendedMaterialsJ = nlohmann::json::array();
+  extendedMaterialsJ.get_ptr<nlohmann::json::array_t*>()->reserve(extendedMaterials.size());
+  for(auto extendedMaterial : extendedMaterials)
+  {
+    extendedMaterialsJ.emplace_back();
+    auto& extendedMaterialJ = extendedMaterialsJ.back();
+
+    extendedMaterial->saveState(extendedMaterialJ);
+
+    if(typeid(extendedMaterial) == typeid(OpenGLMaterial))
+      extendedMaterialJ["type"] = "OpenGL";
+
+    else if(typeid(extendedMaterial) == typeid(LegacyMaterial))
+      extendedMaterialJ["type"] = "Legacy";
+
+    else if(typeid(extendedMaterial) == typeid(ExternalMaterial))
+      extendedMaterialJ["type"] = "External";
+  }
+}
+
+//##################################################################################################
+void Material::saveUVMatrix(nlohmann::json& j) const
+{
+  uvTransformation.saveState(j);
   j["uvMatrix"] = tp_math_utils::mat3ToJSON(uvTransformation.uvMatrix());
   j["isIdentity"] = uvTransformation.isIdentity();
 }
@@ -212,76 +306,46 @@ void Material::saveExtendedState(nlohmann::json& j) const
 //##################################################################################################
 void Material::loadState(const nlohmann::json& j)
 {
+  tpDeleteAll(extendedMaterials);
+  extendedMaterials.clear();
+
+  if(TPJSONString(j, "version") == "2.0")
+  {
+    // New format
+    if(auto i=j.find("extendedMaterials"); i!=j.end() && i->is_array())
+    {
+      extendedMaterials.reserve(i->size());
+      for(const auto& extendedMaterialJ : *i)
+      {
+        ExtendedMaterial* extendedMaterial{nullptr};
+
+        std::string type = TPJSONString(extendedMaterialJ, "type");
+        if(type == "OpenGL")
+          extendedMaterial = new OpenGLMaterial();
+
+        else if(type == "Legacy")
+          extendedMaterial = new LegacyMaterial();
+
+        else if(type == "External")
+          extendedMaterial = new ExternalMaterial();
+
+        if(extendedMaterial)
+        {
+          extendedMaterial->loadState(extendedMaterialJ);
+          extendedMaterials.push_back(extendedMaterial);
+        }
+      }
+    }
+  }
+  else if(j.find("albedo") != j.end())
+  {
+    // Legacy format
+    findOrAddOpenGL()->loadState(j);
+    findOrAddLegacy()->loadState(j);
+  }
 
   name = TPJSONString(j, "name");
-
-  shaderType            = shaderTypeFromString(TPJSONString(j, "shaderType"));
-
-  albedoColorspace      = colorspaceFromString(TPJSONString(j, "albedoColorspace"));
-  albedo                = tp_math_utils::vec3FromJSON(TPJSON(j, "albedo"  ), albedo  );
-  sss                   = tp_math_utils::vec3FromJSON(TPJSON(j, "sss"     ), sss     );
-  emission              = tp_math_utils::vec3FromJSON(TPJSON(j, "emission"), emission);
-  velvet                = tp_math_utils::vec3FromJSON(TPJSON(j, "velvet"  ), velvet  );
-
-  albedoScale           = TPJSONFloat(j, "albedoScale"   , albedoScale   );
-  sssScale              = TPJSONFloat(j, "sssScale"      , sssScale      );
-  emissionScale         = TPJSONFloat(j, "emissionScale" , emissionScale );
-  velvetScale           = TPJSONFloat(j, "velvetScale"   , velvetScale   );
-  heightScale           = TPJSONFloat(j, "heightScale"   , heightScale   );
-  heightMidlevel        = TPJSONFloat(j, "heightMidlevel", heightMidlevel);
-
-  alpha                 = TPJSONFloat(j, "alpha"                , alpha                );
-  roughness             = TPJSONFloat(j, "roughness"            , roughness            );
-  metalness             = TPJSONFloat(j, "metalness"            , metalness            );
-  specular              = TPJSONFloat(j, "specular"             , specular             );
-  transmission          = TPJSONFloat(j, "transmission"         , transmission         );
-  transmissionRoughness = TPJSONFloat(j, "transmissionRoughness", transmissionRoughness);
-  ior                   = TPJSONFloat(j, "ior"                  , ior                  );
-  sheen                 = TPJSONFloat(j, "sheen"                , sheen                );
-  sheenTint             = TPJSONFloat(j, "sheenTint"            , sheenTint            );
-  clearCoat             = TPJSONFloat(j, "clearCoat"            , clearCoat            );
-  clearCoatRoughness    = TPJSONFloat(j, "clearCoatRoughness"   , clearCoatRoughness   );
-  iridescentFactor      = TPJSONFloat(j, "iridescentFactor"     , iridescentFactor     );
-  iridescentOffset      = TPJSONFloat(j, "iridescentOffset"     , iridescentOffset     );
-  iridescentFrequency   = TPJSONFloat(j, "iridescentFrequency"  , iridescentFrequency  );
-
-  sssRadius        = tp_math_utils::vec3FromJSON(TPJSON(j, "sssRadius"), sssRadius);
-  sssMethod        = sssMethodFromString(TPJSONString(j, "sssMethod"));
-
-  normalStrength   = TPJSONFloat(j, "normalStrength"  , normalStrength  );
-
-  albedoBrightness = TPJSONFloat(j, "albedoBrightness", albedoBrightness);
-  albedoContrast   = TPJSONFloat(j, "albedoContrast"  , albedoContrast  );
-  albedoGamma      = TPJSONFloat(j, "albedoGamma"     , albedoGamma     );
-  albedoHue        = TPJSONFloat(j, "albedoHue"       , albedoHue       );
-  albedoSaturation = TPJSONFloat(j, "albedoSaturation", albedoSaturation);
-  albedoValue      = TPJSONFloat(j, "albedoValue"     , albedoValue     );
-  albedoFactor     = TPJSONFloat(j, "albedoFactor"    , albedoFactor    );
-
-  useAmbient       = TPJSONFloat(j, "useAmbient"    , useAmbient    );
-  useDiffuse       = TPJSONFloat(j, "useDiffuse"    , useDiffuse    );
-  useNdotL         = TPJSONFloat(j, "useNdotL"      , useNdotL      );
-  useAttenuation   = TPJSONFloat(j, "useAttenuation", useAttenuation);
-  useShadow        = TPJSONFloat(j, "useShadow"     , useShadow     );
-  useLightMask     = TPJSONFloat(j, "useLightMask"  , useLightMask  );
-  useReflection    = TPJSONFloat(j, "useReflection" , useReflection );
-
-  tileTextures     = TPJSONBool(j, "tileTextures", false);
-
   uvTransformation.loadState(j);
-
-  rayVisibilityCamera        = TPJSONBool(j, "rayVisibilityCamera"       , true );
-  rayVisibilityDiffuse       = TPJSONBool(j, "rayVisibilityDiffuse"      , true );
-  rayVisibilityGlossy        = TPJSONBool(j, "rayVisibilityGlossy"       , true );
-  rayVisibilityTransmission  = TPJSONBool(j, "rayVisibilityTransmission" , true );
-  rayVisibilityScatter       = TPJSONBool(j, "rayVisibilityScatter"      , true );
-  rayVisibilityShadow        = TPJSONBool(j, "rayVisibilityShadow"       , true );
-  rayVisibilityShadowCatcher = TPJSONBool(j, "rayVisibilityShadowCatcher", false);
-
-  updateTypedTextures([&](const auto& type, auto& value, const auto&)
-  {
-    value = TPJSONString(j, type);
-  });
 }
 
 }
