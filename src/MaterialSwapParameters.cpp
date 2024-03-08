@@ -4,6 +4,7 @@
 #include "tp_math_utils/JSONUtils.h"
 
 #include "tp_utils/JSONUtils.h"
+#include "tp_utils/DebugUtils.h"
 
 namespace tp_math_utils
 {
@@ -12,11 +13,12 @@ namespace tp_math_utils
 tp_math_utils::Material MaterialSwapParameters::materialWithSwappedParameters(const tp_math_utils::Material& material,
                                                                               const glm::vec3& color) const
 {
+  tpDebug() << "A";
   tp_math_utils::Material swapped = material;
 
   glm::vec3 hsvColor = rgb2hsv(color);
 
-  auto swapValue = [](float v, float newValue, float use, float scale, float bias)
+  auto swapValue = [](float& v, float newValue, float use, float scale, float bias)
   {
     v = std::clamp((v*(1.0f-use)) + ( ( (newValue*scale) + bias) * use), 0.0f, 1.0f);
   };
@@ -33,6 +35,7 @@ tp_math_utils::Material MaterialSwapParameters::materialWithSwappedParameters(co
   {
     if(auto m = dynamic_cast<OpenGLMaterial*>(extendedMaterial); m)
     {
+      tpDebug() << "B";
       swapVec3(m->albedo  , albedoUse  , albedoScale  , albedoBias  );
 
       if(useAlbedoHue)
@@ -44,6 +47,7 @@ tp_math_utils::Material MaterialSwapParameters::materialWithSwappedParameters(co
 
     else if(auto m = dynamic_cast<LegacyMaterial*>(extendedMaterial); m)
     {
+      tpDebug() << "C";
       swapVec3(m->sss     , sssUse     , sssScale     , sssBias     );
       swapVec3(m->emission, emissionUse, emissionScale, emissionBias);
       swapVec3(m->velvet  , velvetUse  , velvetScale  , velvetBias  );
