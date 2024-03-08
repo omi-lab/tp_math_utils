@@ -35,6 +35,11 @@ void OpenGLMaterial::saveState(nlohmann::json& j) const
   j["tileTextures"]          = tileTextures;
 
   j["rayVisibilityShadowCatcher"] = rayVisibilityShadowCatcher;
+
+  viewTypedTextures([&](const auto& type, const auto& value, const auto&)
+  {
+    j[type] = value.toString();
+  });
 }
 
 //##################################################################################################
@@ -69,6 +74,11 @@ void OpenGLMaterial::loadState(const nlohmann::json& j)
   tileTextures          = TPJSONBool(j, "tileTextures", false);
 
   rayVisibilityShadowCatcher = TPJSONBool(j, "rayVisibilityShadowCatcher", false);
+
+  updateTypedTextures([&](const auto& type, auto& value, const auto&)
+  {
+    value = TPJSONString(j, type);
+  });
 }
 
 //##################################################################################################
