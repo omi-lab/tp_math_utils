@@ -82,16 +82,6 @@ void OpenGLMaterial::loadState(const nlohmann::json& j)
 }
 
 //##################################################################################################
-void OpenGLMaterial::allTextureIDs(std::unordered_set<tp_utils::StringID>& textureIDs) const
-{
-  viewTextures([&](const tp_utils::StringID& value)
-  {
-    if(value.isValid())
-      textureIDs.insert(value);
-  });
-}
-
-//##################################################################################################
 void OpenGLMaterial::view(const Material& material, const std::function<void(const OpenGLMaterial&)>& closure)
 {
   for(const auto& extendedMaterial : material.extendedMaterials)
@@ -104,6 +94,16 @@ void OpenGLMaterial::view(const Material& material, const std::function<void(con
   }
 
   closure(OpenGLMaterial());
+}
+
+//##################################################################################################
+void OpenGLMaterial::allTextureIDs(std::unordered_set<tp_utils::StringID>& textureIDs) const
+{
+  viewTextures([&](const tp_utils::StringID& value)
+  {
+    if(value.isValid())
+      textureIDs.insert(value);
+  });
 }
 
 }
