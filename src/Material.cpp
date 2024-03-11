@@ -25,6 +25,9 @@ glm::mat3 skew(const glm::mat3& m_, const glm::vec2& uv)
 //##################################################################################################
 void cloneExtendedMaterials(const std::vector<ExtendedMaterial*>& from, std::vector<ExtendedMaterial*>& to)
 {
+  tpDeleteAll(to);
+  to.clear();
+
   for(const auto& extendedMaterial : from)
   {
     if(auto m=dynamic_cast<const OpenGLMaterial*>(extendedMaterial); m)
@@ -284,13 +287,13 @@ void Material::saveState(nlohmann::json& j) const
 
     extendedMaterial->saveState(extendedMaterialJ);
 
-    if(typeid(extendedMaterial) == typeid(OpenGLMaterial))
+    if(dynamic_cast<OpenGLMaterial*>(extendedMaterial))
       extendedMaterialJ["type"] = "OpenGL";
 
-    else if(typeid(extendedMaterial) == typeid(LegacyMaterial))
+    else if(dynamic_cast<LegacyMaterial*>(extendedMaterial))
       extendedMaterialJ["type"] = "Legacy";
 
-    else if(typeid(extendedMaterial) == typeid(ExternalMaterial))
+    else if(dynamic_cast<ExternalMaterial*>(extendedMaterial))
       extendedMaterialJ["type"] = "External";
   }
 }
@@ -321,19 +324,19 @@ void Material::loadState(const nlohmann::json& j)
 
         std::string type = TPJSONString(extendedMaterialJ, "type");
         if(type == "OpenGL")
-          extendedMaterial = new OpenGLMaterial();
+          extendedMaterial = findOrAddOpenGL();
 
         else if(type == "Legacy")
-          extendedMaterial = new LegacyMaterial();
+          extendedMaterial = findOrAddLegacy();
 
         else if(type == "External")
-          extendedMaterial = new ExternalMaterial();
-
-        if(extendedMaterial)
         {
-          extendedMaterial->loadState(extendedMaterialJ);
+          extendedMaterial = new ExternalMaterial();
           extendedMaterials.push_back(extendedMaterial);
         }
+
+        if(extendedMaterial)
+          extendedMaterial->loadState(extendedMaterialJ);
       }
     }
   }

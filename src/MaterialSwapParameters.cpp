@@ -36,7 +36,7 @@ tp_math_utils::Material MaterialSwapParameters::materialWithSwappedParameters(co
     if(auto m = dynamic_cast<OpenGLMaterial*>(extendedMaterial); m)
     {
       tpDebug() << "B";
-      swapVec3(m->albedo  , albedoUse  , albedoScale  , albedoBias  );
+      swapVec3(m->albedo  , albedoUse  , albedoScale  , albedoBias);
 
       if(useAlbedoHue)
         m->albedoHue = hsvColor.x + 0.5f;
