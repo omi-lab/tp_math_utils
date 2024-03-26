@@ -19,6 +19,9 @@ public:
   void loadState(const nlohmann::json& j) override;
 
   //################################################################################################
+  void appendBlendFileIDs(std::unordered_set<tp_utils::StringID>& blendFileIDs) const override;
+
+  //################################################################################################
   static void view(const Material& material,
                    const tp_utils::StringID& assetType,
                    const std::function<void(const ExternalMaterial&)>& closure);

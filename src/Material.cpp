@@ -54,6 +54,12 @@ void ExtendedMaterial::allTextureIDs(std::unordered_set<tp_utils::StringID>& tex
   TP_UNUSED(textureIDs);
 }
 
+//################################################################################################
+void ExtendedMaterial::appendBlendFileIDs(std::unordered_set<tp_utils::StringID>& blendFileIDs) const
+{
+  TP_UNUSED(blendFileIDs);
+}
+
 //##################################################################################################
 std::unordered_set<tp_utils::StringID> ExtendedMaterial::allTextures() const
 {
@@ -210,6 +216,16 @@ ExternalMaterial* Material::findOrAddExternal(const tp_utils::StringID& assetTyp
   return m;
 }
 
+//################################################################################################
+bool Material::hasExternal(const tp_utils::StringID& assetType)
+{
+  for(auto material : extendedMaterials)
+    if(auto m=dynamic_cast<ExternalMaterial*>(material); m)
+      if(m->assetType == assetType)
+        return true;
+  return false;
+}
+
 //##################################################################################################
 void Material::updateOpenGL(const std::function<void(OpenGLMaterial&)>& closure) const
 {
@@ -262,12 +278,27 @@ void Material::allTextureIDs(std::unordered_set<tp_utils::StringID>& textureIDs)
     extendedMaterial->allTextureIDs(textureIDs);
 }
 
+//################################################################################################
+void Material::appendBlendFileIDs(std::unordered_set<tp_utils::StringID>& blendFileIDs) const
+{
+  for(const auto& extendedMaterial : extendedMaterials)
+    extendedMaterial->appendBlendFileIDs(blendFileIDs);
+}
+
 //##################################################################################################
 std::unordered_set<tp_utils::StringID> Material::allTextures() const
 {
   std::unordered_set<tp_utils::StringID> textureIDs;
   allTextureIDs(textureIDs);
   return textureIDs;
+}
+
+//################################################################################################
+std::unordered_set<tp_utils::StringID> Material::allBlendFiles() const
+{
+  std::unordered_set<tp_utils::StringID> allBlendFileIDs;
+  appendBlendFileIDs(allBlendFileIDs);
+  return allBlendFileIDs;
 }
 
 //##################################################################################################

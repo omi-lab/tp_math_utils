@@ -32,6 +32,9 @@ public:
   virtual void allTextureIDs(std::unordered_set<tp_utils::StringID>& textureIDs) const;
 
   //################################################################################################
+  virtual void appendBlendFileIDs(std::unordered_set<tp_utils::StringID>& blendFileIDs) const;
+
+  //################################################################################################
   std::unordered_set<tp_utils::StringID> allTextures() const;
 };
 
@@ -97,6 +100,9 @@ struct TP_MATH_UTILS_EXPORT Material
   ExternalMaterial* findOrAddExternal(const tp_utils::StringID& assetType);
 
   //################################################################################################
+  bool hasExternal(const tp_utils::StringID& assetType);
+
+  //################################################################################################
   void updateOpenGL(const std::function<void(OpenGLMaterial&)>& closure) const;
 
   //################################################################################################
@@ -120,7 +126,13 @@ struct TP_MATH_UTILS_EXPORT Material
   void allTextureIDs(std::unordered_set<tp_utils::StringID>& textureIDs) const;
 
   //################################################################################################
+  void appendBlendFileIDs(std::unordered_set<tp_utils::StringID>& blendFileIDs) const;
+
+  //################################################################################################
   std::unordered_set<tp_utils::StringID> allTextures() const;
+
+  //################################################################################################
+  std::unordered_set<tp_utils::StringID> allBlendFiles() const;
 
   //################################################################################################
   void saveState(nlohmann::json& j) const;

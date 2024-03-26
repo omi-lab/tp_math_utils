@@ -19,6 +19,15 @@ void ExternalMaterial::loadState(const nlohmann::json& j)
   subPath = TPJSONString(j, "subPath");
 }
 
+//################################################################################################
+void ExternalMaterial::appendBlendFileIDs(std::unordered_set<tp_utils::StringID>& blendFileIDs) const
+{
+  if(assetType.toString() == "blend")
+  {
+    blendFileIDs.insert(subPath);
+  }
+}
+
 //##################################################################################################
 void ExternalMaterial::view(const Material& material,
                             const tp_utils::StringID& assetType,
