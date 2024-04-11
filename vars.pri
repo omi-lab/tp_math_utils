@@ -102,6 +102,9 @@ HEADERS += inc/tp_math_utils/MarchingCubes.h
 SOURCES += src/materials/ExternalMaterial.cpp
 HEADERS += inc/tp_math_utils/materials/ExternalMaterial.h
 
+SOURCES += src/materials/ExternalMaterialMetadata.cpp
+HEADERS += inc/tp_math_utils/materials/ExternalMaterialMetadata.h
+
 SOURCES += src/materials/LegacyMaterial.cpp
 HEADERS += inc/tp_math_utils/materials/LegacyMaterial.h
 

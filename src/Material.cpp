@@ -55,9 +55,9 @@ void ExtendedMaterial::allTextureIDs(std::unordered_set<tp_utils::StringID>& tex
 }
 
 //################################################################################################
-void ExtendedMaterial::appendBlendFileIDs(std::unordered_set<tp_utils::StringID>& blendFileIDs) const
+void ExtendedMaterial::appendFileIDs(std::vector<std::pair<tp_utils::StringID, tp_utils::StringID>>& fileIDs) const
 {
-  TP_UNUSED(blendFileIDs);
+  TP_UNUSED(fileIDs);
 }
 
 //##################################################################################################
@@ -279,10 +279,10 @@ void Material::allTextureIDs(std::unordered_set<tp_utils::StringID>& textureIDs)
 }
 
 //################################################################################################
-void Material::appendBlendFileIDs(std::unordered_set<tp_utils::StringID>& blendFileIDs) const
+void Material::appendFileIDs(std::vector<std::pair<tp_utils::StringID, tp_utils::StringID>>& fileIDs) const
 {
   for(const auto& extendedMaterial : extendedMaterials)
-    extendedMaterial->appendBlendFileIDs(blendFileIDs);
+   extendedMaterial->appendFileIDs(fileIDs);
 }
 
 //##################################################################################################
@@ -294,11 +294,11 @@ std::unordered_set<tp_utils::StringID> Material::allTextures() const
 }
 
 //################################################################################################
-std::unordered_set<tp_utils::StringID> Material::allBlendFiles() const
+std::vector<std::pair<tp_utils::StringID, tp_utils::StringID>> Material::allFiles() const
 {
-  std::unordered_set<tp_utils::StringID> allBlendFileIDs;
-  appendBlendFileIDs(allBlendFileIDs);
-  return allBlendFileIDs;
+  std::vector<std::pair<tp_utils::StringID, tp_utils::StringID>> files;
+  appendFileIDs(files);
+  return files;
 }
 
 //##################################################################################################

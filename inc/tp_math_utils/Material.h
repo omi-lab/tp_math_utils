@@ -6,6 +6,7 @@
 #include "tp_utils/StringID.h"
 
 #include "json.hpp"
+#include <utility>
 
 #include <unordered_set>
 
@@ -32,7 +33,7 @@ public:
   virtual void allTextureIDs(std::unordered_set<tp_utils::StringID>& textureIDs) const;
 
   //################################################################################################
-  virtual void appendBlendFileIDs(std::unordered_set<tp_utils::StringID>& blendFileIDs) const;
+  virtual void appendFileIDs(std::vector<std::pair<tp_utils::StringID, tp_utils::StringID>>& fileIDs) const;
 
   //################################################################################################
   std::unordered_set<tp_utils::StringID> allTextures() const;
@@ -126,13 +127,13 @@ struct TP_MATH_UTILS_EXPORT Material
   void allTextureIDs(std::unordered_set<tp_utils::StringID>& textureIDs) const;
 
   //################################################################################################
-  void appendBlendFileIDs(std::unordered_set<tp_utils::StringID>& blendFileIDs) const;
+  void appendFileIDs(std::vector<std::pair<tp_utils::StringID, tp_utils::StringID>>& fileIDs) const;
 
   //################################################################################################
   std::unordered_set<tp_utils::StringID> allTextures() const;
 
   //################################################################################################
-  std::unordered_set<tp_utils::StringID> allBlendFiles() const;
+  std::vector<std::pair<tp_utils::StringID, tp_utils::StringID>> allFiles() const;
 
   //################################################################################################
   void saveState(nlohmann::json& j) const;

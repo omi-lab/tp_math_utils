@@ -1,5 +1,5 @@
-#ifndef tp_math_utils_ExternalMaterialVariable_h
-#define tp_math_utils_ExternalMaterialVariable_h
+#ifndef tp_math_utils_ExternalMaterialMetadata_h
+#define tp_math_utils_ExternalMaterialMetadata_h
 
 #include "tp_math_utils/Globals.h"
 
@@ -30,13 +30,13 @@ public:
     {
       auto j = nlohmann::json();
       save(j);
-      auto otherJ = nlohmann::json();
-      other.save(otherJ);
-      return (j.dump()==otherJ.dump());
+      auto jother = nlohmann::json();
+      other.save(jother);
+      return (j.dump()==jother.dump() && type() == other.type());
     }
 
     virtual std::string type() const { return TypeStr; }
-    virtual void load(const nlohmann::json& jData) {}
+    virtual void load(const nlohmann::json&) {}
     virtual void save(nlohmann::json&) const {};
   };
 
@@ -176,6 +176,12 @@ struct ExternalMaterialMetadata
 
 //##################################################################################################
 std::vector<ExternalMaterialMetadata> LoadMaterialMetadataFromFile(const std::string metadataFilePath);
+
+//##################################################################################################
+std::vector<ExternalMaterialMetadata> LoadMaterialMetadataFromTextJson(const std::string metadataDataJson);
+
+//##################################################################################################
+std::vector<ExternalMaterialMetadata> LoadMaterialMetadataFromJson(const nlohmann::json& metadataDataJson);
 
 }
 

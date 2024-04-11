@@ -109,17 +109,6 @@ void ExternalMaterialMetadata::loadState(const nlohmann::json& j)
     ExternalMaterialVariable& variable = variables.emplace_back();
     variable.loadState(jvar);
   }
-
-  auto copyVar = variables;
-  for(auto& cpy : copyVar)
-  {
-    tpDebug()<<"XXXX: name:"<<cpy.name()<<" type:"<<cpy.type();
-
-    nlohmann::json j = nlohmann::json();
-    cpy.saveState(j);
-    tpDebug()<<"XXXX: dump: "<<j.dump(2);
-  }
-
 }
 
 //##################################################################################################
@@ -141,14 +130,32 @@ std::vector<ExternalMaterialMetadata> LoadMaterialMetadataFromFile(const std::st
   if(!tp_utils::exists(metadataFilePath))
     return {};
 
-  nlohmann::json metadataFileJ = tp_utils::readJSONFile(metadataFilePath);
-  
-  if(!metadataFileJ.is_array())
+  return LoadMaterialMetadataFromJson(tp_utils::readJSONFile(metadataFilePath));
+}
+
+//##################################################################################################
+std::vector<ExternalMaterialMetadata> LoadMaterialMetadataFromTextJson(const std::string metadataDataJson)
+{
+  nlohmann::json metadataFileJ;
+  try
+  {
+    return LoadMaterialMetadataFromJson(nlohmann::json::parse(metadataDataJson));
+  }
+  catch(...)
+  {
+    return {};
+  }
+}
+
+//##################################################################################################
+std::vector<ExternalMaterialMetadata> LoadMaterialMetadataFromJson(const nlohmann::json& metadataDataJ)
+{
+  if(!metadataDataJ.is_array())
     return {};
 
   std::vector<ExternalMaterialMetadata> metadataVector;
-  metadataVector.reserve(metadataFileJ.size());
-  for(auto& materialMetadataJ : metadataFileJ)
+  metadataVector.reserve(metadataDataJ.size());
+  for(auto& materialMetadataJ : metadataDataJ)
   {
     auto& metadata = metadataVector.emplace_back();
     metadata.loadState(materialMetadataJ);
