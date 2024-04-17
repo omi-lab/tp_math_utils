@@ -24,7 +24,7 @@ public:
   void loadState(const nlohmann::json& j) override;
 
   //################################################################################################
-  void appendFileIDs(std::vector<std::pair<tp_utils::StringID, tp_utils::StringID>>& fileIDs) const;
+  void appendFileIDs(std::vector<std::pair<tp_utils::StringID, tp_utils::StringID>>& fileIDs) const override;
 
   //################################################################################################
   static void view(const Material& material,
