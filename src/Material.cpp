@@ -233,7 +233,7 @@ void Material::removeExternal(const tp_utils::StringID& assetType)
   }
 }
 
-//################################################################################################
+//##################################################################################################
 bool Material::hasExternal(const tp_utils::StringID& assetType)
 {
   for(auto material : extendedMaterials)
