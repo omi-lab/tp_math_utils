@@ -216,6 +216,23 @@ ExternalMaterial* Material::findOrAddExternal(const tp_utils::StringID& assetTyp
   return m;
 }
 
+//##################################################################################################
+void Material::removeExternal(const tp_utils::StringID& assetType)
+{
+  for(auto i=extendedMaterials.begin(); i!=extendedMaterials.end();)
+  {
+    if(auto m=dynamic_cast<ExternalMaterial*>(*i.base()); m)
+    {
+      if(m->assetType == assetType)
+      {
+        i=extendedMaterials.erase(i);
+        continue;
+      }
+    }
+    ++i;
+  }
+}
+
 //################################################################################################
 bool Material::hasExternal(const tp_utils::StringID& assetType)
 {

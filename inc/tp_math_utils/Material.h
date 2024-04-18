@@ -101,6 +101,9 @@ struct TP_MATH_UTILS_EXPORT Material
   ExternalMaterial* findOrAddExternal(const tp_utils::StringID& assetType);
 
   //################################################################################################
+  void removeExternal(const tp_utils::StringID& assetType);
+
+  //################################################################################################
   bool hasExternal(const tp_utils::StringID& assetType);
 
   //################################################################################################
