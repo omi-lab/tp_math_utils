@@ -8,10 +8,11 @@
 
 #include "json.hpp"
 
-#ifdef far
+#pragma push_macro("far")
 #undef far
+#pragma push_macro("near")
 #undef near
-#endif
+
 
 namespace tp_math_utils
 {
@@ -94,5 +95,8 @@ public:
 };
 
 }
+
+#pragma pop_macro("far")
+#pragma pop_macro("near")
 
 #endif

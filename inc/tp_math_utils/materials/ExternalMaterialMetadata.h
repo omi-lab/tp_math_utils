@@ -11,6 +11,9 @@
 #include <vector>
 #include <memory>
 
+#pragma push_macro("RGB")
+#undef RGB
+
 namespace tp_math_utils
 {
 
@@ -54,6 +57,7 @@ public:
     void save(nlohmann::json& j) const override;
   };
 
+
 //##################################################################################################
   struct RGB : public ExternalMaterialVariable::Data
   {
@@ -70,6 +74,7 @@ public:
     void load(const nlohmann::json& jData) override;
     void save(nlohmann::json& j) const override;
   };
+
 
 //##################################################################################################
   ExternalMaterialVariable()
@@ -185,5 +190,6 @@ std::vector<ExternalMaterialMetadata> LoadMaterialMetadataFromJson(const nlohman
 
 }
 
+#pragma pop_macro("RGB")
 
 #endif
