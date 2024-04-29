@@ -93,7 +93,9 @@ void ExternalMaterialVariable::RGB::save(nlohmann::json& j) const
 //##################################################################################################
 void ExternalMaterialMetadata::loadState(const nlohmann::json& j)
 {
-  name = TPJSONString(j, "name");
+  name             = TPJSONString(j, "name");
+  animationReady   = TPJSONBool(j,   "animationReady", false);
+  colorSwapReady   = TPJSONBool(j,   "colorSwapReady", false);
 
   if(j.find("vars") == j.end())
     return;
@@ -114,9 +116,13 @@ void ExternalMaterialMetadata::loadState(const nlohmann::json& j)
 //##################################################################################################
 void ExternalMaterialMetadata::saveState(nlohmann::json& j) const
 {
-  j["name"]  = name;
-  j["vars"] = nlohmann::json::array();
+  j["name"]             = name;
+  j["animationReady"]   = animationReady;
+  j["colorSwapReady"]   = colorSwapReady;
+  j["vars"]             = nlohmann::json::array();
+
   j["vars"].get_ptr<nlohmann::json::array_t*>()->reserve(variables.size());
+  
   for(auto& var : variables)
   {
     j["vars"].push_back(nlohmann::json::object());

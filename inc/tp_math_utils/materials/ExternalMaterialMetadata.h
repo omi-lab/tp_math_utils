@@ -167,6 +167,8 @@ private:
 struct ExternalMaterialMetadata
 {
   std::string name;
+  bool animationReady{false};
+  bool colorSwapReady{false};
   std::vector<ExternalMaterialVariable> variables;
 
   //################################################################################################
