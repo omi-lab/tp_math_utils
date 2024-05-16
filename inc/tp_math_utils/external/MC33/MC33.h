@@ -233,6 +233,7 @@ The function calculate_isosurface fill the surface object with the isosurface da
 */
 class MC33
 {
+  TP_DQ;
 public:
   //################################################################################################
   MC33();
@@ -246,11 +247,6 @@ public:
   //################################################################################################
   //! Calculate the isosurface with isovalue iso and store the data in the surface Sf.
   bool calculateIsosurface(Geometry3D& geometry, float iso);
-
-private:
-  struct Private;
-  friend struct Private;
-  Private* d;
 };
 
 }

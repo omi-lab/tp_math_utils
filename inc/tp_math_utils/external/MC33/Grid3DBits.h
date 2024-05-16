@@ -9,6 +9,7 @@ namespace tp_math_utils
 //##################################################################################################
 class Grid3DBits : public Grid3DBase
 {
+  TP_DQ;
 public:
   //################################################################################################
   Grid3DBits(const glm::vec<3, size_t>& size, const void* data);
@@ -21,11 +22,6 @@ public:
 
   //################################################################################################
   glm::vec<3, size_t> gridSize() const override;
-
-private:
-  struct Private;
-  friend struct Private;
-  Private* d;
 };
 
 }

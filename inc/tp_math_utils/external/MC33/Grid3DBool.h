@@ -9,6 +9,7 @@ namespace tp_math_utils
 //##################################################################################################
 class Grid3DBool : public Grid3DBase
 {
+  TP_DQ;
 public:
   //################################################################################################
   Grid3DBool(const glm::vec<3, size_t>& size, const std::vector<bool>* data = nullptr);
@@ -21,11 +22,6 @@ public:
 
   //################################################################################################
   glm::vec<3, size_t> gridSize() const override;
-
-private:
-  struct Private;
-  friend struct Private;
-  Private* d;
 };
 
 }
