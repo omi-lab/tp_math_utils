@@ -179,7 +179,7 @@ struct TP_MATH_UTILS_EXPORT Geometry
   tp_math_utils::Material material;
 
   //################################################################################################
-  nlohmann::json saveState() const;
+  void saveState(nlohmann::json& j) const;
 
   //################################################################################################
   void loadState(const nlohmann::json& j);

@@ -777,13 +777,11 @@ bool Geometry3D::printDataToFile(const std::vector<Geometry3D>& geometry, const 
 }
 
 //##################################################################################################
-nlohmann::json Geometry::saveState() const
+void Geometry::saveState(nlohmann::json& j) const
 {
-  nlohmann::json j;
   j["geometry"] = vec2VectorToJSON(geometry);
   j["transform"] = mat4ToJSON(transform);
   material.saveState(j["material"]);
-  return j;
 }
 
 //##################################################################################################
