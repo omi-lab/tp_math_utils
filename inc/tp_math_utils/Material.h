@@ -42,13 +42,57 @@ public:
 //##################################################################################################
 struct UVTransformation
 {
+  enum TransformationType {
+    Transform2D,
+    Transform3D
+  };
+
+  glm::vec3      skewUVW{0.0f, 0.0f, 0.0f}; //!< 3D Skew 
+  glm::vec3     scaleUVW{1.0f, 1.0f, 1.0f}; //!< 3D Scale
+  glm::vec3 translateUVW{0.0f, 0.0f, 0.0f}; //!< 3D Translate
+  glm::vec3    rotateUVW{0.0f, 0.0f, 0.0f}; //!< 3D Rotate Degrees.
+
   glm::vec2      skewUV{0.0f, 0.0f}; //!< Skew the texture coords. m[1][0] = glm::tan(glm::radians(skewUV.x)); m[0][1] = glm::tan(glm::radians(skewUV.y));
   glm::vec2     scaleUV{1.0f, 1.0f}; //!< Scale the texture coords.
   glm::vec2 translateUV{0.0f, 0.0f}; //!< Translate the texture coords.
   float        rotateUV{0.0f};       //!< Rotate the texture coords. Degrees.
+  
+  //################################################################################################
+  static TransformationType toType(const std::string& type)
+  {
+    if(type == "Transform2D")
+    {
+      return TransformationType::Transform2D;
+    }
+    else if(type == "Transform3D")
+    {
+      return TransformationType::Transform3D;
+    }
+    
+    return TransformationType::Transform2D;
+  }
+  //################################################################################################
+  static std::string toString(TransformationType type)
+  {
+    switch(type)
+    {
+      case TransformationType::Transform2D:
+        return "Transform2D";
+      case TransformationType::Transform3D:
+        return "Transform3D";
+      default:
+        return "Transform2D";
+    }
+  }
+
+  //################################################################################################
+  TransformationType type() const;
 
   //################################################################################################
   glm::mat3 uvMatrix() const;
+
+  //################################################################################################
+  glm::mat4 uvwMatrix() const;
 
   //################################################################################################
   bool isIdentity() const;
