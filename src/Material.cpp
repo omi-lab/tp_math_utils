@@ -70,19 +70,6 @@ std::unordered_set<tp_utils::StringID> ExtendedMaterial::allTextures() const
   return textureIDs;
 }
 
-//################################################################################################
-UVTransformation::TransformationType UVTransformation::type() const
-{
-
-  bool has3dValueFromUser = false;
-  has3dValueFromUser |= ((std::fabs(skewUVW.x) + std::fabs(skewUVW.y) + std::fabs(skewUVW.z)) > 0.0001f);
-  has3dValueFromUser |= ((std::fabs(scaleUVW.x-1.0f) + std::fabs(scaleUVW.y-1.0f) + std::fabs(scaleUVW.z-1.0f)) > 0.0001f);
-  has3dValueFromUser |= ((std::fabs(translateUVW.x) + std::fabs(translateUVW.y) + std::fabs(translateUVW.z)) > 0.0001f);
-  has3dValueFromUser |= ((std::fabs(rotateUVW.x) + std::fabs(rotateUVW.y) + std::fabs(rotateUVW.z)) > 0.0001f);
-
-  return has3dValueFromUser ? TransformationType::Transform3D : TransformationType::Transform2D;
-}
-
 //##################################################################################################
 glm::mat3 UVTransformation::uvMatrix() const
 {
@@ -97,11 +84,11 @@ glm::mat3 UVTransformation::uvMatrix() const
 //################################################################################################
 glm::mat4 UVTransformation::uvwMatrix() const
 {
-  if(type() == TransformationType::Transform3D)
+  if(type == TransformationType::Transform3D)
   {
     glm::mat4 m{1.0f};
     m = glm::translate(m, translateUVW);
-    m = m * glm::toMat4(glm::quat(rotateUVW * glm::pi<float>()/180.0f));
+    m = m * glm::toMat4(glm::quat(glm::radians(rotateUVW)));
     m = glm::scale(m, scaleUVW);
     m = skew(m, skewUVW);
     return m;
@@ -112,7 +99,7 @@ glm::mat4 UVTransformation::uvwMatrix() const
 //##################################################################################################
 bool UVTransformation::isIdentity() const
 {
-  if(type() == TransformationType::Transform3D)
+  if(type == TransformationType::Transform3D)
     return false;
 
   if((std::fabs(skewUV.x) + std::fabs(skewUV.y)) > 0.0001f)
@@ -137,7 +124,7 @@ void UVTransformation::saveState(nlohmann::json& j) const
   j["scaleUVW"]              = tp_math_utils::vec3ToJSON(scaleUVW);
   j["translateUVW"]          = tp_math_utils::vec3ToJSON(translateUVW);
   j["rotateUVW"]             = tp_math_utils::vec3ToJSON(rotateUVW);
-  j["type"]                  = UVTransformation::toString(type());
+  j["type"]                  = UVTransformation::toString(type);
 
   j["skewUV"]                = tp_math_utils::vec2ToJSON(skewUV);
   j["scaleUV"]               = tp_math_utils::vec2ToJSON(scaleUV);
@@ -159,6 +146,7 @@ void UVTransformation::loadState(const nlohmann::json& j)
   scaleUVW     = tp_math_utils::getJSONVec3(j,    "scaleUVW",     scaleUVW);
   translateUVW = tp_math_utils::getJSONVec3(j,"translateUVW", translateUVW);
   rotateUVW    = tp_math_utils::getJSONVec3(j,   "rotateUVW",    rotateUVW);
+  type         = UVTransformation::toType(TPJSONString(j,  "type"));
 }
 
 //##################################################################################################

@@ -42,7 +42,8 @@ public:
 //##################################################################################################
 struct UVTransformation
 {
-  enum TransformationType {
+  enum TransformationType
+  {
     Transform2D,
     Transform3D
   };
@@ -56,7 +57,9 @@ struct UVTransformation
   glm::vec2     scaleUV{1.0f, 1.0f}; //!< Scale the texture coords.
   glm::vec2 translateUV{0.0f, 0.0f}; //!< Translate the texture coords.
   float        rotateUV{0.0f};       //!< Rotate the texture coords. Degrees.
-  
+
+  TransformationType type{TransformationType::Transform2D};
+
   //################################################################################################
   static TransformationType toType(const std::string& type)
   {
@@ -84,9 +87,6 @@ struct UVTransformation
         return "Transform2D";
     }
   }
-
-  //################################################################################################
-  TransformationType type() const;
 
   //################################################################################################
   glm::mat3 uvMatrix() const;
