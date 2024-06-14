@@ -58,6 +58,12 @@ public:
   void loadState(const nlohmann::json& j) override;
 
   //################################################################################################
+  glm::vec4 rgba() const
+  {
+    return {albedo, alpha};
+  }
+
+  //################################################################################################
   static void view(const Material& material, const std::function<void(const OpenGLMaterial&)>& closure);
 
   //################################################################################################
