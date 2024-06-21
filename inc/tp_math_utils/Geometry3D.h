@@ -110,6 +110,11 @@ struct TP_MATH_UTILS_EXPORT Geometry3D
   std::string stats() const;
 
   //################################################################################################
+  static void getMinMax(const std::vector<tp_math_utils::Geometry3D>& geometry,
+                        glm::vec3& min,
+                        glm::vec3& max);
+
+  //################################################################################################
   //! Convert strips and fans into triangles.
   void convertToTriangles();
 

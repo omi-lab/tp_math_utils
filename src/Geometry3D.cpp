@@ -200,7 +200,7 @@ void accumulateTangents(const Geometry3D& geometry,
 }
 
 }
-    
+
 //##################################################################################################
 std::vector<std::string> normalCalculationModes()
 {
@@ -334,6 +334,39 @@ std::string Geometry3D::stats() const
   stats(vertCount, indexCount, triangleCount);
 
   return statsString(vertCount, indexCount, triangleCount);
+}
+
+//##################################################################################################
+void Geometry3D::getMinMax(const std::vector<tp_math_utils::Geometry3D>& geometry,
+                           glm::vec3& min,
+                           glm::vec3& max)
+{
+  min = {0,0,0};
+  max = {0,0,0};
+  bool first=true;
+
+  for(const auto& mesh : geometry)
+  {
+    for(const auto& vert : mesh.verts)
+    {
+      if(first)
+      {
+        first=false;
+        min = vert.vert;
+        max = vert.vert;
+      }
+      else
+      {
+        if(vert.vert.x < min.x)min.x  = vert.vert.x;
+        if(vert.vert.y < min.y)min.y  = vert.vert.y;
+        if(vert.vert.z < min.z)min.z  = vert.vert.z;
+
+        if(vert.vert.x > max.x)max.x  = vert.vert.x;
+        if(vert.vert.y > max.y)max.y  = vert.vert.y;
+        if(vert.vert.z > max.z)max.z  = vert.vert.z;
+      }
+    }
+  }
 }
 
 //##################################################################################################
@@ -687,7 +720,7 @@ void Geometry3D::buildTangentVectors(std::vector<glm::vec3>& tangent) const
   tangent.assign(verts.size(), {1.e-6f,0,0});
   for(const auto& part : indexes)
     accumulateTangents(*this, part, tangent);
-    
+
   // normalize each tangent vector to unit length
   for(auto& t : tangent)
     t = glm::normalize(t);
