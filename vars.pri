@@ -51,6 +51,12 @@ HEADERS += inc/tp_math_utils/Material.h
 SOURCES += src/MaterialSwapParameters.cpp
 HEADERS += inc/tp_math_utils/MaterialSwapParameters.h
 
+SOURCES += src/LightSwapParameters.cpp
+HEADERS += inc/tp_math_utils/LightSwapParameters.h
+
+SOURCES += src/LightParameters.cpp
+HEADERS += inc/tp_math_utils/LightParameters.h
+
 SOURCES += src/Light.cpp
 HEADERS += inc/tp_math_utils/Light.h
 
