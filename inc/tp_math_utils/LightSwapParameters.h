@@ -15,8 +15,6 @@ namespace tp_math_utils
 //##################################################################################################
 struct TP_MATH_UTILS_EXPORT LightSwapParameters
 {
-  glm::vec3 initialColor     {0.1f, 0.7f, 0.2f};
-  
   glm::vec3 ambientUse       {0.0f, 0.0f, 0.0f};
   glm::vec3 ambientScale     {1.0f, 1.0f, 1.0f};
   glm::vec3 ambientBias      {0.0f, 0.0f, 0.0f};

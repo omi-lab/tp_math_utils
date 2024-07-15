@@ -15,7 +15,7 @@ tp_math_utils::Light LightSwapParameters::lightWithSwappedParameters(const tp_ma
 
   auto swapValue = [](float& v, float newValue, float use, float scale, float bias)
   {
-    v = std::clamp((v*(1.0f-use)) + ( ( (newValue*scale) + bias) * use), 0.0f, 1.0f);
+    v = ((v*(1.0f-use)) + ( ( (newValue*scale) + bias) * use));
   };
 
   auto swapVec3 = [&](glm::vec3& currentValue,const glm::vec3& userValue, const glm::vec3& use, const glm::vec3& scale, const glm::vec3& bias)
@@ -29,7 +29,7 @@ tp_math_utils::Light LightSwapParameters::lightWithSwappedParameters(const tp_ma
   swapVec3(swapped.diffuse,  userParams.diffuse,  diffuseUse,  diffuseScale,  diffuseBias);
   swapVec3(swapped.specular, userParams.specular, specularUse, specularScale, specularBias);
 
-  const glm::vec3 userOffsetScale {userParams.offsetScale, 0.0f, 0.0f};
+  const glm::vec3 userOffsetScale {userParams.offsetScale, userParams.offsetScale, userParams.offsetScale};
   swapVec3(swapped.offsetScale, userOffsetScale, offsetScaleUse, offsetScaleScale, offsetScaleBias);
 
   swapValue(swapped.diffuseScale,   userParams.diffuseScale,   diffuseScaleUse,   diffuseScaleScale,   diffuseScaleBias);
@@ -42,8 +42,6 @@ tp_math_utils::Light LightSwapParameters::lightWithSwappedParameters(const tp_ma
 //##################################################################################################
 void LightSwapParameters::saveState(nlohmann::json& j) const
 {
-  j["initialColor"] = tp_math_utils::vec3ToJSON(initialColor);
-
   j["ambientUse"]          = tp_math_utils::vec3ToJSON(ambientUse);
   j["ambientScale"]        = tp_math_utils::vec3ToJSON(ambientScale);
   j["ambientBias"]         = tp_math_utils::vec3ToJSON(ambientBias);
@@ -77,8 +75,6 @@ void LightSwapParameters::saveState(nlohmann::json& j) const
 //##################################################################################################
 void LightSwapParameters::loadState(const nlohmann::json& j)
 {
-  initialColor        = TPJSONVec3(j, "initialColor", initialColor);
-  
   ambientUse          = TPJSONVec3(j, "ambientUse"  ,   ambientUse  );
   ambientScale        = TPJSONVec3(j, "ambientScale",   ambientScale);
   ambientBias         = TPJSONVec3(j, "ambientBias" ,   ambientBias );
