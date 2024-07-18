@@ -29,11 +29,14 @@ void closestPointsOnRays(const DRay& S1, const DRay& S2, glm::dvec3& P1, glm::dv
   double     sc, tc;
 
   // compute the line parameters of the two closest points
-  if(D < SMALL_NUM) {          // the lines are almost parallel
+  if(D < SMALL_NUM)
+  {
+    // the lines are almost parallel
     sc = 0.0;
     tc = (b>c ? d/b : e/c);    // use the largest denominator
   }
-  else {
+  else
+  {
     sc = (b*e - c*d) / D;
     tc = (a*e - b*d) / D;
   }
