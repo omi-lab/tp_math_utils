@@ -2,7 +2,6 @@
 #include "tp_math_utils/JSONUtils.h"
 
 #include "tp_utils/JSONUtils.h"
-#include "tp_utils/DebugUtils.h"
 
 namespace tp_math_utils
 {
@@ -25,16 +24,16 @@ tp_math_utils::Light LightSwapParameters::lightWithSwappedParameters(const tp_ma
     swapValue(currentValue.z, userValue.z, use.z, scale.z, bias.z);
   };
 
-  swapVec3(swapped.ambient,  userParams.ambient,  ambientUse,  ambientScale,  ambientBias);
-  swapVec3(swapped.diffuse,  userParams.diffuse,  diffuseUse,  diffuseScale,  diffuseBias);
-  swapVec3(swapped.specular, userParams.specular, specularUse, specularScale, specularBias);
+  swapVec3(swapped.ambient,  userParams.color,  ambientUse,  ambientScale,  ambientBias);
+  swapVec3(swapped.diffuse,  userParams.color,  diffuseUse,  diffuseScale,  diffuseBias);
+  swapVec3(swapped.specular, userParams.color, specularUse, specularScale, specularBias);
 
-  const glm::vec3 userOffsetScale {userParams.offsetScale, userParams.offsetScale, userParams.offsetScale};
+  const glm::vec3 userOffsetScale {userParams.offsetScale * 2.0f, userParams.offsetScale * 2.0f, userParams.offsetScale * 2.0f};
   swapVec3(swapped.offsetScale, userOffsetScale, offsetScaleUse, offsetScaleScale, offsetScaleBias);
 
-  swapValue(swapped.diffuseScale,   userParams.diffuseScale,   diffuseScaleUse,   diffuseScaleScale,   diffuseScaleBias);
-  swapValue(swapped.spotLightBlend, userParams.spotLightBlend, spotLightBlendUse, spotLightBlendScale, spotLightBlendBias);
-  swapValue(swapped.fov,            userParams.fov,            fovUse,            fovScale,            fovBias);
+  swapValue(swapped.diffuseScale,   userParams.diffuseScale * 2.0f,   diffuseScaleUse,   diffuseScaleScale,   diffuseScaleBias);
+  swapValue(swapped.spotLightBlend, userParams.spotLightBlend * 2.0f, spotLightBlendUse, spotLightBlendScale, spotLightBlendBias);
+  swapValue(swapped.fov,            userParams.fov * 2.0f,            fovUse,            fovScale,            fovBias);
 
   return swapped;
 }

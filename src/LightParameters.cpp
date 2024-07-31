@@ -10,9 +10,7 @@ namespace tp_math_utils
 //##################################################################################################
 void LightParameters::saveState(nlohmann::json& j) const
 {
-  j["ambient"]        = tp_math_utils::vec3ToJSON(ambient);
-  j["diffuse"]        = tp_math_utils::vec3ToJSON(diffuse);
-  j["specular"]       = tp_math_utils::vec3ToJSON(specular);
+  j["color"]          = tp_math_utils::vec3ToJSON(color);
 
   j["offsetScale"]    = offsetScale;
   j["diffuseScale"]   = diffuseScale;
@@ -23,9 +21,7 @@ void LightParameters::saveState(nlohmann::json& j) const
 //##################################################################################################
 void LightParameters::loadState(const nlohmann::json& j)
 {
-  ambient        = TPJSONVec3(j, "ambient"  ,   ambient);
-  diffuse        = TPJSONVec3(j, "diffuse"  ,   diffuse);
-  specular       = TPJSONVec3(j, "specular" ,   specular);
+  color          = TPJSONVec3(j, "color"  ,   color);
 
   offsetScale    = TPJSONFloat(j, "offsetScale"   , offsetScale);
   diffuseScale   = TPJSONFloat(j, "diffuseScale"  , diffuseScale);

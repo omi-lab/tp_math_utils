@@ -11,15 +11,12 @@ namespace tp_math_utils
 //##################################################################################################
 struct TP_MATH_UTILS_EXPORT LightParameters
 {
-  glm::vec3 ambient          {0.0f, 0.0f, 0.0f};
-  glm::vec3 diffuse          {0.0f, 0.0f, 0.0f};
-  glm::vec3 specular         {0.0f, 0.0f, 0.0f};
+  glm::vec3 color           {0.5f, 0.5f, 0.5f};
 
-  float offsetScale          {0.0f};
-  float diffuseScale         {0.0f};
-
-  float spotLightBlend       {0.0f};
-  float fov                  {0.0f};
+  float offsetScale          {0.5f};
+  float diffuseScale         {0.5f};
+  float spotLightBlend       {0.5f};
+  float fov                  {0.5f};
 
   //################################################################################################
   void saveState(nlohmann::json& j) const;
