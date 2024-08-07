@@ -266,7 +266,7 @@ void Material::removeExternal(const tp_utils::StringID& assetType)
 }
 
 //##################################################################################################
-bool Material::hasExternal(const tp_utils::StringID& assetType)
+bool Material::hasExternal(const tp_utils::StringID& assetType) const
 {
   for(auto material : extendedMaterials)
     if(auto m=dynamic_cast<ExternalMaterial*>(material); m)

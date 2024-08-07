@@ -148,7 +148,7 @@ struct TP_MATH_UTILS_EXPORT Material
   void removeExternal(const tp_utils::StringID& assetType);
 
   //################################################################################################
-  bool hasExternal(const tp_utils::StringID& assetType);
+  bool hasExternal(const tp_utils::StringID& assetType) const;
 
   //################################################################################################
   void updateOpenGL(const std::function<void(OpenGLMaterial&)>& closure) const;
