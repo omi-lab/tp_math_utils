@@ -34,6 +34,7 @@ struct TP_MATH_UTILS_EXPORT LightSwapParameters
   float diffuseScaleUse      {0.0f};
   float diffuseScaleScale    {1.0f};
   float diffuseScaleBias     {0.0f};
+  float diffuseScaleDefault  {0.0f};
 
   float spotLightBlendUse    {0.0f};
   float spotLightBlendScale  {1.0f};

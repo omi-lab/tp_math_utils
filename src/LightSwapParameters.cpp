@@ -60,6 +60,7 @@ void LightSwapParameters::saveState(nlohmann::json& j) const
   j["diffuseScaleUse"]     = diffuseScaleUse;
   j["diffuseScaleScale"]   = diffuseScaleScale;
   j["diffuseScaleBias"]    = diffuseScaleBias;
+  j["diffuseScaleDefault"]    = diffuseScaleDefault;
 
   j["spotLightBlendUse"]   = spotLightBlendUse;
   j["spotLightBlendScale"] = spotLightBlendScale;
@@ -93,6 +94,7 @@ void LightSwapParameters::loadState(const nlohmann::json& j)
   diffuseScaleUse     = TPJSONFloat(j, "diffuseScaleUse");
   diffuseScaleScale   = TPJSONFloat(j, "diffuseScaleScale");
   diffuseScaleBias    = TPJSONFloat(j, "diffuseScaleBias");
+  diffuseScaleDefault    = TPJSONFloat(j, "diffuseScaleDefault");
 
   spotLightBlendUse   = TPJSONFloat(j, "spotLightBlendUse");
   spotLightBlendScale = TPJSONFloat(j, "spotLightBlendScale");
