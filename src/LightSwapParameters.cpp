@@ -2,6 +2,8 @@
 #include "tp_math_utils/JSONUtils.h"
 
 #include "tp_utils/JSONUtils.h"
+#include "tp_utils/DebugUtils.h"
+#include <optional>
 
 namespace tp_math_utils
 {
@@ -12,9 +14,11 @@ tp_math_utils::Light LightSwapParameters::lightWithSwappedParameters(const tp_ma
 {
   tp_math_utils::Light swapped = light;
 
-  auto swapValue = [](float& v, float newValue, float use, float scale, float bias)
+  auto swapValue = [](float& v, float newValue, float use, float scale, float bias, std::optional<float> min = std::nullopt)
   {
     v = ((v*(1.0f-use)) + ( ( (newValue*scale) + bias) * use));
+    if(min)
+        v = std::max(v,*min);
   };
 
   auto swapVec3 = [&](glm::vec3& currentValue,const glm::vec3& userValue, const glm::vec3& use, const glm::vec3& scale, const glm::vec3& bias)
@@ -31,7 +35,8 @@ tp_math_utils::Light LightSwapParameters::lightWithSwappedParameters(const tp_ma
   const glm::vec3 userOffsetScale {userParams.offsetScale * 2.0f, userParams.offsetScale * 2.0f, userParams.offsetScale * 2.0f};
   swapVec3(swapped.offsetScale, userOffsetScale, offsetScaleUse, offsetScaleScale, offsetScaleBias);
 
-  swapValue(swapped.diffuseScale,   userParams.diffuseScale * 2.0f,   diffuseScaleUse,   diffuseScaleScale,   diffuseScaleBias);
+  swapValue(swapped.diffuseScale,   userParams.diffuseScale,   diffuseScaleUse,   diffuseScaleScale,   diffuseScaleBias,  diffuseScaleMin);
+
   swapValue(swapped.spotLightBlend, userParams.spotLightBlend * 2.0f, spotLightBlendUse, spotLightBlendScale, spotLightBlendBias);
   swapValue(swapped.fov,            userParams.fov * 2.0f,            fovUse,            fovScale,            fovBias);
 
@@ -60,7 +65,8 @@ void LightSwapParameters::saveState(nlohmann::json& j) const
   j["diffuseScaleUse"]     = diffuseScaleUse;
   j["diffuseScaleScale"]   = diffuseScaleScale;
   j["diffuseScaleBias"]    = diffuseScaleBias;
-  j["diffuseScaleDefault"]    = diffuseScaleDefault;
+  j["diffuseScaleDefault"] = diffuseScaleDefault;
+  j["diffuseScaleMin"]     = diffuseScaleMin;
 
   j["spotLightBlendUse"]   = spotLightBlendUse;
   j["spotLightBlendScale"] = spotLightBlendScale;
@@ -94,7 +100,8 @@ void LightSwapParameters::loadState(const nlohmann::json& j)
   diffuseScaleUse     = TPJSONFloat(j, "diffuseScaleUse");
   diffuseScaleScale   = TPJSONFloat(j, "diffuseScaleScale");
   diffuseScaleBias    = TPJSONFloat(j, "diffuseScaleBias");
-  diffuseScaleDefault    = TPJSONFloat(j, "diffuseScaleDefault");
+  diffuseScaleDefault = TPJSONFloat(j, "diffuseScaleDefault");
+  diffuseScaleMin     = TPJSONFloat(j, "diffuseScaleMin");
 
   spotLightBlendUse   = TPJSONFloat(j, "spotLightBlendUse");
   spotLightBlendScale = TPJSONFloat(j, "spotLightBlendScale");
