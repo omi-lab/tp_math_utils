@@ -1,5 +1,6 @@
 #include "tp_math_utils/LightAnimation.h"
 #include "tp_math_utils/JSONUtils.h"
+#include "tp_utils/DebugUtils.h"
 
 namespace {
 
@@ -65,6 +66,14 @@ void updateMaxRange(std::pair<float,float> &range, std::map<K,T> map)
   }
 }
 
+template<typename T>
+bool hasAnimatedValues(const T& animationMap)
+{
+  bool valuesAreTheSame = true;
+  std::for_each(animationMap.begin(), animationMap.end(), [&](auto &value) { valuesAreTheSame &= ((*animationMap.begin()).second == value.second); });
+  return !valuesAreTheSame;
+}
+
 }
 
 namespace tp_math_utils
@@ -86,14 +95,28 @@ void LightAnimation::updateMaxRange(std::pair<float,float>& range) const // min,
 //################################################################################################
 bool LightAnimation::empty() const
 {
-  return    location       .size() <= 1 &&
-            rotationEuler  .size() <= 1 &&
-            scale          .size() <= 1 &&
-            fov            .size() <= 1 &&
-            diffuseScale   .size() <= 1 &&
-            diffuse        .size() <= 1 &&
-            offsetScale    .size() <= 1 &&
-            spotLightBlend .size() <= 1;
+  return  location       .size() <= 1 &&
+          rotationEuler  .size() <= 1 &&
+          scale          .size() <= 1 &&
+          fov            .size() <= 1 &&
+          diffuseScale   .size() <= 1 &&
+          diffuse        .size() <= 1 &&
+          offsetScale    .size() <= 1 &&
+          spotLightBlend .size() <= 1;
+}
+
+//################################################################################################
+//!returns true if any of the animated value are non-zero
+bool LightAnimation::isAnimated() const
+{
+  return hasAnimatedValues(location      ) ||
+         hasAnimatedValues(rotationEuler ) ||
+         hasAnimatedValues(scale         ) ||
+         hasAnimatedValues(fov           ) ||
+         hasAnimatedValues(diffuseScale  ) ||
+         hasAnimatedValues(diffuse       ) ||
+         hasAnimatedValues(offsetScale   ) ||
+         hasAnimatedValues(spotLightBlend);
 }
 
 //################################################################################################

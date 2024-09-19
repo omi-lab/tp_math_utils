@@ -34,6 +34,10 @@ struct TP_MATH_UTILS_EXPORT LightAnimation
   bool empty() const;
 
   //################################################################################################
+  //!returns true if any of the animated value are non-zero
+  bool isAnimated() const;
+
+  //################################################################################################
   void saveState(nlohmann::json& j) const;
 
   //################################################################################################
