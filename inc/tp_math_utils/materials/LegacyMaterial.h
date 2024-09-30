@@ -22,8 +22,9 @@ Colorspace colorspaceFromString(const std::string& colorspace);
 //##################################################################################################
 enum class SSSMethod
 {
-  ChristensenBurley = 0,
-  RandomWalk        = 1
+  ChristensenBurley     = 0,
+  RandomWalk            = 1,
+  RandomWalkFixedRadius = 2
 };
 
 //##################################################################################################

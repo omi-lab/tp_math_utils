@@ -30,8 +30,9 @@ std::string sssMethodToString(SSSMethod sssMethod)
 {
   switch(sssMethod)
   {
-    case SSSMethod::ChristensenBurley: return "ChristensenBurley";
-    case SSSMethod::RandomWalk       : return "RandomWalk"       ;
+    case SSSMethod::ChristensenBurley     : return "ChristensenBurley"    ;
+    case SSSMethod::RandomWalk            : return "RandomWalk"           ;
+    case SSSMethod::RandomWalkFixedRadius : return "RandomWalkFixedRadius";
   }
   return "ChristensenBurley";
 }
@@ -39,8 +40,8 @@ std::string sssMethodToString(SSSMethod sssMethod)
 //##################################################################################################
 SSSMethod sssMethodFromString(const std::string& sssMethod)
 {
-  if(sssMethod == "RandomWalk")
-    return SSSMethod::RandomWalk;
+  if(sssMethod == "RandomWalk"           ) return SSSMethod::RandomWalk;
+  if(sssMethod == "RandomWalkFixedRadius") return SSSMethod::RandomWalkFixedRadius;
   return SSSMethod::ChristensenBurley;
 }
 
