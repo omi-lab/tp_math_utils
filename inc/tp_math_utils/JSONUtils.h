@@ -15,6 +15,7 @@ namespace tp_math_utils
 #define TPJSONVec3  tp_math_utils::getJSONVec3
 #define TPJSONVec4  tp_math_utils::getJSONVec4
 #define TPJSONIVec2 tp_math_utils::getJSONIvec2
+#define TPJSONIVec3 tp_math_utils::getJSONIvec3
 #define TPJSONMat4  tp_math_utils::getJSONMat4
 
 //-- ivec2 -----------------------------------------------------------------------------------------
@@ -99,6 +100,26 @@ inline glm::quat quatFromJSON(const nlohmann::json& j, const glm::quat& defaultV
 inline glm::quat getJSONQuat(const nlohmann::json& j, const std::string& key, const glm::quat& defaultValue)
 {
   return quatFromJSON(TPJSON(j, key), defaultValue);
+}
+
+//-- ivec3 -----------------------------------------------------------------------------------------
+
+//##################################################################################################
+inline nlohmann::json ivec3ToJSON(const glm::ivec3& vec)
+{
+  return nlohmann::json::array({vec.x, vec.y});
+}
+
+//##################################################################################################
+inline glm::ivec3 ivec3FromJSON(const nlohmann::json& j, const glm::ivec3& defaultValue=glm::ivec3())
+{
+  return (j.is_array() && j.size()==3 && j.at(0).is_number() && j.at(1).is_number() && j.at(2).is_number())?glm::ivec3(j.at(0), j.at(1), j.at(2)):defaultValue;
+}
+
+//##################################################################################################
+inline glm::ivec3 getJSONIvec3(const nlohmann::json& j, const std::string& key, const glm::ivec3& defaultValue)
+{
+  return ivec3FromJSON(TPJSON(j, key), defaultValue);
 }
 
 //-- vec3 ------------------------------------------------------------------------------------------
