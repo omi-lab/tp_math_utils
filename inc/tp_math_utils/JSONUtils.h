@@ -107,7 +107,7 @@ inline glm::quat getJSONQuat(const nlohmann::json& j, const std::string& key, co
 //##################################################################################################
 inline nlohmann::json ivec3ToJSON(const glm::ivec3& vec)
 {
-  return nlohmann::json::array({vec.x, vec.y});
+  return nlohmann::json::array({vec.x, vec.y, vec.z});
 }
 
 //##################################################################################################
