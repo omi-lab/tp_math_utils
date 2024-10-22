@@ -125,6 +125,7 @@ void Light::applyAnimation(double lightSetF, std::pair<float,float> const& anima
   });
 }
 
+//##################################################################################################
 void Light::applyAnimation(std::vector<tp_math_utils::Light>& lights, double lightSetF)
 {
   // find out total animation range over all lights
@@ -154,7 +155,11 @@ glm::vec3 Light::position() const
 //##################################################################################################
 void Light::setDirection(const glm::vec3& direction)
 {
-  viewMatrix = glm::lookAt(position(), position() + direction, glm::vec3(0.0f, 1.0f, 0.0f));
+  glm::vec3 up = (std::fabs(glm::dot(direction, {0.0f, 0.0f, 1.0f})) > 0.999f)?
+        glm::vec3(0.0f, 1.0f, 0.0f):
+        glm::vec3(0.0f, 0.0f, 1.0f);
+
+  viewMatrix = glm::lookAt(position(), position() + direction, up);
 }
 
 //##################################################################################################
