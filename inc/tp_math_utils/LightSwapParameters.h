@@ -31,10 +31,9 @@ struct TP_MATH_UTILS_EXPORT LightSwapParameters
   glm::vec3 offsetScaleScale {1.0f, 1.0f, 1.0f};
   glm::vec3 offsetScaleBias  {0.0f, 0.0f, 0.0f};
 
-  float diffuseScaleUse      {0.0f};
-  float diffuseScaleScale    {1.0f};
-  float diffuseScaleBias     {0.0f};
+  bool diffuseScaleEnabled   {false};
   float diffuseScaleDefault  {0.0f};
+  float diffuseScaleMax      {1.0f};
   float diffuseScaleMin      {0.0f};
 
   float spotLightBlendUse    {0.0f};
