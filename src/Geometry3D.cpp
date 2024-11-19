@@ -820,9 +820,9 @@ void Geometry::saveState(nlohmann::json& j) const
 //##################################################################################################
 void Geometry::loadState(const nlohmann::json& j)
 {
-  geometry = vec2VectorFromJSON(TPJSON(j, "geometry"));
-  transform = mat4FromJSON(TPJSON(j, "transform"));
-  material.loadState(TPJSON(j, "material"));
+  geometry = vec2VectorFromJSON(j, "geometry");
+  transform = mat4FromJSON(j, "transform");
+  tp_utils::loadObjectFromJSON(j, "material", material);
 }
 
 }

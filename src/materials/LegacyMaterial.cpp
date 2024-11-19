@@ -115,9 +115,9 @@ void LegacyMaterial::loadState(const nlohmann::json& j)
   shaderType            = shaderTypeFromString(TPJSONString(j, "shaderType"));
 
   albedoColorspace      = colorspaceFromString(TPJSONString(j, "albedoColorspace"));
-  sss                   = tp_math_utils::vec3FromJSON(TPJSON(j, "sss"     ), sss     );
-  emission              = tp_math_utils::vec3FromJSON(TPJSON(j, "emission"), emission);
-  velvet                = tp_math_utils::vec3FromJSON(TPJSON(j, "velvet"  ), velvet  );
+  sss                   = tp_math_utils::vec3FromJSON(j, "sss"     , sss     );
+  emission              = tp_math_utils::vec3FromJSON(j, "emission", emission);
+  velvet                = tp_math_utils::vec3FromJSON(j, "velvet"  , velvet  );
 
   sssScale              = TPJSONFloat(j, "sssScale"      , sssScale      );
   emissionScale         = TPJSONFloat(j, "emissionScale" , emissionScale );
@@ -135,7 +135,7 @@ void LegacyMaterial::loadState(const nlohmann::json& j)
   iridescentOffset      = TPJSONFloat(j, "iridescentOffset"     , iridescentOffset     );
   iridescentFrequency   = TPJSONFloat(j, "iridescentFrequency"  , iridescentFrequency  );
 
-  sssRadius             = tp_math_utils::vec3FromJSON(TPJSON(j, "sssRadius"), sssRadius);
+  sssRadius             = tp_math_utils::vec3FromJSON(j, "sssRadius", sssRadius);
   sssMethod             = sssMethodFromString(TPJSONString(j, "sssMethod"));
 
   normalStrength        = TPJSONFloat(j, "normalStrength"  , normalStrength  );

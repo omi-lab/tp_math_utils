@@ -8,13 +8,19 @@ namespace tp_math_utils
 //##################################################################################################
 void deserializeGeometry(const nlohmann::json& j, Polygon& polygon)
 {
-  try
+  if(auto i = j.find("coordinates"); i != j.end() and i->is_array())
   {
-    for(const nlohmann::json& shape : TPJSON(j, "coordinates"))
+    for(const nlohmann::json& shape : *i)
     {
+      if(!shape.is_array())
+        continue;
+
       std::vector<glm::vec2> loop;
       for(const nlohmann::json& coord : shape)
       {
+        if(!coord.is_array() or coord.size()!=2 or !coord.at(0).is_number() or !coord.at(1).is_number())
+          break;
+
         float x = coord.at(0);
         float y = coord.at(1);
         loop.emplace_back(x, y);
@@ -25,10 +31,6 @@ void deserializeGeometry(const nlohmann::json& j, Polygon& polygon)
       else
         polygon.holes.push_back(loop);
     }
-  }
-  catch(...)
-  {
-
   }
 }
 

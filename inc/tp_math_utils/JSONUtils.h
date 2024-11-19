@@ -81,6 +81,15 @@ inline const std::vector<glm::vec2> vec2VectorFromJSON(const nlohmann::json& j)
   return coords;
 }
 
+//##################################################################################################
+inline const std::vector<glm::vec2> vec2VectorFromJSON(const nlohmann::json& j, const std::string& key)
+{
+  if(auto i = j.find(key); i != j.end())
+    return vec2VectorFromJSON(i.value());
+
+  return {};
+}
+
 //-- quat ------------------------------------------------------------------------------------------
 
 //##################################################################################################
@@ -137,6 +146,15 @@ inline glm::vec3 vec3FromJSON(const nlohmann::json& j, const glm::vec3& defaultV
 }
 
 //##################################################################################################
+inline glm::vec3 vec3FromJSON(const nlohmann::json& j, const std::string& key, const glm::vec3& defaultValue=glm::vec3())
+{
+  if(auto i = j.find(key); i != j.end())
+    return vec3FromJSON(i.value());
+
+  return defaultValue;
+}
+
+//##################################################################################################
 inline glm::vec3 getJSONVec3(const nlohmann::json& j, const std::string& key, const glm::vec3& defaultValue)
 {
   return vec3FromJSON(TPJSON(j, key), defaultValue);
@@ -163,6 +181,15 @@ inline const std::vector<glm::vec3> vec3VectorFromJSON(const nlohmann::json& j)
       coords.push_back(vec3FromJSON(jj));
   }
   return coords;
+}
+
+//##################################################################################################
+inline const std::vector<glm::vec3> vec3VectorFromJSON(const nlohmann::json& j, const std::string& key)
+{
+  if(auto i = j.find(key); i != j.end())
+    return vec3VectorFromJSON(i.value());
+
+  return {};
 }
 
 //-- vec4 ------------------------------------------------------------------------------------------
@@ -262,6 +289,15 @@ inline glm::mat4 mat4FromJSON(const nlohmann::json& j)
         (*v) = jj;
   }
   return mat;
+}
+
+//##################################################################################################
+inline const glm::mat4 mat4FromJSON(const nlohmann::json& j, const std::string& key)
+{
+  if(auto i = j.find(key); i != j.end())
+    return mat4FromJSON(i.value());
+
+  return {};
 }
 
 //##################################################################################################

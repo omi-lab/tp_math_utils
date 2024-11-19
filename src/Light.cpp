@@ -208,11 +208,11 @@ void Light::loadState(const nlohmann::json& j)
 
   type = lightTypeFromString(TPJSONString(j, "type"));
 
-  viewMatrix = tp_math_utils::mat4FromJSON(TPJSON(j, "viewMatrix"));
+  viewMatrix = tp_math_utils::mat4FromJSON(j, "viewMatrix");
 
-  ambient = tp_math_utils::vec3FromJSON(TPJSON(j, "ambient"));
-  diffuse = tp_math_utils::vec3FromJSON(TPJSON(j, "diffuse"));
-  specular = tp_math_utils::vec3FromJSON(TPJSON(j, "specular"));
+  ambient = tp_math_utils::vec3FromJSON(j, "ambient");
+  diffuse = tp_math_utils::vec3FromJSON(j, "diffuse");
+  specular = tp_math_utils::vec3FromJSON(j, "specular");
 
   diffuseScale = TPJSONFloat(j, "diffuseScale", diffuseScale);
 
@@ -227,7 +227,7 @@ void Light::loadState(const nlohmann::json& j)
   fov         = TPJSONFloat(j, "fov"        , fov        );
   orthoRadius = TPJSONFloat(j, "orthoRadius", orthoRadius);
 
-  offsetScale = tp_math_utils::vec3FromJSON(TPJSON(j, "offsetScale", tp_math_utils::vec3ToJSON(glm::vec3(0.1f,0.1f,0.1f))));
+  offsetScale = tp_math_utils::getJSONVec3(j, "offsetScale", {0.1f,0.1f,0.1f});
 
   castShadows = TPJSONBool(j, "castShadows", true);
 

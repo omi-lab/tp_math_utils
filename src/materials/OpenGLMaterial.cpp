@@ -45,7 +45,7 @@ void OpenGLMaterial::saveState(nlohmann::json& j) const
 //##################################################################################################
 void OpenGLMaterial::loadState(const nlohmann::json& j)
 {
-  albedo                = tp_math_utils::vec3FromJSON(TPJSON(j, "albedo"  ), albedo  );
+  albedo                = tp_math_utils::vec3FromJSON(j, "albedo", albedo  );
 
   albedoScale           = TPJSONFloat(j, "albedoScale"   , albedoScale   );
 
