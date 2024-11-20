@@ -8,7 +8,7 @@ namespace tp_math_utils
 //##################################################################################################
 void deserializeGeometry(const nlohmann::json& j, Polygon& polygon)
 {
-  if(auto i = j.find("coordinates"); i != j.end() and i->is_array())
+  if(auto i = j.find("coordinates"); i != j.end() && i->is_array())
   {
     for(const nlohmann::json& shape : *i)
     {
@@ -18,7 +18,7 @@ void deserializeGeometry(const nlohmann::json& j, Polygon& polygon)
       std::vector<glm::vec2> loop;
       for(const nlohmann::json& coord : shape)
       {
-        if(!coord.is_array() or coord.size()!=2 or !coord.at(0).is_number() or !coord.at(1).is_number())
+        if(!coord.is_array() || coord.size()!=2 || !coord.at(0).is_number() || !coord.at(1).is_number())
           break;
 
         float x = coord.at(0);
