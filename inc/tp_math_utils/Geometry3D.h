@@ -119,6 +119,60 @@ struct TP_MATH_UTILS_EXPORT Geometry3D
   void convertToTriangles();
 
   //################################################################################################
+  //! Loop for each triangle
+  template<typename Closure>
+  void forEachTriangle(Closure&& closure) const
+  {
+    for(const auto& indexes : indexes)
+    {
+      auto calcVMax = [&](size_t sub)
+      {
+        return (sub>indexes.indexes.size())?0:indexes.indexes.size()-sub;
+      };
+
+      if(indexes.type == triangleFan)
+      {
+        const auto& firstIndex = indexes.indexes.front();
+
+        size_t vMax = calcVMax(1);
+        for(size_t v=1; v<vMax; v++)
+        {
+          const glm::vec3& v0 = verts.at(firstIndex).vert;
+          const glm::vec3& v1 = verts.at(indexes.indexes.at(v)).vert;
+          const glm::vec3& v2 = verts.at(indexes.indexes.at(v+1)).vert;
+
+          closure(v0,v1,v2);
+        }
+      }
+      else if(indexes.type == triangleStrip)
+      {
+        size_t vMax = calcVMax(2);
+
+        for(size_t v=0; v<vMax; v++)
+        {
+          const glm::vec3& v0 = verts.at(indexes.indexes.at(v)).vert;
+          const glm::vec3& v1 = verts.at(indexes.indexes.at(v+1)).vert;
+          const glm::vec3& v2 = verts.at(indexes.indexes.at(v+2)).vert;
+
+          closure(v0,v1,v2);
+        }
+      }
+      else if(indexes.type == triangles)
+      {
+        size_t vMax = calcVMax(2);
+        for(size_t v=0; v<vMax; v+=3)
+        {
+          const glm::vec3& v0 = verts.at(indexes.indexes.at(v)).vert;
+          const glm::vec3& v1 = verts.at(indexes.indexes.at(v+1)).vert;
+          const glm::vec3& v2 = verts.at(indexes.indexes.at(v+2)).vert;
+
+          closure(v0,v1,v2);
+        }
+      }
+    }
+  }
+
+  //################################################################################################
   //! Convert to triangles and duplicate verts. (nVerts = nFaces*3)
   void breakApartTriangles();
 
