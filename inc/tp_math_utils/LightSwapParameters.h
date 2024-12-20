@@ -3,50 +3,47 @@
 
 #include "tp_math_utils/Globals.h"
 #include "tp_math_utils/Light.h"
-#include "tp_math_utils/LightParameters.h"
-
-#include "json.hpp"
-
-#include <unordered_set>
+#include "tp_math_utils/SwapParameters.h"
 
 namespace tp_math_utils
 {
 
 //##################################################################################################
+struct TP_MATH_UTILS_EXPORT LightSwapInput
+{
+  glm::vec3 color     {0.5f, 0.5f, 0.5f};
+
+  float diffuseScale  {0.5f};
+
+  float spotLightBlend{0.5f};
+  float fov           {0.5f};
+
+  float offsetScale   {0.5f};
+
+  //################################################################################################
+  void saveState(nlohmann::json& j) const;
+
+  //################################################################################################
+  void loadState(const nlohmann::json& j);
+};
+
+//##################################################################################################
 struct TP_MATH_UTILS_EXPORT LightSwapParameters
 {
-  glm::vec3 ambientUse       {0.0f, 0.0f, 0.0f};
-  glm::vec3 ambientScale     {1.0f, 1.0f, 1.0f};
-  glm::vec3 ambientBias      {0.0f, 0.0f, 0.0f};
+  Vec3SwapParameters ambient;
+  Vec3SwapParameters diffuse;
+  Vec3SwapParameters specular;
 
-  glm::vec3 diffuseUse       {0.0f, 0.0f, 0.0f};
-  glm::vec3 diffuseScale     {1.0f, 1.0f, 1.0f};
-  glm::vec3 diffuseBias      {0.0f, 0.0f, 0.0f};
+  FloatSwapParameters diffuseScale;
 
-  glm::vec3 specularUse      {0.0f, 0.0f, 0.0f};
-  glm::vec3 specularScale    {1.0f, 1.0f, 1.0f};
-  glm::vec3 specularBias     {0.0f, 0.0f, 0.0f};
+  FloatSwapParameters spotLightBlend;
+  FloatSwapParameters fov;
 
-  glm::vec3 offsetScaleUse   {0.0f, 0.0f, 0.0f};
-  glm::vec3 offsetScaleScale {1.0f, 1.0f, 1.0f};
-  glm::vec3 offsetScaleBias  {0.0f, 0.0f, 0.0f};
-
-  bool diffuseScaleEnabled   {false};
-  float diffuseScaleDefault  {0.0f};
-  float diffuseScaleMax      {1.0f};
-  float diffuseScaleMin      {0.0f};
-
-  float spotLightBlendUse    {0.0f};
-  float spotLightBlendScale  {1.0f};
-  float spotLightBlendBias   {0.0f};
-
-  float fovUse               {0.0f};
-  float fovScale             {1.0f};
-  float fovBias              {0.0f};
+  Vec3SwapParameters offsetScale;
 
   //################################################################################################
   tp_math_utils::Light lightWithSwappedParameters(const tp_math_utils::Light& light,
-                                                        const LightParameters& userParams) const;
+                                                  const LightSwapInput& lightSwapInput) const;
 
   //################################################################################################
   void saveState(nlohmann::json& j) const;
