@@ -33,6 +33,17 @@ void LightSwapInput::loadState(const nlohmann::json& j)
   offsetScale    = TPJSONFloat(j, "offsetScale"   , offsetScale   );
 }
 
+//##################################################################################################
+bool LightSwapInput::operator!=(const LightSwapInput& other) const
+{
+  return
+      color          != other.color          ||
+      diffuseScale   != other.diffuseScale   ||
+      spotLightBlend != other.spotLightBlend ||
+      fov            != other.fov            ||
+      offsetScale    != other.offsetScale;
+}
+
 //################################################################################################
 tp_math_utils::Light LightSwapParameters::lightWithSwappedParameters(const tp_math_utils::Light& light,
                                                                      const LightSwapInput& userParams) const
