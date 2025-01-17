@@ -89,7 +89,30 @@ struct UVTransformation
   }
 
   //################################################################################################
+  bool operator==(const UVTransformation& other) const
+  {
+    return skewUVW      == other.skewUVW               &&
+           scaleUVW     == other.scaleUVW              &&
+           translateUVW == other.translateUVW          &&
+           rotateUVW    == other.rotateUVW             &&
+           skewUV       == other.skewUV                &&
+           scaleUV      == other.scaleUV               &&
+           translateUV  == other.translateUV           &&
+           glm::abs(rotateUV - other.rotateUV) < 1e-6f &&
+           type         == other.type;
+  }
+
+  //################################################################################################
+  bool operator!=(const UVTransformation& other) const
+  {
+    return !(*this == other);
+  }
+
+  //################################################################################################
   glm::mat3 uvMatrix() const;
+
+  //################################################################################################
+  glm::mat3 lightMaskUVMatrix() const;
 
   //################################################################################################
   glm::mat4 uvwMatrix() const;

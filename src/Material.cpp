@@ -5,6 +5,7 @@
 #include "tp_math_utils/materials/ExternalMaterial.h"
 
 #include "tp_utils/JSONUtils.h"
+#include "tp_utils/DebugUtils.h"
 
 #include "glm/gtx/matrix_transform_2d.hpp" // IWYU pragma: keep
 #include "glm/gtx/quaternion.hpp"
@@ -78,6 +79,27 @@ glm::mat3 UVTransformation::uvMatrix() const
   m = skew(m, skewUV);
   m = glm::rotate(m, glm::radians(rotateUV));
   m = glm::translate(m, translateUV);
+  return m;
+}
+
+//##################################################################################################
+glm::mat3 UVTransformation::lightMaskUVMatrix() const
+{
+  glm::vec2 center(0.5f, 0.5f);
+  glm::mat3 m{1.0f};
+
+  m = glm::translate(m, center);
+  m = glm::scale(m, scaleUV);
+  m = glm::translate(m, -center);
+
+  m = skew(m, skewUV);
+
+  m = glm::translate(m, center);
+  m = glm::rotate(m, glm::radians(rotateUV));
+  m = glm::translate(m, -center);
+
+  m = glm::translate(m, translateUV);
+
   return m;
 }
 
