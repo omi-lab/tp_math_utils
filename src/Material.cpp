@@ -83,22 +83,23 @@ glm::mat3 UVTransformation::uvMatrix() const
 }
 
 //##################################################################################################
+//NTN-->TOCHECK: reverse direction
 glm::mat3 UVTransformation::lightMaskUVMatrix() const
 {
   glm::vec2 center(0.5f, 0.5f);
   glm::mat3 m{1.0f};
 
   m = glm::translate(m, center);
-  m = glm::scale(m, scaleUV);
+  m = glm::scale(m,  glm::vec2(1.0f / scaleUV.x, 1.0f / scaleUV.y));
   m = glm::translate(m, -center);
 
-  m = skew(m, skewUV);
+  m = skew(m, -skewUV);
 
   m = glm::translate(m, center);
-  m = glm::rotate(m, glm::radians(rotateUV));
+  m = glm::rotate(m, glm::radians(-rotateUV));
   m = glm::translate(m, -center);
 
-  m = glm::translate(m, translateUV);
+  m = glm::translate(m, -translateUV);
 
   return m;
 }
